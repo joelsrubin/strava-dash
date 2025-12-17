@@ -67,3 +67,21 @@ export function fetchAthleteActivitiesQueryOptions() {
 		staleTime: Infinity,
 	});
 }
+
+export const fetchActivity = async (id: string) => {
+	const token = await getStravaAccessToken();
+	const response = await fetch(`${BASE_URL}/activities/${id}`, {
+		headers: {
+			Authorization: `Bearer ${token}`,
+		},
+	});
+	return response.json() as Promise<TActivity>;
+};
+
+export function fetchActivityQueryOptions(id: string) {
+	return queryOptions({
+		queryKey: ["activity", id],
+		queryFn: () => fetchActivity(id),
+		staleTime: Infinity,
+	});
+}

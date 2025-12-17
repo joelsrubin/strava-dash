@@ -1,4 +1,4 @@
-import { SidebarIcon } from "lucide-react";
+import { CloudLightning, Flame, SidebarIcon } from "lucide-react";
 
 import {
 	Breadcrumb,
@@ -29,17 +29,10 @@ export function SiteHeader({ user }: { user: TAthlete }) {
 					<SidebarIcon />
 				</Button>
 				<Separator orientation="vertical" className="mr-2 h-4" />
-				<Breadcrumb className="hidden sm:block">
-					<BreadcrumbList>
-						<BreadcrumbItem>
-							<BreadcrumbLink href="#">Dash</BreadcrumbLink>
-						</BreadcrumbItem>
-						<BreadcrumbSeparator />
-						<BreadcrumbItem>
-							<BreadcrumbPage>Activities</BreadcrumbPage>
-						</BreadcrumbItem>
-					</BreadcrumbList>
-				</Breadcrumb>
+				<div className="flex items-center gap-2">
+					<span>Dash</span>
+					<Flame className="text-primary" />
+				</div>
 				<div className="w-full sm:ml-auto sm:w-auto" />
 				<div className="ml-2 self-end justify-end ">
 					<NavUser user={user} />

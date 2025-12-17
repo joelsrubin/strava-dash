@@ -1,7 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import {
+	ArrowUpDown,
+	BicepsFlexed,
+	Heart,
+	MoreHorizontal,
+	Ruler,
+} from "lucide-react";
 import {
 	Area,
 	AreaChart,
@@ -54,8 +60,7 @@ function RouteComponent() {
 	const { data: athleteActivities } = useSuspenseQuery(
 		fetchAthleteActivitiesQueryOptions(),
 	);
-
-	console.log({ athleteActivities });
+	const navigate = useNavigate();
 
 	const distanceData = athleteActivities
 		.map((activity, index) => ({
@@ -102,7 +107,18 @@ function RouteComponent() {
 	const columns: ColumnDef<TActivity>[] = [
 		{
 			accessorKey: "distance",
-			header: "Distance",
+			header: ({ column }) => {
+				return (
+					<Button
+						className="px-0 py-2"
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Distance
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => {
 				return (
 					<div>
@@ -113,11 +129,21 @@ function RouteComponent() {
 		},
 		{
 			accessorKey: "moving_time",
-			header: "Moving Time",
+			header: ({ column }) => {
+				return (
+					<Button
+						className="px-0 py-2"
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Moving Time
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => {
 				if (!row.original.moving_time) return <div>no data</div>;
 				if (row.original.moving_time > 3600) {
-					console.log(row.original.moving_time);
 					// parse hours and minutes
 					const hours = Math.floor(row.original.moving_time / 3600);
 					const minutes = Math.floor((row.original.moving_time % 3600) / 60);
@@ -132,14 +158,36 @@ function RouteComponent() {
 		},
 		{
 			accessorKey: "total_elevation_gain",
-			header: "Total Elevation Gain",
+			header: ({ column }) => {
+				return (
+					<Button
+						className="px-0 py-2"
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Total Elevation Gain
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => {
 				return <div>{row.original.total_elevation_gain.toFixed(0)} ft</div>;
 			},
 		},
 		{
 			accessorKey: "average_heartrate",
-			header: "Average Heart Rate",
+			header: ({ column }) => {
+				return (
+					<Button
+						className="px-0 py-2"
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Average Heart Rate
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => {
 				if (!row.original.average_heartrate) return <div>no data</div>;
 				return <div>{row.original.average_heartrate.toFixed(0)} bpm</div>;
@@ -147,7 +195,18 @@ function RouteComponent() {
 		},
 		{
 			accessorKey: "max_heartrate",
-			header: "Max Heart Rate",
+			header: ({ column }) => {
+				return (
+					<Button
+						className="px-0 py-2"
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Max Heart Rate
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => {
 				if (!row.original.max_heartrate) return <div>no data</div>;
 				return <div>{row.original.max_heartrate} bpm</div>;
@@ -156,7 +215,18 @@ function RouteComponent() {
 
 		{
 			accessorKey: "start_date",
-			header: "Date",
+			header: ({ column }) => {
+				return (
+					<Button
+						className="px-0 py-2"
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Max Heart Rate
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
 			cell: ({ row }) => {
 				return (
 					<div>{new Date(row.original.start_date).toLocaleDateString()}</div>
@@ -166,8 +236,6 @@ function RouteComponent() {
 		{
 			id: "actions",
 			cell: ({ row }) => {
-				// const payment = row.original;
-
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
@@ -178,7 +246,15 @@ function RouteComponent() {
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuItem>View Run</DropdownMenuItem>
+
+							<DropdownMenuItem asChild>
+								<Link
+									to="/dashboard/run/$id"
+									params={{ id: row.original.id.toString() }}
+								>
+									View Run
+								</Link>
+							</DropdownMenuItem>
 							<DropdownMenuSeparator />
 						</DropdownMenuContent>
 					</DropdownMenu>
@@ -204,7 +280,9 @@ function RouteComponent() {
 			>
 				<div className="grid auto-rows-min gap-4 md:grid-cols-3">
 					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2">Distance 🏃‍♂️</h2>
+						<h2 className="p-2 flex items-center gap-2">
+							Distance <Ruler />
+						</h2>
 						<ChartContainer config={distanceConfig}>
 							<BarChart className=" w-full" data={distanceData}>
 								<CartesianGrid vertical={false} />
@@ -227,21 +305,24 @@ function RouteComponent() {
 						</ChartContainer>
 					</div>
 					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2">Suffer Score 💪</h2>
+						<h2 className="p-2 flex items-center gap-2">
+							Effort <BicepsFlexed />
+						</h2>
 						<ChartContainer config={sufferConfig}>
 							<LineChart className=" w-full" data={sufferData}>
 								<CartesianGrid vertical={false} />
 								<Line
 									dataKey="suffer"
 									stroke="var(--color-suffer)"
-									strokeWidth={2}
 									dot={false}
 								/>
 							</LineChart>
 						</ChartContainer>
 					</div>
 					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2">Heart Rate 💓</h2>
+						<h2 className="p-2 flex items-center gap-2">
+							Heart <Heart />
+						</h2>
 						<ChartContainer config={heartRateConfig}>
 							<AreaChart className=" w-full" data={heartRateData}>
 								<CartesianGrid vertical={false} />
