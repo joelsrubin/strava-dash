@@ -1,8 +1,5 @@
-"use client";
-
 import { SidebarIcon } from "lucide-react";
 
-import { SearchForm } from "@/components/dashboard/search-form";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -15,11 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 
-export function SiteHeader() {
+import { NavUser } from "./nav-user";
+
+export function SiteHeader({ user }: { user: TAthlete }) {
 	const { toggleSidebar } = useSidebar();
 
 	return (
-		<header className="bg-background flex w-full items-center border-b">
+		<header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
 			<div className="flex h-(--header-height) w-full items-center gap-2 px-4">
 				<Button
 					className="h-8 w-8"
@@ -33,17 +32,18 @@ export function SiteHeader() {
 				<Breadcrumb className="hidden sm:block">
 					<BreadcrumbList>
 						<BreadcrumbItem>
-							<BreadcrumbLink href="#">
-								Building Your Application
-							</BreadcrumbLink>
+							<BreadcrumbLink href="#">Dash</BreadcrumbLink>
 						</BreadcrumbItem>
 						<BreadcrumbSeparator />
 						<BreadcrumbItem>
-							<BreadcrumbPage>Data Fetching</BreadcrumbPage>
+							<BreadcrumbPage>Activities</BreadcrumbPage>
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
-				<SearchForm className="w-full sm:ml-auto sm:w-auto" />
+				<div className="w-full sm:ml-auto sm:w-auto" />
+				<div className="ml-2 self-end justify-end ">
+					<NavUser user={user} />
+				</div>
 			</div>
 		</header>
 	);

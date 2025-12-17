@@ -1,32 +1,42 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { getStravaAccessToken } from "@/api/auth";
-import { fetchAthelete } from "@/api/client";
+import { fetchAthleteQueryOptions } from "@/api/client";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
-
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
-	beforeLoad: async () => {
+	beforeLoad: async ({ context: { queryClient } }) => {
 		const token = await getStravaAccessToken();
 		if (!token) {
 			throw redirect({ to: "/" });
 		}
-		const athlete = await fetchAthelete({ token });
+		const athlete = await queryClient.ensureQueryData(
+			fetchAthleteQueryOptions({ token }),
+		);
 
-		return { token, athlete };
+		return { athlete };
 	},
 });
 
 function RouteComponent() {
-	const { athlete } = Route.useRouteContext();
+	const isMobile = useIsMobile();
+	const { data: athlete } = useSuspenseQuery(fetchAthleteQueryOptions());
 
 	return (
-		<div className="[--header-height:calc(--spacing(14))]">
-			<SidebarProvider className="flex flex-col">
-				<SiteHeader />
-				<div className="flex flex-1">
+		<div
+			className={
+				isMobile
+					? "min-h-screen [--header-height:calc(--spacing(14))]"
+					: "h-screen overflow-hidden [--header-height:calc(--spacing(14))]"
+			}
+		>
+			<SidebarProvider className="flex h-full flex-col">
+				<SiteHeader user={athlete} />
+				<div className={isMobile ? "flex flex-1" : "flex min-h-0 flex-1"}>
 					<AppSidebar user={athlete} />
 					<Outlet />
 				</div>

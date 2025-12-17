@@ -1,24 +1,24 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getCookie, setCookie } from "@tanstack/react-start/server";
 
-type TResponse = {
-	access_token: string;
-	expires_at: number;
-	expires_in: number;
-	refresh_token: string;
-	token_type: string;
-};
+import { useStravaSession } from "./session";
 
 export const refreshStravaAccessToken = createServerFn({
 	method: "POST",
 }).handler(async () => {
+	const session = await useStravaSession();
+	const refreshToken = session.data.refreshToken;
+
+	if (!refreshToken) {
+		throw new Error("No refresh token available");
+	}
+
 	const response = await fetch("https://www.strava.com/oauth/token", {
 		method: "POST",
 		body: new URLSearchParams({
 			client_id: import.meta.env.VITE_STRAVA_CLIENT_ID,
 			client_secret: import.meta.env.VITE_STRAVA_CLIENT_SECRET,
 			grant_type: "refresh_token",
-			refresh_token: import.meta.env.VITE_STRAVA_REFRESH_TOKEN,
+			refresh_token: refreshToken,
 		}),
 		headers: {
 			"Content-Type": "application/x-www-form-urlencoded",
@@ -26,29 +26,62 @@ export const refreshStravaAccessToken = createServerFn({
 	});
 
 	if (!response.ok) {
-		throw new Error("Failed to login with Strava");
+		throw new Error("Failed to refresh Strava token");
 	}
 
-	const data: TResponse = await response.json();
+	const data = await response.json();
 
-	setCookie("strava_access_token", data.access_token, {
-		path: "/",
-		maxAge: data.expires_in,
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		sameSite: "strict",
+	await session.update({
+		accessToken: data.access_token,
+		refreshToken: data.refresh_token,
+		expiresAt: data.expires_at,
 	});
-	return data;
+
+	return data.access_token;
 });
 
 export const getStravaAccessToken = createServerFn({ method: "GET" }).handler(
 	async () => {
-		let accessToken = getCookie("strava_access_token");
-		if (!accessToken) {
-			await refreshStravaAccessToken();
-			accessToken = getCookie("strava_access_token");
+		const session = await useStravaSession();
+		let accessToken = session.data.accessToken;
+
+		// Check if token is expired
+		const expiresAt = session.data.expiresAt;
+		const isExpired = expiresAt && Date.now() / 1000 > expiresAt;
+
+		if (!accessToken || isExpired) {
+			if (session.data.refreshToken) {
+				accessToken = await refreshStravaAccessToken();
+			}
 		}
 
 		return accessToken;
+	},
+);
+
+export const setStravaAccessToken = createServerFn({ method: "POST" })
+	.inputValidator(
+		(data: {
+			access_token: string;
+			expires_at: number;
+			refresh_token: string;
+		}) => data,
+	)
+	.handler(async ({ data }) => {
+		const session = await useStravaSession();
+
+		await session.update({
+			accessToken: data.access_token,
+			refreshToken: data.refresh_token,
+			expiresAt: data.expires_at,
+		});
+
+		return data.access_token;
+	});
+
+export const clearStravaSession = createServerFn({ method: "POST" }).handler(
+	async () => {
+		const session = await useStravaSession();
+		await session.clear();
 	},
 );
