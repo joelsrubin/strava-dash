@@ -4,6 +4,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
+import { Hashtag } from "./extensions/hashtag";
 import { Toolbar } from "./toolbar";
 
 // Create lowlight instance with common languages
@@ -38,6 +39,7 @@ const Tiptap = ({
 			CodeBlockLowlight.configure({
 				lowlight,
 			}),
+			Hashtag,
 		],
 		content: initialContent,
 		onUpdate: ({ editor }) => {

@@ -1,4 +1,4 @@
-import { SquareTerminal } from "lucide-react";
+import { Clock, Notebook, SquareTerminal } from "lucide-react";
 
 import { NavMain } from "@/components/dashboard/nav-main";
 
@@ -15,6 +15,12 @@ const data = {
 				{
 					title: "Activities",
 					url: "/dashboard/main",
+					icon: Clock,
+				},
+				{
+					title: "Notes",
+					url: "/dashboard/notes",
+					icon: Notebook,
 				},
 			],
 		},

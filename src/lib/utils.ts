@@ -1,6 +1,20 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+	return twMerge(clsx(inputs));
+}
+
+export function formatTime(seconds: number) {
+	const hours = Math.floor(seconds / 3600);
+	const minutes = Math.floor((seconds % 3600) / 60);
+	return `${hours ? `${hours}h ` : ""}${minutes ? `${minutes}m ` : ""}`;
+}
+
+export function formatDistance(distance: number) {
+	return `${(distance * 0.00062137).toFixed(2)} mi`;
+}
+
+export function formatElevation(elevation: number) {
+	return `${elevation.toFixed(0)} ft`;
 }

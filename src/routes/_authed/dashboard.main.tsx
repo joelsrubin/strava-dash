@@ -60,7 +60,6 @@ function RouteComponent() {
 	const { data: athleteActivities } = useSuspenseQuery(
 		fetchAthleteActivitiesQueryOptions(),
 	);
-	const navigate = useNavigate();
 
 	const distanceData = athleteActivities
 		.map((activity, index) => ({
@@ -280,13 +279,12 @@ function RouteComponent() {
 			>
 				<div className="grid auto-rows-min gap-4 md:grid-cols-3">
 					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2 flex items-center gap-2">
-							Distance <Ruler />
-						</h2>
+						<h2 className="p-2 flex items-center gap-2">Distance</h2>
 						<ChartContainer config={distanceConfig}>
 							<BarChart className=" w-full" data={distanceData}>
 								<CartesianGrid vertical={false} />
 								<Bar
+									isAnimationActive={false}
 									dataKey="distance"
 									fill="var(--color-distance)"
 									radius={4}
@@ -305,13 +303,12 @@ function RouteComponent() {
 						</ChartContainer>
 					</div>
 					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2 flex items-center gap-2">
-							Effort <BicepsFlexed />
-						</h2>
+						<h2 className="p-2 flex items-center gap-2">Effort</h2>
 						<ChartContainer config={sufferConfig}>
 							<LineChart className=" w-full" data={sufferData}>
 								<CartesianGrid vertical={false} />
 								<Line
+									isAnimationActive={false}
 									dataKey="suffer"
 									stroke="var(--color-suffer)"
 									dot={false}
@@ -320,13 +317,12 @@ function RouteComponent() {
 						</ChartContainer>
 					</div>
 					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2 flex items-center gap-2">
-							Heart <Heart />
-						</h2>
+						<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>
 						<ChartContainer config={heartRateConfig}>
 							<AreaChart className=" w-full" data={heartRateData}>
 								<CartesianGrid vertical={false} />
 								<Area
+									isAnimationActive={false}
 									dataKey="heartRate"
 									fill="var(--color-heartRate)"
 									stroke="var(--color-heartRate)"

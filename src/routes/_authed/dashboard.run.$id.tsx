@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/chart";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { formatDistance, formatTime } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 	component: RouteComponent,
@@ -28,7 +29,7 @@ function RouteComponent() {
 	const { id } = Route.useParams();
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
 	const initialState =
-		localStorage.getItem("editor-state") ||
+		localStorage.getItem(`editor-state-${id}`) ||
 		`<p>${activity.name} - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`;
 
 	const splitsData = activity.splits_standard.map((split) => ({
@@ -55,7 +56,7 @@ function RouteComponent() {
 
 	const handleChange = (content: string) => {
 		console.log("content", content);
-		localStorage.setItem("editor-state", content);
+		localStorage.setItem(`editor-state-${id}`, content);
 	};
 
 	return (
@@ -77,12 +78,9 @@ function RouteComponent() {
 					<div className="bg-muted/50 rounded-xl p-2 flex flex-col gap-2">
 						<h2>Run Details</h2>
 						<span>name: {activity.name}</span>
-						<span>distance: {activity.distance}</span>
-						<span>moving_time: {activity.moving_time}</span>
-						<span>elapsed_time: {activity.elapsed_time}</span>
-						<span>total_elevation_gain: {activity.total_elevation_gain}</span>
-						<span>elev_high: {activity.elev_high}</span>
-						<span>elev_low: {activity.elev_low}</span>
+						<span>distance: {formatDistance(activity.distance)}</span>
+						<span>moving_time: {formatTime(activity.moving_time)}</span>
+						<span>elapsed_time: {formatTime(activity.elapsed_time)}</span>
 						<span>sport_type: {activity.sport_type}</span>
 					</div>
 					<div className="bg-muted/50 rounded-xl md:col-span-2">

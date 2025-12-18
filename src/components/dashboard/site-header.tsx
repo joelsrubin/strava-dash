@@ -1,13 +1,6 @@
-import { CloudLightning, Flame, SidebarIcon } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Flame, SidebarIcon } from "lucide-react";
 
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -30,8 +23,10 @@ export function SiteHeader({ user }: { user: TAthlete }) {
 				</Button>
 				<Separator orientation="vertical" className="mr-2 h-4" />
 				<div className="flex items-center gap-2">
-					<span>Dash</span>
-					<Flame className="text-primary" />
+					<Link to="/dashboard/main" className="flex items-center gap-2">
+						<span>Dash</span>
+						<Flame className="text-primary" />
+					</Link>
 				</div>
 				<div className="w-full sm:ml-auto sm:w-auto" />
 				<div className="ml-2 self-end justify-end ">
