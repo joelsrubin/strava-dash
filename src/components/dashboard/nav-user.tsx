@@ -16,6 +16,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function NavUser({ user }: { user: TAthlete }) {
 	const clearStravaSessionFn = useServerFn(clearStravaSession);
@@ -24,6 +25,7 @@ export function NavUser({ user }: { user: TAthlete }) {
 		await clearStravaSessionFn();
 		navigate({ to: "/" });
 	};
+	const isMobile = useIsMobile();
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
@@ -40,11 +42,13 @@ export function NavUser({ user }: { user: TAthlete }) {
 									{user.lastname.charAt(0)}
 								</AvatarFallback>
 							</Avatar>
-							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-medium">
-									{user.firstname} {user.lastname}
-								</span>
-							</div>
+							{!isMobile && (
+								<div className="grid flex-1 text-left text-sm leading-tight">
+									<span className="truncate font-medium">
+										{user.firstname} {user.lastname}
+									</span>
+								</div>
+							)}
 							<ChevronsUpDown className="ml-auto size-4" />
 						</SidebarMenuButton>
 					</DropdownMenuTrigger>

@@ -1,7 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { fetchActivityQueryOptions } from "@/api/client";
+import Tiptap from "@/components/editor/tip-tap";
 import {
 	type ChartConfig,
 	ChartContainer,
@@ -25,6 +27,9 @@ function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { id } = Route.useParams();
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
+	const initialState =
+		localStorage.getItem("editor-state") ||
+		`<p>${activity.name} - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`;
 
 	const splitsData = activity.splits_standard.map((split) => ({
 		split: `Mile ${split.split}`,
@@ -47,6 +52,11 @@ function RouteComponent() {
 			},
 		},
 	} satisfies ChartConfig;
+
+	const handleChange = (content: string) => {
+		console.log("content", content);
+		localStorage.setItem("editor-state", content);
+	};
 
 	return (
 		<SidebarInset
@@ -94,7 +104,7 @@ function RouteComponent() {
 									axisLine={false}
 									tickMargin={8}
 									fontSize={12}
-									domain={["dataMin - 10", "dataMax + 10"]}
+									domain={[120, 180]}
 								/>
 								<YAxis
 									yAxisId="paceZone"
@@ -141,10 +151,12 @@ function RouteComponent() {
 				<div
 					className={
 						isMobile
-							? "bg-muted/50 flex flex-col rounded-xl"
+							? "bg-muted/50 flex flex-1 flex-col rounded-xl"
 							: "bg-muted/50 flex min-h-0 flex-1 flex-col rounded-xl"
 					}
-				></div>
+				>
+					<Tiptap onChange={handleChange} initialContent={initialState} />
+				</div>
 			</div>
 		</SidebarInset>
 	);

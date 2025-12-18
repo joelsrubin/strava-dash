@@ -137,3 +137,136 @@
     @apply font-sans;
     }
 }
+
+/* TipTap Editor Styles */
+.tiptap {
+  @apply outline-none min-h-[200px] px-4 py-3;
+
+  /* Paragraphs */
+  p {
+    @apply my-4 first:mt-0 last:mb-0 text-base leading-relaxed;
+  }
+
+  /* Headings */
+  h1 {
+    @apply text-3xl font-bold mt-8 mb-4 first:mt-0;
+  }
+
+  h2 {
+    @apply text-2xl font-bold mt-6 mb-3 first:mt-0;
+  }
+
+  h3 {
+    @apply text-xl font-semibold mt-5 mb-2 first:mt-0;
+  }
+
+  h4 {
+    @apply text-lg font-semibold mt-4 mb-2 first:mt-0;
+  }
+
+  /* Lists */
+  ul {
+    @apply list-disc pl-6 my-4 first:mt-0 last:mb-0;
+  }
+
+  ol {
+    @apply list-decimal pl-6 my-4 first:mt-0 last:mb-0;
+  }
+
+  li {
+    @apply my-1;
+
+    p {
+      @apply my-0;
+    }
+  }
+
+  /* Blockquote */
+  blockquote {
+    @apply border-l-4 border-primary pl-4 my-4 italic text-muted-foreground first:mt-0 last:mb-0;
+  }
+
+  /* Inline code */
+  code {
+    @apply bg-muted text-sm px-1.5 py-0.5 rounded font-mono;
+  }
+
+  /* Code block */
+  pre {
+    @apply bg-muted rounded-lg p-4 my-4 overflow-x-auto first:mt-0 last:mb-0;
+
+    code {
+      @apply bg-transparent p-0 text-sm;
+    }
+  }
+
+  /* Horizontal rule */
+  hr {
+    @apply border-t border-border my-6;
+  }
+
+  /* Links */
+  a {
+    @apply text-primary underline underline-offset-2 hover:text-primary/80 transition-colors cursor-pointer;
+  }
+
+  /* Bold, italic, strikethrough */
+  strong {
+    @apply font-bold;
+  }
+
+  em {
+    @apply italic;
+  }
+
+  s {
+    @apply line-through;
+  }
+
+  /* Placeholder */
+  p.is-editor-empty:first-child::before {
+    @apply text-muted-foreground pointer-events-none float-left h-0;
+    content: attr(data-placeholder);
+  }
+}
+
+/* Syntax highlighting for code blocks (lowlight) */
+.tiptap pre code .hljs-comment,
+.tiptap pre code .hljs-quote {
+  @apply text-muted-foreground italic;
+}
+
+.tiptap pre code .hljs-keyword,
+.tiptap pre code .hljs-selector-tag,
+.tiptap pre code .hljs-addition {
+  @apply text-primary;
+}
+
+.tiptap pre code .hljs-string,
+.tiptap pre code .hljs-attribute,
+.tiptap pre code .hljs-template-variable,
+.tiptap pre code .hljs-variable,
+.tiptap pre code .hljs-regexp {
+  @apply text-chart-2;
+}
+
+.tiptap pre code .hljs-number,
+.tiptap pre code .hljs-literal,
+.tiptap pre code .hljs-type,
+.tiptap pre code .hljs-built_in,
+.tiptap pre code .hljs-params {
+  @apply text-chart-3;
+}
+
+.tiptap pre code .hljs-function,
+.tiptap pre code .hljs-title {
+  @apply text-chart-1;
+}
+
+.tiptap pre code .hljs-meta {
+  @apply text-muted-foreground;
+}
+
+.tiptap pre code .hljs-deletion {
+  @apply text-destructive;
+}
