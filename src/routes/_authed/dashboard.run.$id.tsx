@@ -90,7 +90,7 @@ function RouteComponent() {
 					</div>
 					<div className="bg-muted/50 rounded-xl md:col-span-1">
 						<h2 className="p-2">Splits Performance</h2>
-						<ChartContainer config={splitsConfig} className="h-[250px] w-full">
+						<ChartContainer config={splitsConfig} className="">
 							<LineChart data={splitsData}>
 								<CartesianGrid strokeDasharray="3 3" vertical={false} />
 								<XAxis

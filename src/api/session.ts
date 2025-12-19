@@ -5,7 +5,6 @@ type SessionData = {
 	refreshToken?: string;
 	expiresAt?: number;
 };
-
 export function useStravaSession() {
 	return useSession<SessionData>({
 		password: process.env.VITE_SESSION_SECRET,

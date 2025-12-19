@@ -13,5 +13,6 @@
     "vars": {
         "VITE_BASE_URL": "https://strava-dash.joelsrubin.workers.dev",
         "VITE_STRAVA_CLIENT_ID": "190450",
+        "VITE_SESSION_SECRET": "w48i3OiUPus/T5F6RePMPy5y8VLOG7RmGo0KMKc9/L8="
     }
   }
