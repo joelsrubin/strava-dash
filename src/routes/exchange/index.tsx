@@ -1,7 +1,7 @@
+import { env } from "cloudflare:workers";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { setStravaAccessToken } from "@/api/auth";
-
 export const Route = createFileRoute("/exchange/")({
 	validateSearch: (search) => ({
 		code: (search.code as string) || undefined,
@@ -22,8 +22,8 @@ function ExchangeComponent() {
 			const response = await fetch("https://www.strava.com/oauth/token", {
 				method: "POST",
 				body: new URLSearchParams({
-					client_id: import.meta.env.VITE_STRAVA_CLIENT_ID,
-					client_secret: import.meta.env.VITE_STRAVA_CLIENT_SECRET,
+					client_id: env.VITE_STRAVA_CLIENT_ID,
+					client_secret: env.VITE_STRAVA_CLIENT_SECRET,
 					code,
 					grant_type: "authorization_code",
 				}),
@@ -34,7 +34,11 @@ function ExchangeComponent() {
 				return;
 			}
 
-			const data = await response.json();
+			const data = (await response.json()) as {
+				access_token: string;
+				expires_at: number;
+				refresh_token: string;
+			};
 
 			await setStravaAccessToken({
 				data: {
