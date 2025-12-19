@@ -1,7 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { getStravaAccessToken } from "@/api/auth";
-import { fetchAthleteQueryOptions } from "@/api/client";
+import {
+	fetchAthleteActivitiesQueryOptions,
+	fetchAthleteQueryOptions,
+} from "@/api/client";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -14,11 +17,10 @@ export const Route = createFileRoute("/_authed/dashboard")({
 		if (!token) {
 			throw redirect({ to: "/" });
 		}
-		const athlete = await queryClient.ensureQueryData(
-			fetchAthleteQueryOptions({ token }),
-		);
-
-		return { athlete };
+		await Promise.all([
+			queryClient.ensureQueryData(fetchAthleteQueryOptions()),
+			queryClient.ensureQueryData(fetchAthleteActivitiesQueryOptions()),
+		]);
 	},
 });
 

@@ -22,6 +22,7 @@ const Tiptap = ({
 	onChange,
 }: TiptapProps) => {
 	const editor = useEditor({
+		immediatelyRender: false,
 		extensions: [
 			StarterKit.configure({
 				codeBlock: false, // Disable default code block, we use CodeBlockLowlight instead
@@ -53,7 +54,7 @@ const Tiptap = ({
 	});
 
 	return (
-		<div className="overflow-scroll rounded-md border border-border bg-transparent focus-within:ring-1 focus-within:ring-ring h-full">
+		<div className="overflow-scroll rounded-md border border-border bg-transparent  h-full">
 			<Toolbar editor={editor} />
 			<EditorContent editor={editor} />
 		</div>

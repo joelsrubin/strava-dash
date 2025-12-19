@@ -4,8 +4,8 @@ import { getStravaAccessToken } from "./auth";
 
 const BASE_URL = "https://www.strava.com/api/v3";
 
-export const fetchAthlete = async (token?: string) => {
-	const accessToken = token ?? (await getStravaAccessToken());
+export const fetchAthlete = async () => {
+	const accessToken = await getStravaAccessToken();
 	if (!accessToken) throw new Error("No access token");
 
 	const response = await fetch(`${BASE_URL}/athlete`, {
@@ -16,10 +16,10 @@ export const fetchAthlete = async (token?: string) => {
 	return response.json() as Promise<TAthlete>;
 };
 
-export function fetchAthleteQueryOptions(opts?: { token?: string }) {
+export function fetchAthleteQueryOptions() {
 	return queryOptions({
 		queryKey: ["athlete"],
-		queryFn: () => fetchAthlete(opts?.token),
+		queryFn: () => fetchAthlete(),
 		staleTime: Infinity,
 	});
 }

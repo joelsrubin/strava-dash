@@ -18,3 +18,9 @@ export function formatDistance(distance: number) {
 export function formatElevation(elevation: number) {
 	return `${elevation.toFixed(0)} ft`;
 }
+
+export function formatDate(date: string) {
+	return new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(
+		new Date(date),
+	);
+}

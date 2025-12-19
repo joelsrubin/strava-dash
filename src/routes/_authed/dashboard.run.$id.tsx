@@ -1,8 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-
+import { lazy, Suspense } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { fetchActivityQueryOptions } from "@/api/client";
+
 import Tiptap from "@/components/editor/tip-tap";
 import {
 	type ChartConfig,
@@ -14,8 +15,9 @@ import {
 } from "@/components/ui/chart";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { formatDistance, formatTime } from "@/lib/utils";
+import { formatDate, formatDistance, formatTime } from "@/lib/utils";
 
+const ActivityMap = lazy(() => import("@/components/editor/activity-map"));
 export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 	component: RouteComponent,
 
@@ -28,9 +30,13 @@ function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { id } = Route.useParams();
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
+	const polyline = activity.map.polyline;
+
 	const initialState =
-		localStorage.getItem(`editor-state-${id}`) ||
-		`<p>${activity.name} - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`;
+		typeof window !== "undefined"
+			? localStorage.getItem(`editor-state-${id}`) ||
+				`<p>${formatDate(activity.start_date)}: ${activity.name} - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`
+			: "<p>Loading...</p>";
 
 	const splitsData = activity.splits_standard.map((split) => ({
 		split: `Mile ${split.split}`,
@@ -43,19 +49,18 @@ function RouteComponent() {
 		...(activity.average_heartrate && {
 			heartRate: {
 				label: "Avg Heart Rate",
-				color: "#FF0800",
+				color: "var(--primary)",
 			},
 		}),
 		...{
 			paceZone: {
 				label: "Pace Zone",
-				color: "#2563eb",
+				color: "dodgerblue",
 			},
 		},
 	} satisfies ChartConfig;
 
 	const handleChange = (content: string) => {
-		console.log("content", content);
 		localStorage.setItem(`editor-state-${id}`, content);
 	};
 
@@ -83,7 +88,7 @@ function RouteComponent() {
 						<span>elapsed_time: {formatTime(activity.elapsed_time)}</span>
 						<span>sport_type: {activity.sport_type}</span>
 					</div>
-					<div className="bg-muted/50 rounded-xl md:col-span-2">
+					<div className="bg-muted/50 rounded-xl md:col-span-1">
 						<h2 className="p-2">Splits Performance</h2>
 						<ChartContainer config={splitsConfig} className="h-[250px] w-full">
 							<LineChart data={splitsData}>
@@ -102,7 +107,7 @@ function RouteComponent() {
 									axisLine={false}
 									tickMargin={8}
 									fontSize={12}
-									domain={[120, 180]}
+									domain={[100, 180]}
 								/>
 								<YAxis
 									yAxisId="paceZone"
@@ -144,6 +149,12 @@ function RouteComponent() {
 								/>
 							</LineChart>
 						</ChartContainer>
+					</div>
+					<div className="bg-muted/50 rounded-xl">
+						<h2 className="p-2">Route Preview</h2>
+						<Suspense>
+							<ActivityMap encodedPolyline={polyline || ""} />
+						</Suspense>
 					</div>
 				</div>
 				<div
