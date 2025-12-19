@@ -10,15 +10,7 @@
       "enabled": true
     },
     "vars": {
-        "VITE_BASE_URL": "http://localhost:3000",
+        "VITE_BASE_URL": "https://strava-dash.joelsrubin.workers.dev",
         "VITE_STRAVA_CLIENT_ID": "190450",
-
-    },
-    "env": {
-        "production": {
-          "vars": {
-            "VITE_BASE_URL": "https://strava-dash.joelsrubin.workers.dev"
-          }
-        }
     }
   }
