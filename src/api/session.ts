@@ -9,7 +9,7 @@ type SessionData = {
 export function useStravaSession() {
 	return useSession<SessionData>({
 		// password: env.VITE_SESSION_SECRET || "",
-		password: "jonggtizgawbcikhaxqfzororcensbbn",
+		password: process.env.VITE_SESSION_SECRET,
 		cookie: {
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",

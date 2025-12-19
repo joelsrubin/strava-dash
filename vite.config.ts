@@ -9,7 +9,7 @@ import viteTsConfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
 	plugins: [
-		nitro(),
+		// nitro(),
 		viteTsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
