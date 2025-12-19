@@ -1,13 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
-import {
-	ArrowUpDown,
-	BicepsFlexed,
-	Heart,
-	MoreHorizontal,
-	Ruler,
-} from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import {
 	Area,
 	AreaChart,

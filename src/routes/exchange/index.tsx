@@ -15,10 +15,8 @@ function ExchangeComponent() {
 	const exchangeTokenFn = useServerFn(exchangeToken);
 	useEffect(() => {
 		if (!code) {
-			window.location.href = "/";
 			return;
 		}
-
 		const handleExchange = async () => {
 			const result = await exchangeTokenFn({ data: { code } });
 
