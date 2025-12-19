@@ -7,6 +7,7 @@ type SessionData = {
 };
 
 export function useStravaSession() {
+	console.log("LOGGING SESSION SECRET", import.meta.env.VITE_SESSION_SECRET);
 	return useSession<SessionData>({
 		password: import.meta.env.VITE_SESSION_SECRET,
 		cookie: {
