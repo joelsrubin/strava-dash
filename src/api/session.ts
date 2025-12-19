@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { useSession } from "@tanstack/react-start/server";
 
 type SessionData = {
@@ -9,7 +8,7 @@ type SessionData = {
 
 export function useStravaSession() {
 	return useSession<SessionData>({
-		password: env.VITE_SESSION_SECRET,
+		password: process.env.VITE_SESSION_SECRET,
 		cookie: {
 			secure: process.env.NODE_ENV === "production",
 			sameSite: "lax",
