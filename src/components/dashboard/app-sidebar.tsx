@@ -2,7 +2,11 @@ import { Clock, Notebook, SquareTerminal } from "lucide-react";
 
 import { NavMain } from "@/components/dashboard/nav-main";
 
-import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
+import {
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+} from "@/components/ui/sidebar";
 
 const data = {
 	navMain: [
@@ -39,6 +43,9 @@ export function AppSidebar({
 			<SidebarContent>
 				<NavMain items={data.navMain} />
 			</SidebarContent>
+			<SidebarFooter>
+				<img src="/powered-by-strava.png" alt="Powered by Strava" />
+			</SidebarFooter>
 		</Sidebar>
 	);
 }

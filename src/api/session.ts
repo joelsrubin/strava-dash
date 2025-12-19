@@ -8,9 +8,7 @@ type SessionData = {
 };
 
 export function useStravaSession() {
-	console.log({ env });
 	return useSession<SessionData>({
-		// password: env.VITE_SESSION_SECRET || "",
 		password: env.VITE_SESSION_SECRET,
 		cookie: {
 			secure: process.env.NODE_ENV === "production",
