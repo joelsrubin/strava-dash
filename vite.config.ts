@@ -9,13 +9,13 @@ import viteTsConfigPaths from "vite-tsconfig-paths";
 
 const config = defineConfig({
 	plugins: [
-		nitro(),
-		cloudflare({ viteEnvironment: { name: "ssr" } }),
-		devtools(),
-		// this is the plugin that enables path aliases
+		// nitro(),
 		viteTsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
+		cloudflare({ viteEnvironment: { name: "ssr" } }),
+		devtools(),
+		// this is the plugin that enables path aliases
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),
