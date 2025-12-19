@@ -10,7 +10,7 @@
       "enabled": true
     },
     "vars": {
-        "VITE_BASE_URL": "https://strava-dash.vercel.app",
+        "VITE_BASE_URL": "http://localhost:3000",
         "VITE_STRAVA_CLIENT_ID": "190450",
 
     },
