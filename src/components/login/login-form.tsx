@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { Bike } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +15,7 @@ export function LoginForm({
 	...props
 }: React.ComponentProps<"div">) {
 	const handleClick = () => {
-		window.location.href = `https://www.strava.com/oauth/authorize?client_id=${env.VITE_STRAVA_CLIENT_ID}&redirect_uri=http://localhost:3000/exchange&response_type=code&scope=read_all,activity:read_all,profile:read_all`;
+		window.location.href = `https://www.strava.com/oauth/authorize?client_id=${import.meta.env.VITE_STRAVA_CLIENT_ID}&redirect_uri=http://localhost:3000/exchange&response_type=code&scope=read_all,activity:read_all,profile:read_all`;
 	};
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
