@@ -89,39 +89,3 @@ export const clearStravaSession = createServerFn({ method: "POST" }).handler(
 		await session.clear();
 	},
 );
-
-export const exchangeToken = createServerFn({ method: "POST" })
-	.inputValidator((data: { code: string }) => data)
-	.handler(async ({ data }) => {
-		const session = await useStravaSession();
-		const response = await fetch("https://www.strava.com/oauth/token", {
-			method: "POST",
-			body: new URLSearchParams({
-				client_id: env.VITE_STRAVA_CLIENT_ID,
-				client_secret: env.VITE_STRAVA_CLIENT_SECRET,
-				code: data.code,
-				grant_type: "authorization_code",
-			}),
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-		});
-
-		if (!response.ok) {
-			return { success: false } as const;
-		}
-
-		const tokenData = (await response.json()) as {
-			access_token: string;
-			expires_at: number;
-			refresh_token: string;
-		};
-
-		await session.update({
-			accessToken: tokenData.access_token,
-			refreshToken: tokenData.refresh_token,
-			expiresAt: tokenData.expires_at,
-		});
-
-		return { success: true } as const;
-	});
