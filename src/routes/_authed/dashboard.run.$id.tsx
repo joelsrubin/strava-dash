@@ -88,6 +88,12 @@ function RouteComponent() {
 						<span>elapsed_time: {formatTime(activity.elapsed_time)}</span>
 						<span>sport_type: {activity.sport_type}</span>
 					</div>
+					<div className="bg-muted/50 rounded-xl">
+						<h2 className="p-2">Route Preview</h2>
+						<Suspense>
+							<ActivityMap encodedPolyline={polyline || ""} />
+						</Suspense>
+					</div>
 					<div className="bg-muted/50 rounded-xl md:col-span-1">
 						<h2 className="p-2">Splits Performance</h2>
 						<ChartContainer config={splitsConfig} className="">
@@ -149,12 +155,6 @@ function RouteComponent() {
 								/>
 							</LineChart>
 						</ChartContainer>
-					</div>
-					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2">Route Preview</h2>
-						<Suspense>
-							<ActivityMap encodedPolyline={polyline || ""} />
-						</Suspense>
 					</div>
 				</div>
 				<div

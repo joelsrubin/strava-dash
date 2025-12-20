@@ -7,6 +7,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { getThemeScript, ThemeProvider } from "@/lib/theme";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{
@@ -38,13 +39,15 @@ export const Route = createRootRouteWithContext<{
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 				<link rel="icon" href="/favicon.svg" />
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: just going for it */}
+				<script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
 			</head>
-			<body className="dark">
-				{children}
+			<body suppressHydrationWarning>
+				<ThemeProvider>{children}</ThemeProvider>
 				<TanStackDevtools
 					config={{
 						position: "bottom-right",
