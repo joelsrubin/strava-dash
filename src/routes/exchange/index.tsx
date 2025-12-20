@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { setStravaAccessToken } from "@/api/auth";
+import { setStravaAccessToken } from "@/api/auth.server";
 export const Route = createFileRoute("/exchange/")({
 	validateSearch: (search) => ({
 		code: (search.code as string) || undefined,

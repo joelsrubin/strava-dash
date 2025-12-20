@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { getStravaAccessToken } from "@/api/auth";
+import { getStravaAccessToken } from "@/api/auth.server";
 import {
 	fetchAthleteActivitiesQueryOptions,
 	fetchAthleteQueryOptions,

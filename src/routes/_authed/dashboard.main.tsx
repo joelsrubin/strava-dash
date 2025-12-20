@@ -99,6 +99,26 @@ function RouteComponent() {
 
 	const columns: ColumnDef<TActivity>[] = [
 		{
+			accessorKey: "start_date",
+			header: ({ column }) => {
+				return (
+					<Button
+						className="px-0 py-2"
+						variant="ghost"
+						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+					>
+						Date
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</Button>
+				);
+			},
+			cell: ({ row }) => {
+				return (
+					<div>{new Date(row.original.start_date).toLocaleDateString()}</div>
+				);
+			},
+		},
+		{
 			accessorKey: "distance",
 			header: ({ column }) => {
 				return (
@@ -206,26 +226,6 @@ function RouteComponent() {
 			},
 		},
 
-		{
-			accessorKey: "start_date",
-			header: ({ column }) => {
-				return (
-					<Button
-						className="px-0 py-2"
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Max Heart Rate
-						<ArrowUpDown className="ml-2 h-4 w-4" />
-					</Button>
-				);
-			},
-			cell: ({ row }) => {
-				return (
-					<div>{new Date(row.original.start_date).toLocaleDateString()}</div>
-				);
-			},
-		},
 		{
 			id: "actions",
 			cell: ({ row }) => {

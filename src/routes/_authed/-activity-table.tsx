@@ -16,6 +16,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -27,6 +28,7 @@ export function DataTable<TData, TValue>({
 	data,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
+	const isMobile = useIsMobile();
 	const table = useReactTable({
 		data,
 		columns,
@@ -36,6 +38,16 @@ export function DataTable<TData, TValue>({
 
 		state: {
 			sorting,
+			columnVisibility: isMobile
+				? {
+						moving_time: false,
+						average_heartrate: false,
+						max_heartrate: false,
+						distance: true,
+						start_date: true,
+						total_elevation_gain: false,
+					}
+				: undefined,
 		},
 	});
 

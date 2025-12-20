@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { getStravaAccessToken } from "./auth";
+import { getStravaAccessToken } from "./auth.server";
 
 const BASE_URL = "https://www.strava.com/api/v3";
 

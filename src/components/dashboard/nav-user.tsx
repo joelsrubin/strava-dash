@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ChevronsUpDown, LogOut } from "lucide-react";
-import { clearStravaSession } from "@/api/auth";
+import { clearStravaSession } from "@/api/auth.server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,

@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { getStravaAccessToken } from "@/api/auth";
+import { getStravaAccessToken } from "@/api/auth.server";
 import { Container } from "@/components/container";
 import { LoginForm } from "@/components/login/login-form";
 
