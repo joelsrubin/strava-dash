@@ -44,7 +44,13 @@ export function AppSidebar({
 				<NavMain items={data.navMain} />
 			</SidebarContent>
 			<SidebarFooter>
-				<img src="/powered-by-strava.png" alt="Powered by Strava" />
+				<div className="flex items-center justify-center">
+					<img
+						className="w-40 pb-2"
+						src="/powered-by-strava.png"
+						alt="Powered by Strava"
+					/>
+				</div>
 			</SidebarFooter>
 		</Sidebar>
 	);

@@ -56,13 +56,15 @@ export default function ActivityMap({
 	const positions = polyline.decode(encodedPolyline) as [number, number][];
 
 	return (
-		<MapContainer style={{ height: 300, width: "100%" }}>
-			<TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
-			<Polyline
-				positions={positions}
-				pathOptions={{ color: "var(--color-primary)", weight: 2 }}
-			/>
-			<FitBounds positions={positions} useMap={useMap} />
-		</MapContainer>
+		<div className="relative z-1">
+			<MapContainer style={{ height: 300, width: "100%", zIndex: 1 }}>
+				<TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+				<Polyline
+					positions={positions}
+					pathOptions={{ color: "var(--color-primary)", weight: 2 }}
+				/>
+				<FitBounds positions={positions} useMap={useMap} />
+			</MapContainer>
+		</div>
 	);
 }

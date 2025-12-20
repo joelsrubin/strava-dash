@@ -1,18 +1,25 @@
 {
-    "$schema": "./node_modules/wrangler/config-schema.json",
-    "name": "strava-dash",
-    "compatibility_date": "2025-12-19",
-    "compatibility_flags": [
-      "nodejs_compat",
-      "nodejs_compat_populate_process_env"
-    ],
-    "main": "@tanstack/react-start/server-entry",
-    "observability": {
-      "enabled": true
-    },
-    "keep_vars": true,
-    "vars": {
-        "VITE_BASE_URL": "https://strava-dash.joelsrubin.workers.dev",
-        "VITE_STRAVA_CLIENT_ID": "190450",
-    }
-  }
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "strava-dash",
+	"compatibility_date": "2025-12-19",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"nodejs_compat_populate_process_env"
+	],
+	"main": "@tanstack/react-start/server-entry",
+	"observability": {
+		"enabled": true
+	},
+	"keep_vars": true,
+	"vars": {
+		"VITE_BASE_URL": "https://strava-dash.joelsrubin.workers.dev",
+		"VITE_STRAVA_CLIENT_ID": "190450",
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "strava-dash",
+			"database_id": "91246fbd-c158-4e5d-b80c-81340db01d04"
+		}
+	]
+}
