@@ -30,7 +30,7 @@ export function NavUser({ user }: { user: TAthlete }) {
 		await clearStravaSessionFn();
 		navigate({ to: "/" });
 	};
-	const isMobile = useIsMobile();
+	const { isMobile } = useIsMobile();
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>

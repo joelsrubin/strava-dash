@@ -19,5 +19,6 @@ function RouteComponent() {
 	const { data: notes } = useSuspenseQuery(
 		fetchNotesByUserIdOptions({ userId: user.id }),
 	);
+	console.log(notes);
 	return <NotesPage notes={notes.results} />;
 }

@@ -5,23 +5,23 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { Note } from "@/db";
+import type { ParsedNotes } from "@/db";
 import { parseNoteContent } from "@/lib/utils";
 
-export default function NotesPage({ notes }: { notes: Note[] }) {
+export default function NotesPage({ notes }: { notes: ParsedNotes[] }) {
 	const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 
 	// Extract all unique hashtags from all notes
 	const allHashtags = Array.from(
-		new Set(notes.flatMap((note) => JSON.parse(note.hashtags))),
+		new Set(notes.flatMap((note) => note.hashtags)),
 	).sort() as string[];
 
 	// Filter notes based on selected hashtags and search query
 	const filteredNotes = notes.filter((note) => {
 		const matchesHashtags =
 			selectedHashtags.length === 0 ||
-			selectedHashtags.some((tag) => JSON.parse(note.hashtags).includes(tag));
+			selectedHashtags.some((tag) => note.hashtags.includes(tag));
 		const matchesSearch =
 			searchQuery === "" ||
 			note.content.toLowerCase().includes(searchQuery.toLowerCase());
@@ -125,7 +125,7 @@ export default function NotesPage({ notes }: { notes: Note[] }) {
 											{parseNoteContent(note.content).text}
 										</p>
 										<div className="flex flex-wrap gap-1.5 pt-2">
-											{JSON.parse(note.hashtags).map((hashtag: string) => (
+											{note.hashtags.map((hashtag: string) => (
 												<Badge
 													key={hashtag}
 													variant="secondary"

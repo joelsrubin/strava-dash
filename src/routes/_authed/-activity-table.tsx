@@ -28,7 +28,7 @@ export function DataTable<TData, TValue>({
 	data,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
-	const isMobile = useIsMobile();
+	const { isMobile } = useIsMobile();
 	const table = useReactTable({
 		data,
 		columns,

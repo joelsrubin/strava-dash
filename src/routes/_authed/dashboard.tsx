@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_authed/dashboard")({
 });
 
 function RouteComponent() {
-	const isMobile = useIsMobile();
+	const { isMobile } = useIsMobile();
 	const { data: athlete } = useSuspenseQuery(fetchAthleteQueryOptions());
 
 	return (

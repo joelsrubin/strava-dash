@@ -18,6 +18,10 @@ export interface Note {
 	hashtags: string;
 }
 
+export type ParsedNotes = Omit<Note, "hashtags"> & {
+	hashtags: string[];
+};
+
 export interface Hashtag {
 	tag: string;
 }
@@ -100,7 +104,13 @@ export const getNotes = createServerFn({ method: "GET" })
 		)
 			.bind(user_id)
 			.all<Note>();
-		return { results };
+
+		const notes = results.map((note) => ({
+			...note,
+			hashtags: JSON.parse(note.hashtags || "[]"),
+		}));
+
+		return { results: notes };
 	});
 
 export const getNotesByUserId = createServerFn({ method: "GET" })
@@ -112,7 +122,12 @@ export const getNotesByUserId = createServerFn({ method: "GET" })
 		)
 			.bind(user_id)
 			.all<Note>();
-		return { results };
+		const notes = results.map((note) => ({
+			...note,
+			hashtags: JSON.parse(note.hashtags || "[]"),
+		}));
+
+		return { results: notes };
 	});
 
 export const getNoteByRun = createServerFn({ method: "GET" })

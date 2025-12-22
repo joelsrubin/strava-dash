@@ -47,7 +47,7 @@ export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 });
 
 function RouteComponent() {
-	const isMobile = useIsMobile();
+	const { isMobile } = useIsMobile();
 	const { id } = Route.useParams();
 	const { queryClient, user } = Route.useRouteContext();
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
@@ -137,7 +137,7 @@ function RouteComponent() {
 						: "flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"
 				}
 			>
-				<div className="grid auto-rows-min gap-4 grid-cols-1 lg:grid-cols-3">
+				<div className="grid auto-rows-min gap-4 grid-cols-1 lg:grid-cols-3 order-2 lg:order-1">
 					<div className="bg-muted/50 rounded-xl p-2 hidden flex-col gap-2 lg:flex">
 						<h2>Run Details</h2>
 						<span>name: {activity.name}</span>
@@ -146,7 +146,7 @@ function RouteComponent() {
 						<span>elapsed_time: {formatTime(activity.elapsed_time)}</span>
 						<span>sport_type: {activity.sport_type}</span>
 					</div>
-					<div className="bg-muted/50 rounded-xl md:col-span-1">
+					<div className="bg-muted/50 rounded-xl md:col-span-1 order-3 lg:order-2">
 						<h2 className="p-2">Splits Performance</h2>
 						<ChartContainer config={splitsConfig} className="">
 							<LineChart data={splitsData}>
@@ -208,18 +208,18 @@ function RouteComponent() {
 							</LineChart>
 						</ChartContainer>
 					</div>
-					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2">Route Preview</h2>
-						<Suspense>
-							<ActivityMap encodedPolyline={polyline || ""} />
-						</Suspense>
-					</div>
+					{!isMobile && (
+						<div className="bg-muted/50 rounded-xl order-4 lg:order-3">
+							<h2 className="p-2">Route Preview</h2>
+							<Suspense>
+								<ActivityMap encodedPolyline={polyline || ""} />
+							</Suspense>
+						</div>
+					)}
 				</div>
 				<div
 					className={
-						isMobile
-							? "bg-muted/50 flex flex-1 flex-col rounded-xl"
-							: "bg-muted/50 flex min-h-0 flex-1 flex-col rounded-xl"
+						"flex flex-1 flex-col bg-muted/50 rounded-xl order-1 lg:order-4"
 					}
 				>
 					<Tiptap
