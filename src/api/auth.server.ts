@@ -132,6 +132,6 @@ export const exchangeStravaToken = createServerFn({ method: "POST" })
 
 		// Full page reload to ensure cookie is sent with the request
 		throw redirect({
-			to: "/dashboard/main",
+			to: "/dashboard",
 		});
 	});

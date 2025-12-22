@@ -67,7 +67,8 @@ const Tiptap = ({
 			</div>
 			<Button
 				className="w-[80%] self-center my-2"
-				onClick={() => onSave?.(editor?.getHTML() || "")}
+				// onClick={() => onSave?.(editor?.getJSON() || "")}
+				onClick={() => console.log(editor?.getText())}
 			>
 				{isPending ? <Spinner /> : null}
 				Save

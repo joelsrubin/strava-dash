@@ -14,7 +14,7 @@ export function fetchNoteByRunIdQueryOptions({ runId }: { runId: number }) {
 	});
 }
 
-export const fetchNotesByStravaId = async ({ userId }: { userId: number }) => {
+export const fetchNotesByUserId = async ({ userId }: { userId: number }) => {
 	const notes = await getNotesByUserId({ data: { user_id: userId } });
 	return notes;
 };
@@ -22,7 +22,7 @@ export const fetchNotesByStravaId = async ({ userId }: { userId: number }) => {
 export function fetchNotesByUserIdOptions({ userId }: { userId: number }) {
 	return queryOptions({
 		queryKey: ["notes", userId],
-		queryFn: () => fetchNotesByStravaId({ userId }),
+		queryFn: () => fetchNotesByUserId({ userId }),
 		staleTime: Infinity,
 	});
 }

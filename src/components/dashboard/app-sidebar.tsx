@@ -18,7 +18,7 @@ const data = {
 			items: [
 				{
 					title: "Activities",
-					url: "/dashboard/main",
+					url: "/dashboard",
 					icon: Clock,
 				},
 				{

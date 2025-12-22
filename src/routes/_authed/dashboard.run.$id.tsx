@@ -49,7 +49,7 @@ export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { id } = Route.useParams();
-	const { queryClient } = Route.useRouteContext();
+	const { queryClient, user } = Route.useRouteContext();
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
 	const { data: note } = useSuspenseQuery(
 		fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
@@ -68,6 +68,7 @@ function RouteComponent() {
 	const { mutate: updateNoteFn, isPending: updateNoteIsPending } =
 		useUpdateNoteMutation({
 			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["notes", user.id] });
 				queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
 				toast.success("Note updated");
 			},
@@ -78,6 +79,7 @@ function RouteComponent() {
 	const { mutate: createNoteFn, isPending: createNoteIsPending } =
 		useCreateNoteMutation({
 			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["notes", user.id] });
 				queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
 				toast.success("Note created");
 			},

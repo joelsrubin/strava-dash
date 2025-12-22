@@ -33,7 +33,7 @@ import { SidebarInset } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DataTable } from "./-activity-table";
 
-export const Route = createFileRoute("/_authed/dashboard/main")({
+export const Route = createFileRoute("/_authed/dashboard/")({
 	component: RouteComponent,
 
 	loader: async ({ context: { queryClient } }) => {
@@ -45,7 +45,7 @@ function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { data: athleteActivities } = useSuspenseQuery(
 		fetchAthleteActivitiesQueryOptions(),
-	);
+	)
 
 	const distanceData = athleteActivities
 		.map((activity, index) => ({
@@ -102,12 +102,12 @@ function RouteComponent() {
 						Date
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
-				);
+				)
 			},
 			cell: ({ row }) => {
 				return (
 					<div>{new Date(row.original.start_date).toLocaleDateString()}</div>
-				);
+				)
 			},
 		},
 		{
@@ -122,14 +122,14 @@ function RouteComponent() {
 						Distance
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
-				);
+				)
 			},
 			cell: ({ row }) => {
 				return (
 					<div>
 						{((row.original.distance as number) * 0.00062137).toFixed(2)} mi
 					</div>
-				);
+				)
 			},
 		},
 		{
@@ -144,7 +144,7 @@ function RouteComponent() {
 						Moving Time
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
-				);
+				)
 			},
 			cell: ({ row }) => {
 				if (!row.original.moving_time) return <div>no data</div>;
@@ -156,7 +156,7 @@ function RouteComponent() {
 						<div>
 							{hours}h {minutes}m
 						</div>
-					);
+					)
 				}
 				return <div>{(row.original.moving_time / 60).toFixed(0)} mins</div>;
 			},
@@ -173,7 +173,7 @@ function RouteComponent() {
 						Total Elevation Gain
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
-				);
+				)
 			},
 			cell: ({ row }) => {
 				return <div>{row.original.total_elevation_gain.toFixed(0)} ft</div>;
@@ -191,7 +191,7 @@ function RouteComponent() {
 						Average Heart Rate
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
-				);
+				)
 			},
 			cell: ({ row }) => {
 				if (!row.original.average_heartrate) return <div>no data</div>;
@@ -210,7 +210,7 @@ function RouteComponent() {
 						Max Heart Rate
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</Button>
-				);
+				)
 			},
 			cell: ({ row }) => {
 				if (!row.original.max_heartrate) return <div>no data</div>;
@@ -243,10 +243,10 @@ function RouteComponent() {
 							<DropdownMenuSeparator />
 						</DropdownMenuContent>
 					</DropdownMenu>
-				);
+				)
 			},
 		},
-	];
+	]
 
 	return (
 		<SidebarInset
@@ -329,5 +329,5 @@ function RouteComponent() {
 				</div>
 			</div>
 		</SidebarInset>
-	);
+	)
 }

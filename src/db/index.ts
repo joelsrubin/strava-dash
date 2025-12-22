@@ -15,6 +15,7 @@ export interface Note {
 	content: string;
 	created_at: string;
 	updated_at: string;
+	hashtags: string;
 }
 
 export interface Hashtag {

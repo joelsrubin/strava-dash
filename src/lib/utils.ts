@@ -29,3 +29,18 @@ export const extractHashtags = (content: string): string[] => {
 	const matches = content.match(/#(\w+)/g) || [];
 	return [...new Set(matches.map((tag) => tag.slice(1).toLowerCase()))];
 };
+
+export function parseNoteContent(html: string) {
+	// Extract tags from data-tag attributes
+	const tagMatches = html.matchAll(/data-tag="([^"]+)"/g);
+	const hashtags = [...tagMatches].map((match) => match[1]);
+
+	// Remove hashtag spans and clean up
+	const text = html
+		.replace(/<span[^>]*class="hashtag"[^>]*>#\w+<\/span>/g, "")
+		.replace(/<\/?p>/g, "")
+		.replace(/\s+/g, " ")
+		.trim();
+
+	return { text, hashtags };
+}
