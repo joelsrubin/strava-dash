@@ -78,6 +78,7 @@ function RouteComponent() {
 	const { mutate: createNoteFn, isPending: createNoteIsPending } =
 		useCreateNoteMutation({
 			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
 				toast.success("Note created");
 			},
 			onError: () => {
