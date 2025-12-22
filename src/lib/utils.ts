@@ -31,16 +31,21 @@ export const extractHashtags = (content: string): string[] => {
 };
 
 export function parseNoteContent(html: string) {
-	// Extract tags from data-tag attributes
 	const tagMatches = html.matchAll(/data-tag="([^"]+)"/g);
 	const hashtags = [...tagMatches].map((match) => match[1]);
 
-	// Remove hashtag spans and clean up
+	const linkMatches = html.matchAll(/<a[^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>/g);
+	const links = [...linkMatches].map((match) => ({
+		url: match[1],
+		text: match[2],
+	}));
+
 	const text = html
-		.replace(/<span[^>]*class="hashtag"[^>]*>#\w+<\/span>/g, "")
-		.replace(/<\/?p>/g, "")
+		.replace(/<span[^>]*class="hashtag"[^>]*>[^<]*<\/span>/g, "") // remove hashtag spans
+		.replace(/<a[^>]*>[^<]*<\/a>/g, "") // remove links
+		.replace(/<[^>]+>/g, "") // strip remaining HTML tags
 		.replace(/\s+/g, " ")
 		.trim();
 
-	return { text, hashtags };
+	return { text, hashtags, links };
 }

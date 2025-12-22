@@ -31,7 +31,6 @@ const Tiptap = ({
 		immediatelyRender: false,
 		extensions: [
 			StarterKit.configure({
-				link: false,
 				codeBlock: false, // Disable default code block, we use CodeBlockLowlight instead
 			}),
 			Link.configure({
