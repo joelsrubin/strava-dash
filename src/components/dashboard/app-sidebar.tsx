@@ -7,6 +7,7 @@ import {
 	SidebarContent,
 	SidebarFooter,
 } from "@/components/ui/sidebar";
+import { useTheme } from "@/lib/theme";
 
 const data = {
 	navMain: [
@@ -35,6 +36,8 @@ export function AppSidebar({
 	user,
 	...props
 }: React.ComponentProps<typeof Sidebar> & { user: TAthlete }) {
+	const { theme } = useTheme();
+
 	return (
 		<Sidebar
 			className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
@@ -47,7 +50,11 @@ export function AppSidebar({
 				<div className="flex items-center justify-center">
 					<img
 						className="w-40 pb-2"
-						src="/powered-by-strava.png"
+						src={
+							theme === "light"
+								? "/powered-by-strava-light.png"
+								: "/powered-by-strava.png"
+						}
 						alt="Powered by Strava"
 					/>
 				</div>
