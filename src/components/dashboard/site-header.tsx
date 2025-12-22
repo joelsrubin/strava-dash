@@ -23,7 +23,7 @@ export function SiteHeader({ user }: { user: TAthlete }) {
 				</Button>
 				<Separator orientation="vertical" className="mr-2 h-4" />
 				<div className="flex items-center gap-2">
-					<Link to="/dashboard/main" className="flex items-center gap-2">
+					<Link to="/dashboard" className="flex items-center gap-2">
 						<span>Dash</span>
 						<Flame className="text-primary" />
 					</Link>
