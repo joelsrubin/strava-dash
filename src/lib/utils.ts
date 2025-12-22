@@ -24,3 +24,8 @@ export function formatDate(date: string) {
 		new Date(date),
 	);
 }
+
+export const extractHashtags = (content: string): string[] => {
+	const matches = content.match(/#(\w+)/g) || [];
+	return [...new Set(matches.map((tag) => tag.slice(1).toLowerCase()))];
+};

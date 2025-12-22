@@ -7,11 +7,14 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Toaster } from "@/components/ui/sonner";
+import type { User } from "@/db";
 import { getThemeScript, ThemeProvider } from "@/lib/theme";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
+	user: User;
 }>()({
 	head: () => ({
 		meta: [
@@ -47,7 +50,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
 			</head>
 			<body suppressHydrationWarning>
-				<ThemeProvider>{children}</ThemeProvider>
+				<ThemeProvider>
+					{children}
+					<Toaster position="top-center" />
+				</ThemeProvider>
 				<TanStackDevtools
 					config={{
 						position: "bottom-right",

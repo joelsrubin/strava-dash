@@ -1,31 +1,24 @@
 import { env } from "cloudflare:workers";
 import { createServerFn } from "@tanstack/react-start";
+import { extractHashtags } from "@/lib/utils";
 
-interface User {
+export interface User {
 	id: number;
 	strava_id: number;
 	name: string;
 }
 
-interface Note {
+export interface Note {
 	id: number;
 	user_id: number;
 	run_id: number;
-	title: string;
 	content: string;
 	created_at: string;
 	updated_at: string;
 }
 
-interface Hashtag {
-	id: number;
-	name: string;
-}
-
-interface NoteHashtag {
-	id: number;
-	note_id: number;
-	hashtag_id: number;
+export interface Hashtag {
+	tag: string;
 }
 
 export const getUsers = createServerFn({ method: "GET" }).handler(async () => {
@@ -44,16 +37,33 @@ export const getUser = createServerFn({ method: "GET" })
 			.all<User>();
 		return { results };
 	});
-export const createUser = createServerFn({ method: "POST" })
-	.inputValidator((input: { strava_id: number; name: string }) => input)
+
+export const getUserByStravaId = createServerFn({ method: "GET" })
+	.inputValidator((input: { strava_id: number }) => input)
 	.handler(async ({ data }) => {
+		const { strava_id } = data;
+		const { results } = await env.DB.prepare(
+			"SELECT * FROM users WHERE strava_id = ?",
+		)
+			.bind(strava_id)
+			.all<User>();
+		return { results };
+	});
+export const createUserIfNotExists = createServerFn({ method: "POST" })
+	.inputValidator((input: { strava_id: number; name: string }) => input)
+	.handler(async ({ data }): Promise<{ user: User }> => {
 		const { strava_id, name } = data;
-		const result = await env.DB.prepare(
-			"INSERT INTO users (strava_id, name) VALUES (?, ?)",
+		const user = await env.DB.prepare(
+			`INSERT INTO users (strava_id, name) VALUES (?, ?)
+   ON CONFLICT (strava_id) DO UPDATE SET strava_id = excluded.strava_id
+   RETURNING *`,
 		)
 			.bind(strava_id, name)
-			.run();
-		return { success: result.success };
+			.first<User>();
+		if (!user) {
+			throw new Error(`no user found or created with strava id: ${strava_id}`);
+		}
+		return { user };
 	});
 
 export const updateUser = createServerFn({ method: "POST" })
@@ -92,48 +102,88 @@ export const getNotes = createServerFn({ method: "GET" })
 		return { results };
 	});
 
+export const getNotesByUserId = createServerFn({ method: "GET" })
+	.inputValidator((input: { user_id: number }) => input)
+	.handler(async ({ data }) => {
+		const { user_id } = data;
+		const { results } = await env.DB.prepare(
+			"SELECT * FROM notes WHERE user_id = ?",
+		)
+			.bind(user_id)
+			.all<Note>();
+		return { results };
+	});
+
+export const getNoteByRun = createServerFn({ method: "GET" })
+	.inputValidator((input: { run_id: number }) => input)
+	.handler(async ({ data }) => {
+		const { run_id } = data;
+		const { results } = await env.DB.prepare(
+			"SELECT * FROM notes WHERE run_id = ?",
+		)
+			.bind(run_id)
+			.all<Note>();
+		return { results };
+	});
+
 export const createNote = createServerFn({ method: "POST" })
 	.inputValidator(
-		(input: {
-			user_id: number;
-			run_id: number;
-			title: string;
-			content: string;
-			created_at: string;
-			updated_at: string;
-		}) => input,
+		(input: { user_id: number; run_id: number; content: string }) => input,
 	)
 	.handler(async ({ data }) => {
-		const { user_id, run_id, title, content, created_at, updated_at } = data;
-		const result = await env.DB.prepare(
-			"INSERT INTO notes (user_id, run_id, title, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-		)
-			.bind(user_id, run_id, title, content, created_at, updated_at)
-			.run();
-		return { success: result.success };
+		const { user_id, run_id, content } = data;
+		const hashtags = extractHashtags(content);
+		if (hashtags.length > 0) {
+			const result = await env.DB.prepare(
+				"INSERT INTO notes (user_id, run_id, content, hashtags, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+			)
+				.bind(
+					user_id,
+					run_id,
+					content,
+					JSON.stringify(hashtags),
+					new Date().toISOString(),
+					new Date().toISOString(),
+				)
+				.run();
+			return { success: result.success };
+		} else {
+			const result = await env.DB.prepare(
+				"INSERT INTO notes (user_id, run_id, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+			)
+				.bind(
+					user_id,
+					run_id,
+					content,
+					new Date().toISOString(),
+					new Date().toISOString(),
+				)
+				.run();
+			return { success: result.success };
+		}
 	});
 
 export const updateNote = createServerFn({ method: "POST" })
-	.inputValidator(
-		(input: {
-			id: number;
-			user_id: number;
-			run_id: number;
-			title: string;
-			content: string;
-			created_at: string;
-			updated_at: string;
-		}) => input,
-	)
+	.inputValidator((input: { id: number; content: string }) => input)
 	.handler(async ({ data }) => {
-		const { id, user_id, run_id, title, content, created_at, updated_at } =
-			data;
-		const result = await env.DB.prepare(
-			"UPDATE notes SET user_id = ?, run_id = ?, title = ?, content = ?, created_at = ?, updated_at = ? WHERE id = ?",
-		)
-			.bind(user_id, run_id, title, content, created_at, updated_at, id)
-			.run();
-		return { success: result.success };
+		const { id, content } = data;
+		const hashtags = extractHashtags(content);
+
+		if (hashtags.length > 0) {
+			const result = await env.DB.prepare(
+				"UPDATE notes SET content = ?, hashtags = ?, updated_at = ? WHERE id = ?",
+			)
+				.bind(content, JSON.stringify(hashtags), new Date().toISOString(), id)
+				.run();
+			return { success: result.success };
+		} else {
+			const result = await env.DB.prepare(
+				"UPDATE notes SET content = ?, updated_at = ? WHERE id = ?",
+			)
+				.bind(content, new Date().toISOString(), id)
+				.run();
+			return { success: result.success };
+		}
 	});
 
 export const deleteNote = createServerFn({ method: "POST" })
@@ -146,57 +196,24 @@ export const deleteNote = createServerFn({ method: "POST" })
 		return { success: result.success };
 	});
 
-export const getHashtags = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const { results } = await env.DB.prepare(
-			"SELECT * FROM hashtags",
-		).all<Hashtag>();
-		return { results };
-	},
-);
-
-export const createHashtag = createServerFn({ method: "POST" })
-	.inputValidator((input: { name: string }) => input)
+export const getHashtagsByUser = createServerFn({ method: "GET" })
+	.inputValidator((input: { user_id: number }) => input)
 	.handler(async ({ data }) => {
-		const { name } = data;
 		const result = await env.DB.prepare(
-			"INSERT INTO hashtags (name) VALUES (?)",
+			"SELECT DISTINCT j.value as tag FROM notes, json_each(notes.hashtags) j WHERE user_id = ?",
 		)
-			.bind(name)
-			.run();
-		return { success: result.success };
+			.bind(data.user_id)
+			.all<Hashtag>();
+		return { results: result.results };
 	});
 
-export const updateHashtag = createServerFn({ method: "POST" })
-	.inputValidator((input: { id: number; name: string }) => input)
+export const getHashtagsByRunId = createServerFn({ method: "GET" })
+	.inputValidator((input: { run_id: number }) => input)
 	.handler(async ({ data }) => {
-		const { id, name } = data;
-		const result = await env.DB.prepare(
-			"UPDATE hashtags SET name = ? WHERE id = ?",
+		const results = await env.DB.prepare(
+			"SELECT DISTINCT j.value as tag FROM notes, json_each(notes.hashtags) j WHERE run_id = ?",
 		)
-			.bind(name, id)
-			.run();
-		return { success: result.success };
-	});
-
-export const deleteHashtag = createServerFn({ method: "POST" })
-	.inputValidator((input: { id: number }) => input)
-	.handler(async ({ data }) => {
-		const { id } = data;
-		const result = await env.DB.prepare("DELETE FROM hashtags WHERE id = ?")
-			.bind(id)
-			.run();
-		return { success: result.success };
-	});
-
-export const getNoteHashtags = createServerFn({ method: "GET" })
-	.inputValidator((input: { note_id: number }) => input)
-	.handler(async ({ data }) => {
-		const { note_id } = data;
-		const { results } = await env.DB.prepare(
-			"SELECT * FROM note_hashtags WHERE note_id = ?",
-		)
-			.bind(note_id)
-			.all<NoteHashtag>();
-		return { results };
+			.bind(data.run_id)
+			.all<Hashtag>();
+		return { results: results.results };
 	});

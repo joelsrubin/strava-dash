@@ -1,9 +1,16 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+
 import { lazy, Suspense } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { fetchActivityQueryOptions } from "@/api/client";
-
+import { toast } from "sonner";
+import {
+	useCreateNoteMutation,
+	useUpdateNoteMutation,
+} from "@/api/mutations/notes";
+import { fetchAthleteByStravaIdQueryOptions } from "@/api/queries/athlete";
+import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
+import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import Tiptap from "@/components/editor/tip-tap";
 import {
 	type ChartConfig,
@@ -25,21 +32,63 @@ export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 	component: RouteComponent,
 
 	loader: async ({ context: { queryClient }, params: { id } }) => {
-		await queryClient.ensureQueryData(fetchActivityQueryOptions(id));
+		const activity = await queryClient.ensureQueryData(
+			fetchActivityQueryOptions(id),
+		);
+		await queryClient.ensureQueryData(
+			fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
+		);
+		await queryClient.ensureQueryData(
+			fetchAthleteByStravaIdQueryOptions({
+				stravaId: Number(activity.athlete.id),
+			}),
+		);
 	},
 });
 
 function RouteComponent() {
 	const isMobile = useIsMobile();
 	const { id } = Route.useParams();
+	const { queryClient } = Route.useRouteContext();
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
+	const { data: note } = useSuspenseQuery(
+		fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
+	);
+
+	const { data: athlete } = useSuspenseQuery(
+		fetchAthleteByStravaIdQueryOptions({
+			stravaId: Number(activity.athlete.id),
+		}),
+	);
+
+	const didInitializeWithNote = Boolean(
+		note.results.length > 0 && note.results[0].id,
+	);
+
+	const { mutate: updateNoteFn, isPending: updateNoteIsPending } =
+		useUpdateNoteMutation({
+			onSuccess: () => {
+				queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
+				toast.success("Note updated");
+			},
+			onError: () => {
+				toast.error("Failed to update note");
+			},
+		});
+	const { mutate: createNoteFn, isPending: createNoteIsPending } =
+		useCreateNoteMutation({
+			onSuccess: () => {
+				toast.success("Note created");
+			},
+			onError: () => {
+				toast.error("Failed to create note");
+			},
+		});
+
 	const polyline = activity.map.polyline;
 
-	const initialState =
-		typeof window !== "undefined"
-			? localStorage.getItem(`editor-state-${id}`) ||
-				`<p>${formatDate(activity.start_date)}: ${activity.name} - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`
-			: "<p>Loading...</p>";
+	const defaultContent = `<p>${formatDate(activity.start_date)}: ${activity.name} - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`;
+	const initialState = note?.results[0]?.content || defaultContent;
 
 	const splitsData = activity.splits_standard.map((split) => ({
 		split: `Mile ${split.split}`,
@@ -62,10 +111,6 @@ function RouteComponent() {
 			},
 		},
 	} satisfies ChartConfig;
-
-	const handleChange = (content: string) => {
-		localStorage.setItem(`editor-state-${id}`, content);
-	};
 
 	const min =
 		Number(Math.min(...splitsData.map((split) => split.heartRate)).toFixed(0)) -
@@ -174,7 +219,21 @@ function RouteComponent() {
 							: "bg-muted/50 flex min-h-0 flex-1 flex-col rounded-xl"
 					}
 				>
-					<Tiptap onChange={handleChange} initialContent={initialState} />
+					<Tiptap
+						initialContent={initialState}
+						onSave={async (content) => {
+							if (didInitializeWithNote) {
+								updateNoteFn({ id: note.results[0].id, content });
+							} else {
+								createNoteFn({
+									user_id: Number(athlete.results[0].id),
+									run_id: Number(id),
+									content,
+								});
+							}
+						}}
+						isPending={updateNoteIsPending || createNoteIsPending}
+					/>
 				</div>
 			</div>
 		</SidebarInset>

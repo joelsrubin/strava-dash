@@ -11,11 +11,8 @@ import {
 	Line,
 	LineChart,
 } from "recharts";
-import {
-	fetchAthleteActivitiesQueryOptions,
-	fetchAthleteQueryOptions,
-	fetchAthleteStatsQueryOptions,
-} from "@/api/client";
+
+import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
 import { Button } from "@/components/ui/button";
 import {
 	type ChartConfig,
@@ -32,6 +29,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarInset } from "@/components/ui/sidebar";
+
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DataTable } from "./-activity-table";
 
@@ -39,12 +37,6 @@ export const Route = createFileRoute("/_authed/dashboard/main")({
 	component: RouteComponent,
 
 	loader: async ({ context: { queryClient } }) => {
-		const athlete = await queryClient.ensureQueryData(
-			fetchAthleteQueryOptions(),
-		);
-		await queryClient.ensureQueryData(
-			fetchAthleteStatsQueryOptions({ athleteId: athlete.id }),
-		);
 		await queryClient.ensureQueryData(fetchAthleteActivitiesQueryOptions());
 	},
 });

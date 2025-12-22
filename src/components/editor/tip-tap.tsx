@@ -4,6 +4,8 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 import { Hashtag } from "./extensions/hashtag";
 import { Toolbar } from "./toolbar";
 
@@ -14,12 +16,16 @@ interface TiptapProps {
 	initialContent?: string;
 	placeholder?: string;
 	onChange?: (content: string) => void;
+	onSave?: (content: string) => void;
+	isPending?: boolean;
 }
 
 const Tiptap = ({
 	initialContent = "",
 	placeholder = "Start writing...",
 	onChange,
+	onSave,
+	isPending,
 }: TiptapProps) => {
 	const editor = useEditor({
 		immediatelyRender: false,
@@ -54,10 +60,19 @@ const Tiptap = ({
 	});
 
 	return (
-		<div className="overflow-scroll rounded-md border border-border bg-transparent  h-full">
-			<Toolbar editor={editor} />
-			<EditorContent editor={editor} />
-		</div>
+		<>
+			<div className="overflow-scroll rounded-md border border-border bg-transparent  h-full">
+				<Toolbar editor={editor} />
+				<EditorContent editor={editor} />
+			</div>
+			<Button
+				className="w-[80%] self-center my-2"
+				onClick={() => onSave?.(editor?.getHTML() || "")}
+			>
+				{isPending ? <Spinner /> : null}
+				Save
+			</Button>
+		</>
 	);
 };
 

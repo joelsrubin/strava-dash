@@ -282,7 +282,14 @@
     cursor: pointer;
     text-decoration: underline;
   }
+
+  &.ProseMirror-selectednode {
+    background-color: var(--primary);
+    color: white;
+  }
 }
+
+
 
 
 .leaflet-layer,

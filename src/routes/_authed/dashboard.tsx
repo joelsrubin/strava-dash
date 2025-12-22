@@ -4,10 +4,11 @@ import { getStravaAccessToken } from "@/api/auth.server";
 import {
 	fetchAthleteActivitiesQueryOptions,
 	fetchAthleteQueryOptions,
-} from "@/api/client";
+} from "@/api/queries/strava";
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { createUserIfNotExists } from "@/db";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Route = createFileRoute("/_authed/dashboard")({
@@ -17,10 +18,18 @@ export const Route = createFileRoute("/_authed/dashboard")({
 		if (!token) {
 			throw redirect({ to: "/" });
 		}
-		await Promise.all([
+		const [athlete] = await Promise.all([
 			queryClient.ensureQueryData(fetchAthleteQueryOptions()),
 			queryClient.ensureQueryData(fetchAthleteActivitiesQueryOptions()),
 		]);
+
+		const { user } = await createUserIfNotExists({
+			data: {
+				name: `${athlete.firstname} ${athlete.lastname}`,
+				strava_id: athlete.id,
+			},
+		});
+		return { user };
 	},
 });
 
