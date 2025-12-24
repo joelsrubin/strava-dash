@@ -1,24 +1,20 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Suspense } from "react";
 import { fetchNotesByUserIdOptions } from "@/api/queries/notes";
-import NotesPage from "@/components/notes/notes-page";
+import NotesPage, { LoadingNotesPage } from "@/components/notes/notes-page";
 
 export const Route = createFileRoute("/_authed/dashboard/notes")({
 	component: RouteComponent,
 	loader: async ({ context: { queryClient, user } }) => {
-		const notes = await queryClient.ensureQueryData(
-			fetchNotesByUserIdOptions({ userId: user.id }),
-		);
-
-		return { notes };
+		queryClient.prefetchQuery(fetchNotesByUserIdOptions({ userId: user.id }));
 	},
 });
 
 function RouteComponent() {
 	const { user } = Route.useRouteContext();
-	const { data: notes } = useSuspenseQuery(
-		fetchNotesByUserIdOptions({ userId: user.id }),
+	return (
+		<Suspense fallback={<LoadingNotesPage />}>
+			<NotesPage user={user} />
+		</Suspense>
 	);
-	console.log(notes);
-	return <NotesPage notes={notes.results} />;
 }
