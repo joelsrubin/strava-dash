@@ -43,13 +43,25 @@ function LoadingPage() {
 			>
 				<div className="grid auto-rows-min gap-4 md:grid-cols-3">
 					<div className="bg-muted/50 rounded-xl">
-						<Skeleton className="h-32" />
+						<Skeleton className="h-4 w-3/4" />
+						<Skeleton className="h-4 w-1/2" />
+						<Skeleton className="h-4 w-2/3" />
+						<Skeleton className="h-4 w-2/3" />
+						<Skeleton className="h-4 w-1/3" />
 					</div>
 					<div className="bg-muted/50 rounded-xl">
-						<Skeleton className="h-32" />
+						<Skeleton className="h-4 w-3/4" />
+						<Skeleton className="h-4 w-1/2" />
+						<Skeleton className="h-4 w-2/3" />
+						<Skeleton className="h-4 w-2/3" />
+						<Skeleton className="h-4 w-1/3" />
 					</div>
 					<div className="bg-muted/50 rounded-xl">
-						<Skeleton className="h-32" />
+						<Skeleton className="h-4 w-3/4" />
+						<Skeleton className="h-4 w-1/2" />
+						<Skeleton className="h-4 w-2/3" />
+						<Skeleton className="h-4 w-2/3" />
+						<Skeleton className="h-4 w-1/3" />
 					</div>
 				</div>
 				<div
