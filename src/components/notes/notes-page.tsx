@@ -1,14 +1,12 @@
-import { Link } from "@tanstack/react-router";
-import { Calendar, Hash, Link2, Search } from "lucide-react";
+import { Hash, Search } from "lucide-react";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import type { ParsedNotes } from "@/db";
-import { parseNoteContent } from "@/lib/utils";
+import type { ParsedNote } from "@/db";
+import { HashtagsCard } from "./hashtags-card";
+import { NoteCard } from "./note-card";
 
-export default function NotesPage({ notes }: { notes: ParsedNotes[] }) {
+export default function NotesPage({ notes }: { notes: ParsedNote[] }) {
 	const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 
@@ -63,101 +61,17 @@ export default function NotesPage({ notes }: { notes: ParsedNotes[] }) {
 				</div>
 
 				{/* Hashtag Filter Pills */}
-				<Card>
-					<CardHeader>
-						<div className="flex items-center gap-2">
-							<Hash className="h-5 w-5 text-muted-foreground" />
-							<CardTitle className="text-lg">Filter by Tags</CardTitle>
-							{selectedHashtags.length > 0 && (
-								<Button
-									variant="ghost"
-									size="sm"
-									onClick={() => setSelectedHashtags([])}
-									className="ml-auto text-xs"
-								>
-									Clear all
-								</Button>
-							)}
-						</div>
-					</CardHeader>
-					<CardContent>
-						<div className="flex flex-wrap gap-2">
-							{allHashtags.map((hashtag) => (
-								<Badge
-									key={hashtag}
-									variant={
-										selectedHashtags.includes(hashtag) ? "default" : "outline"
-									}
-									className="cursor-pointer hover:bg-primary/90 transition-colors px-3 py-1.5 text-sm"
-									onClick={() => toggleHashtag(hashtag)}
-								>
-									{`#${hashtag}`}
-								</Badge>
-							))}
-						</div>
-					</CardContent>
-				</Card>
+				<HashtagsCard
+					allHashtags={allHashtags}
+					selectedHashtags={selectedHashtags}
+					toggleHashtag={toggleHashtag}
+					setSelectedHashtags={setSelectedHashtags}
+				/>
 
 				{/* Notes Grid */}
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{filteredNotes.map((note) => (
-						<Card
-							key={note.id}
-							className="hover:border-primary/90 transition-colors"
-						>
-							<Link
-								to={`/dashboard/run/$id`}
-								params={{ id: note.run_id.toString() }}
-							>
-								<CardContent className="pt-6">
-									<div className="space-y-3">
-										<div className="flex items-center justify-between">
-											<div className="flex items-center gap-2 text-xs text-muted-foreground">
-												<Calendar className="h-3 w-3" />
-												{new Date(note.created_at).toLocaleDateString("en-US", {
-													month: "short",
-													day: "numeric",
-													year: "numeric",
-												})}
-											</div>
-										</div>
-										<p className="text-sm leading-relaxed text-foreground">
-											{parseNoteContent(note.content).text}
-										</p>
-										<div className="flex flex-wrap gap-1.5 pt-2">
-											{note.hashtags.map((hashtag: string) => (
-												<Badge
-													key={hashtag}
-													variant="secondary"
-													className="text-xs cursor-pointer hover:bg-secondary/80"
-													onClick={() => toggleHashtag(hashtag)}
-												>
-													{`#${hashtag}`}
-												</Badge>
-											))}
-										</div>
-										<div>
-											{parseNoteContent(note.content).links.map((link) => (
-												<a
-													key={link.url}
-													href={link.url}
-													target="_blank"
-													rel="noopener noreferrer"
-												>
-													<Badge
-														variant="secondary"
-														className="text-xs cursor-pointer hover:bg-secondary/80"
-													>
-														<Link2 />
-														{link.text}
-													</Badge>
-												</a>
-											))}
-										</div>
-									</div>
-								</CardContent>
-							</Link>
-						</Card>
+						<NoteCard key={note.id} note={note} toggleHashtag={toggleHashtag} />
 					))}
 				</div>
 

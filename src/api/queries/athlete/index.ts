@@ -21,3 +21,16 @@ export function fetchAthleteByStravaIdQueryOptions({
 		staleTime: Infinity,
 	});
 }
+
+export const fetchAthleteByUser = async ({ userId }: { userId: number }) => {
+	const note = await getUserByStravaId({ data: { strava_id: userId } });
+	return note;
+};
+
+export function fetchAthleteByUserQueryOptions({ userId }: { userId: number }) {
+	return queryOptions({
+		queryKey: ["athlete", userId],
+		queryFn: () => fetchAthleteByUser({ userId }),
+		staleTime: Infinity,
+	});
+}

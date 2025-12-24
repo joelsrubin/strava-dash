@@ -8,7 +8,10 @@ import {
 	useCreateNoteMutation,
 	useUpdateNoteMutation,
 } from "@/api/mutations/notes";
-import { fetchAthleteByStravaIdQueryOptions } from "@/api/queries/athlete";
+import {
+	fetchAthleteByStravaIdQueryOptions,
+	fetchAthleteByUserQueryOptions,
+} from "@/api/queries/athlete";
 import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
 import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import Tiptap from "@/components/editor/tip-tap";
@@ -31,17 +34,13 @@ const ActivityMap = lazy(
 export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 	component: RouteComponent,
 
-	loader: async ({ context: { queryClient }, params: { id } }) => {
-		const activity = await queryClient.ensureQueryData(
-			fetchActivityQueryOptions(id),
-		);
+	loader: async ({ context: { queryClient, user }, params: { id } }) => {
+		await queryClient.ensureQueryData(fetchActivityQueryOptions(id));
 		await queryClient.ensureQueryData(
 			fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
 		);
 		await queryClient.ensureQueryData(
-			fetchAthleteByStravaIdQueryOptions({
-				stravaId: Number(activity.athlete.id),
-			}),
+			fetchAthleteByUserQueryOptions({ userId: Number(user.id) }),
 		);
 	},
 });

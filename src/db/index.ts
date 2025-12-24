@@ -18,7 +18,7 @@ export interface Note {
 	hashtags: string;
 }
 
-export type ParsedNotes = Omit<Note, "hashtags"> & {
+export type ParsedNote = Omit<Note, "hashtags"> & {
 	hashtags: string[];
 };
 
