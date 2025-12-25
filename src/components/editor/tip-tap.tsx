@@ -18,7 +18,6 @@ interface TiptapProps {
 	onChange?: (content: string) => void;
 	onSave?: (content: string) => void;
 	isPending?: boolean;
-	isMobile?: boolean;
 }
 
 const Tiptap = ({
@@ -27,7 +26,6 @@ const Tiptap = ({
 	onChange,
 	onSave,
 	isPending,
-	isMobile,
 }: TiptapProps) => {
 	const editor = useEditor({
 		immediatelyRender: false,
@@ -63,11 +61,9 @@ const Tiptap = ({
 
 	return (
 		<>
-			<div
-				className={`rounded-md border border-border bg-transparent flex flex-col ${isMobile ? "min-h-0 flex-1 overflow-hidden" : "h-full overflow-scroll"}`}
-			>
+			<div className="rounded-md border border-border bg-transparent flex flex-col min-h-0 flex-1 overflow-hidden">
 				<Toolbar editor={editor} />
-				<div className={isMobile ? "min-h-0 flex-1 overflow-y-auto" : ""}>
+				<div className="min-h-0 flex-1 overflow-y-auto">
 					<EditorContent editor={editor} />
 				</div>
 			</div>

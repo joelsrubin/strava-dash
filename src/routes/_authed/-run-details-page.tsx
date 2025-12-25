@@ -193,7 +193,7 @@ export function RunDetailsPage({
 					)}
 				</div>
 				<div
-					className={`flex flex-col bg-muted/50 rounded-xl order-1 lg:order-4 ${isMobile ? "min-h-0 max-h-[60vh]" : "flex-1"}`}
+					className={`flex min-h-0 flex-1 flex-col bg-muted/50 rounded-xl order-1 lg:order-4 ${isMobile ? "max-h-[60vh]" : ""}`}
 				>
 					<Tiptap
 						initialContent={initialState}
@@ -209,7 +209,6 @@ export function RunDetailsPage({
 							}
 						}}
 						isPending={updateNoteIsPending || createNoteIsPending}
-						isMobile={isMobile}
 					/>
 				</div>
 			</div>
