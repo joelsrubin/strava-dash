@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { useMemo } from "react";
 import {
 	Area,
 	AreaChart,
@@ -11,7 +12,6 @@ import {
 	Line,
 	LineChart,
 } from "recharts";
-
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,7 +29,6 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarInset } from "@/components/ui/sidebar";
-
 import { useIsMobile } from "@/hooks/use-mobile";
 import { DataTable } from "./-activity-table";
 
@@ -81,164 +80,179 @@ export function ActivitiesPage() {
 		},
 	} satisfies ChartConfig;
 
-	const columns: ColumnDef<TActivity>[] = [
-		{
-			accessorKey: "start_date",
-			header: ({ column }) => {
-				return (
-					<Button
-						className="px-0 py-2"
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Date
-						<ArrowUpDown className="ml-2 h-4 w-4" />
-					</Button>
-				);
+	const columns: ColumnDef<TActivity>[] = useMemo(
+		() => [
+			{
+				accessorKey: "start_date",
+				header: ({ column }) => {
+					return (
+						<Button
+							className="px-0 py-2"
+							variant="ghost"
+							onClick={() =>
+								column.toggleSorting(column.getIsSorted() === "asc")
+							}
+						>
+							Date
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						</Button>
+					);
+				},
+				cell: ({ row }) => {
+					return (
+						<div>{new Date(row.original.start_date).toLocaleDateString()}</div>
+					);
+				},
 			},
-			cell: ({ row }) => {
-				return (
-					<div>{new Date(row.original.start_date).toLocaleDateString()}</div>
-				);
-			},
-		},
-		{
-			accessorKey: "distance",
-			header: ({ column }) => {
-				return (
-					<Button
-						className="px-0 py-2"
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Distance
-						<ArrowUpDown className="ml-2 h-4 w-4" />
-					</Button>
-				);
-			},
-			cell: ({ row }) => {
-				return (
-					<div>
-						{((row.original.distance as number) * 0.00062137).toFixed(2)} mi
-					</div>
-				);
-			},
-		},
-		{
-			accessorKey: "moving_time",
-			header: ({ column }) => {
-				return (
-					<Button
-						className="px-0 py-2"
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Moving Time
-						<ArrowUpDown className="ml-2 h-4 w-4" />
-					</Button>
-				);
-			},
-			cell: ({ row }) => {
-				if (!row.original.moving_time) return <div>no data</div>;
-				if (row.original.moving_time > 3600) {
-					// parse hours and minutes
-					const hours = Math.floor(row.original.moving_time / 3600);
-					const minutes = Math.floor((row.original.moving_time % 3600) / 60);
+			{
+				accessorKey: "distance",
+				header: ({ column }) => {
+					return (
+						<Button
+							className="px-0 py-2"
+							variant="ghost"
+							onClick={() =>
+								column.toggleSorting(column.getIsSorted() === "asc")
+							}
+						>
+							Distance
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						</Button>
+					);
+				},
+				cell: ({ row }) => {
 					return (
 						<div>
-							{hours}h {minutes}m
+							{((row.original.distance as number) * 0.00062137).toFixed(2)} mi
 						</div>
 					);
-				}
-				return <div>{(row.original.moving_time / 60).toFixed(0)} mins</div>;
+				},
 			},
-		},
-		{
-			accessorKey: "total_elevation_gain",
-			header: ({ column }) => {
-				return (
-					<Button
-						className="px-0 py-2"
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Total Elevation Gain
-						<ArrowUpDown className="ml-2 h-4 w-4" />
-					</Button>
-				);
+			{
+				accessorKey: "moving_time",
+				header: ({ column }) => {
+					return (
+						<Button
+							className="px-0 py-2"
+							variant="ghost"
+							onClick={() =>
+								column.toggleSorting(column.getIsSorted() === "asc")
+							}
+						>
+							Moving Time
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						</Button>
+					);
+				},
+				cell: ({ row }) => {
+					if (!row.original.moving_time) return <div>no data</div>;
+					if (row.original.moving_time > 3600) {
+						// parse hours and minutes
+						const hours = Math.floor(row.original.moving_time / 3600);
+						const minutes = Math.floor((row.original.moving_time % 3600) / 60);
+						return (
+							<div>
+								{hours}h {minutes}m
+							</div>
+						);
+					}
+					return <div>{(row.original.moving_time / 60).toFixed(0)} mins</div>;
+				},
 			},
-			cell: ({ row }) => {
-				return <div>{row.original.total_elevation_gain.toFixed(0)} ft</div>;
+			{
+				accessorKey: "total_elevation_gain",
+				header: ({ column }) => {
+					return (
+						<Button
+							className="px-0 py-2"
+							variant="ghost"
+							onClick={() =>
+								column.toggleSorting(column.getIsSorted() === "asc")
+							}
+						>
+							Total Elevation Gain
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						</Button>
+					);
+				},
+				cell: ({ row }) => {
+					return <div>{row.original.total_elevation_gain.toFixed(0)} ft</div>;
+				},
 			},
-		},
-		{
-			accessorKey: "average_heartrate",
-			header: ({ column }) => {
-				return (
-					<Button
-						className="px-0 py-2"
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Average Heart Rate
-						<ArrowUpDown className="ml-2 h-4 w-4" />
-					</Button>
-				);
+			{
+				accessorKey: "average_heartrate",
+				header: ({ column }) => {
+					return (
+						<Button
+							className="px-0 py-2"
+							variant="ghost"
+							onClick={() =>
+								column.toggleSorting(column.getIsSorted() === "asc")
+							}
+						>
+							Average Heart Rate
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						</Button>
+					);
+				},
+				cell: ({ row }) => {
+					if (!row.original.average_heartrate) return <div>no data</div>;
+					return <div>{row.original.average_heartrate.toFixed(0)} bpm</div>;
+				},
 			},
-			cell: ({ row }) => {
-				if (!row.original.average_heartrate) return <div>no data</div>;
-				return <div>{row.original.average_heartrate.toFixed(0)} bpm</div>;
+			{
+				accessorKey: "max_heartrate",
+				header: ({ column }) => {
+					return (
+						<Button
+							className="px-0 py-2"
+							variant="ghost"
+							onClick={() =>
+								column.toggleSorting(column.getIsSorted() === "asc")
+							}
+						>
+							Max Heart Rate
+							<ArrowUpDown className="ml-2 h-4 w-4" />
+						</Button>
+					);
+				},
+				cell: ({ row }) => {
+					if (!row.original.max_heartrate) return <div>no data</div>;
+					return <div>{row.original.max_heartrate} bpm</div>;
+				},
 			},
-		},
-		{
-			accessorKey: "max_heartrate",
-			header: ({ column }) => {
-				return (
-					<Button
-						className="px-0 py-2"
-						variant="ghost"
-						onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-					>
-						Max Heart Rate
-						<ArrowUpDown className="ml-2 h-4 w-4" />
-					</Button>
-				);
-			},
-			cell: ({ row }) => {
-				if (!row.original.max_heartrate) return <div>no data</div>;
-				return <div>{row.original.max_heartrate} bpm</div>;
-			},
-		},
 
-		{
-			id: "actions",
-			cell: ({ row }) => {
-				return (
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="ghost" className="h-8 w-8 p-0">
-								<span className="sr-only">Open menu</span>
-								<MoreHorizontal className="h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+			{
+				id: "actions",
+				cell: ({ row }) => {
+					return (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant="ghost" className="h-8 w-8 p-0">
+									<span className="sr-only">Open menu</span>
+									<MoreHorizontal className="h-4 w-4" />
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-							<DropdownMenuItem asChild>
-								<Link
-									to="/dashboard/run/$id"
-									params={{ id: row.original.id.toString() }}
-								>
-									View Run
-								</Link>
-							</DropdownMenuItem>
-							<DropdownMenuSeparator />
-						</DropdownMenuContent>
-					</DropdownMenu>
-				);
+								<DropdownMenuItem asChild>
+									<Link
+										to="/dashboard/run/$id"
+										params={{ id: row.original.id.toString() }}
+									>
+										View Run
+									</Link>
+								</DropdownMenuItem>
+								<DropdownMenuSeparator />
+							</DropdownMenuContent>
+						</DropdownMenu>
+					);
+				},
 			},
-		},
-	];
+		],
+		[],
+	);
 
 	return (
 		<SidebarInset

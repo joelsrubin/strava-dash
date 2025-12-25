@@ -110,20 +110,8 @@ export function RunDetailsPage({
 		1;
 
 	return (
-		<SidebarInset
-			className={
-				isMobile
-					? "flex flex-1 flex-col overflow-auto"
-					: "flex min-h-0 flex-1 flex-col"
-			}
-		>
-			<div
-				className={
-					isMobile
-						? "flex flex-1 flex-col gap-4 p-4"
-						: "flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"
-				}
-			>
+		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
+			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
 				<div className="grid auto-rows-min gap-4 grid-cols-1 lg:grid-cols-3 order-2 lg:order-1">
 					<div className="bg-muted/50 rounded-xl p-2 hidden flex-col gap-2 lg:flex">
 						<h2>Run Details</h2>
@@ -205,9 +193,7 @@ export function RunDetailsPage({
 					)}
 				</div>
 				<div
-					className={
-						"flex flex-1 flex-col bg-muted/50 rounded-xl order-1 lg:order-4"
-					}
+					className={`flex flex-col bg-muted/50 rounded-xl order-1 lg:order-4 ${isMobile ? "min-h-0 max-h-[60vh]" : "flex-1"}`}
 				>
 					<Tiptap
 						initialContent={initialState}
@@ -223,6 +209,7 @@ export function RunDetailsPage({
 							}
 						}}
 						isPending={updateNoteIsPending || createNoteIsPending}
+						isMobile={isMobile}
 					/>
 				</div>
 			</div>
