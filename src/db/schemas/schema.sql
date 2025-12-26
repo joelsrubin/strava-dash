@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS notes (
   hashtags TEXT DEFAULT '[]',  -- JSON array
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  activity_date TEXT,
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 

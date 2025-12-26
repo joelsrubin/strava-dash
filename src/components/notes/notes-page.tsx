@@ -1,5 +1,5 @@
+import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
-
 import { Hash, Search } from "lucide-react";
 import { useState } from "react";
 import { fetchNotesByUserIdOptions } from "@/api/queries/notes";
@@ -10,12 +10,19 @@ import type { User } from "@/db";
 import { HashtagsCard } from "./hashtags-card";
 import { NoteCard } from "./note-card";
 
-export default function NotesPage({ user }: { user: User }) {
+export default function NotesPage({
+	user,
+	queryClient,
+}: {
+	user: User;
+	queryClient: QueryClient;
+}) {
 	const { data: notesData } = useSuspenseQuery(
 		fetchNotesByUserIdOptions({ userId: user.id }),
 	);
 
 	const notes = notesData.results;
+
 	const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 
@@ -80,7 +87,12 @@ export default function NotesPage({ user }: { user: User }) {
 				{/* Notes Grid */}
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{filteredNotes.map((note) => (
-						<NoteCard key={note.id} note={note} toggleHashtag={toggleHashtag} />
+						<NoteCard
+							queryClient={queryClient}
+							key={note.id}
+							note={note}
+							toggleHashtag={toggleHashtag}
+						/>
 					))}
 				</div>
 

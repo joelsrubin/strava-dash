@@ -1,5 +1,5 @@
 import { type UseMutationOptions, useMutation } from "@tanstack/react-query";
-import { createNote, updateNote } from "@/db";
+import { createNote, deleteNote, type Note, updateNote } from "@/db";
 
 export const useUpdateNoteMutation = (
 	options?: UseMutationOptions<
@@ -21,7 +21,7 @@ export const useCreateNoteMutation = (
 	options?: UseMutationOptions<
 		void,
 		Error,
-		{ content: string; run_id: number; user_id: number }
+		Pick<Note, "content" | "run_id" | "user_id" | "activity_date">
 	>,
 ) => {
 	return useMutation({
@@ -29,12 +29,25 @@ export const useCreateNoteMutation = (
 			content,
 			run_id,
 			user_id,
+			activity_date,
 		}: {
 			content: string;
 			run_id: number;
 			user_id: number;
+			activity_date: string;
 		}) => {
-			await createNote({ data: { content, run_id, user_id } });
+			await createNote({ data: { content, run_id, user_id, activity_date } });
+		},
+		...options,
+	});
+};
+
+export const useDeleteNoteMutation = (
+	options?: UseMutationOptions<void, Error, { id: number }>,
+) => {
+	return useMutation({
+		mutationFn: async ({ id }: { id: number }) => {
+			await deleteNote({ data: { id } });
 		},
 		...options,
 	});

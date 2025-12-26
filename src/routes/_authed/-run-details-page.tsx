@@ -204,6 +204,7 @@ export function RunDetailsPage({
 								createNoteFn({
 									user_id: Number(athlete.results[0].id),
 									run_id: Number(id),
+									activity_date: activity?.start_date,
 									content,
 								});
 							}

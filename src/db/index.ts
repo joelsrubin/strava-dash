@@ -14,6 +14,7 @@ export interface Note {
 	run_id: number;
 	content: string;
 	created_at: string;
+	activity_date: string;
 	updated_at: string;
 	hashtags: string;
 }
@@ -144,20 +145,33 @@ export const getNoteByRun = createServerFn({ method: "GET" })
 
 export const createNote = createServerFn({ method: "POST" })
 	.inputValidator(
-		(input: { user_id: number; run_id: number; content: string }) => input,
+		(input: {
+			user_id: number;
+			run_id: number;
+			content: string;
+			activity_date: string;
+		}) => input,
 	)
 	.handler(async ({ data }) => {
-		const { user_id, run_id, content } = data;
+		console.log({ data });
+		const { user_id, run_id, content, activity_date } = data;
+		console.log("createNote data:", {
+			user_id,
+			run_id,
+			content,
+			activity_date,
+		});
 		const hashtags = extractHashtags(content);
 		if (hashtags.length > 0) {
 			const result = await env.DB.prepare(
-				"INSERT INTO notes (user_id, run_id, content, hashtags, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
+				"INSERT INTO notes (user_id, run_id, content, hashtags, activity_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
 			)
 				.bind(
 					user_id,
 					run_id,
 					content,
 					JSON.stringify(hashtags),
+					activity_date,
 					new Date().toISOString(),
 					new Date().toISOString(),
 				)
@@ -165,12 +179,13 @@ export const createNote = createServerFn({ method: "POST" })
 			return { success: result.success };
 		} else {
 			const result = await env.DB.prepare(
-				"INSERT INTO notes (user_id, run_id, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
+				"INSERT INTO notes (user_id, run_id, content, activity_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
 			)
 				.bind(
 					user_id,
 					run_id,
 					content,
+					activity_date,
 					new Date().toISOString(),
 					new Date().toISOString(),
 				)
