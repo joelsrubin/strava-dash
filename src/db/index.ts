@@ -153,14 +153,8 @@ export const createNote = createServerFn({ method: "POST" })
 		}) => input,
 	)
 	.handler(async ({ data }) => {
-		console.log({ data });
 		const { user_id, run_id, content, activity_date } = data;
-		console.log("createNote data:", {
-			user_id,
-			run_id,
-			content,
-			activity_date,
-		});
+
 		const hashtags = extractHashtags(content);
 		if (hashtags.length > 0) {
 			const result = await env.DB.prepare(

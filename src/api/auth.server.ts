@@ -8,6 +8,7 @@ import { useStravaSession } from "./session";
 export const refreshStravaAccessToken = createServerFn({
 	method: "POST",
 }).handler(async () => {
+	console.log("refreshing strava token");
 	const session = await useStravaSession();
 	const refreshToken = session.data.refreshToken;
 

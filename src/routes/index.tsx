@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
 	beforeLoad: async () => {
 		const token = await getStravaAccessToken();
 		if (token) {
-			throw redirect({ to: "/dashboard/main" });
+			throw redirect({ to: "/dashboard" });
 		}
 		return null;
 	},

@@ -24,7 +24,7 @@ import { SidebarInset } from "@/components/ui/sidebar";
 
 import type { User } from "@/db";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { formatDate, formatDistance, formatTime } from "@/lib/utils";
+import { formatDistance, formatTime } from "@/lib/utils";
 
 export function RunDetailsPage({
 	id,
@@ -77,7 +77,7 @@ export function RunDetailsPage({
 
 	const polyline = activity.map.polyline;
 
-	const defaultContent = `<p>${formatDate(activity.start_date)}: ${activity.name} - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`;
+	const defaultContent = `<p><b>${activity.name}</b> - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`;
 	const initialState = note?.results[0]?.content || defaultContent;
 
 	const splitsData = activity.splits_standard.map((split) => ({

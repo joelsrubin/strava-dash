@@ -51,7 +51,7 @@ export default function NotesPage({
 	};
 
 	return (
-		<div className="min-h-screen bg-background p-6">
+		<div className="min-h-screen bg-background p-6 flex mx-auto">
 			<div className="max-w-7xl mx-auto space-y-6">
 				{/* Header */}
 				<div className="flex items-center justify-between">

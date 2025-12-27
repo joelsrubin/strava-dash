@@ -19,7 +19,7 @@ export function HashtagsCard({
 			<CardHeader>
 				<div className="flex items-center gap-2">
 					<Hash className="h-5 w-5 text-muted-foreground" />
-					<CardTitle className="text-lg">Filter by Tags</CardTitle>
+					<CardTitle className="text-2xl bold">Filter by Tags</CardTitle>
 					{selectedHashtags.length > 0 && (
 						<Button
 							variant="ghost"
@@ -32,22 +32,24 @@ export function HashtagsCard({
 					)}
 				</div>
 			</CardHeader>
-			<CardContent>
-				<div className="flex flex-wrap gap-2">
-					{allHashtags.map((hashtag) => (
-						<Badge
-							key={hashtag}
-							variant={
-								selectedHashtags.includes(hashtag) ? "default" : "outline"
-							}
-							className="cursor-pointer hover:bg-primary/90 transition-colors px-3 py-1.5 text-sm"
-							onClick={() => toggleHashtag(hashtag)}
-						>
-							{`#${hashtag}`}
-						</Badge>
-					))}
-				</div>
-			</CardContent>
+			{allHashtags.length > 0 ? (
+				<CardContent>
+					<div className="flex flex-wrap gap-2">
+						{allHashtags.map((hashtag) => (
+							<Badge
+								key={hashtag}
+								variant={
+									selectedHashtags.includes(hashtag) ? "default" : "outline"
+								}
+								className="cursor-pointer hover:bg-primary/90 hover:text-black transition-colors px-3 py-1.5 text-sm"
+								onClick={() => toggleHashtag(hashtag)}
+							>
+								{`#${hashtag}`}
+							</Badge>
+						))}
+					</div>
+				</CardContent>
+			) : null}
 		</Card>
 	);
 }

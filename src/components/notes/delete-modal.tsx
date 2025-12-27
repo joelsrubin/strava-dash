@@ -1,4 +1,5 @@
-import { AlertCircle, X } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import type { ReactElement } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -16,6 +17,7 @@ interface DeleteConfirmationModalProps {
 	title?: string;
 	description?: string;
 	itemName?: string;
+	children: ReactElement;
 	isLoading?: boolean;
 }
 
@@ -25,12 +27,11 @@ export function DeleteConfirmationModal({
 	description = "This action cannot be undone. This will permanently delete the item.",
 	itemName,
 	isLoading = false,
+	children,
 }: DeleteConfirmationModalProps) {
 	return (
 		<Dialog>
-			<DialogTrigger asChild>
-				<X className="h-4 w-4 text-muted-foreground hover:text-destructive cursor-pointer" />
-			</DialogTrigger>
+			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent className="sm:max-w-md">
 				<DialogHeader>
 					<div className="flex items-center gap-3">
@@ -51,7 +52,7 @@ export function DeleteConfirmationModal({
 						)}
 					</DialogDescription>
 				</DialogHeader>
-				<DialogFooter className="gap-2 sm:gap-0">
+				<DialogFooter className="gap-2">
 					<DialogClose asChild>
 						<Button type="button" variant="outline" disabled={isLoading}>
 							Cancel

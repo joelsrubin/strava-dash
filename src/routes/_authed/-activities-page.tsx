@@ -269,61 +269,64 @@ export function ActivitiesPage() {
 						: "flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"
 				}
 			>
-				<div className="grid auto-rows-min gap-4 md:grid-cols-3">
-					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2 flex items-center gap-2">Distance</h2>
-						<ChartContainer config={distanceConfig}>
-							<BarChart className=" w-full" data={distanceData}>
-								<CartesianGrid vertical={false} />
-								<Bar
-									isAnimationActive={false}
-									dataKey="distance"
-									fill="var(--color-distance)"
-									radius={4}
-								/>
+				{!isMobile && (
+					<div className="grid auto-rows-min gap-4 md:grid-cols-3">
+						<div className="bg-muted/50 rounded-xl">
+							<h2 className="p-2 flex items-center gap-2">Distance</h2>
+							<ChartContainer config={distanceConfig}>
+								<BarChart className=" w-full" data={distanceData}>
+									<CartesianGrid vertical={false} />
+									<Bar
+										isAnimationActive={false}
+										dataKey="distance"
+										fill="var(--color-distance)"
+										radius={4}
+									/>
 
-								<ChartTooltip
-									content={
-										<ChartTooltipContent
-											formatter={(value) =>
-												`${((value as number) * 0.00062137).toFixed(0)} mi`
-											}
-										/>
-									}
-								/>
-							</BarChart>
-						</ChartContainer>
+									<ChartTooltip
+										content={
+											<ChartTooltipContent
+												formatter={(value) =>
+													`${((value as number) * 0.00062137).toFixed(0)} mi`
+												}
+											/>
+										}
+									/>
+								</BarChart>
+							</ChartContainer>
+						</div>
+						<div className="bg-muted/50 rounded-xl">
+							<h2 className="p-2 flex items-center gap-2">Effort</h2>
+							<ChartContainer config={sufferConfig}>
+								<LineChart className=" w-full" data={sufferData}>
+									<CartesianGrid vertical={false} />
+									<Line
+										isAnimationActive={false}
+										dataKey="suffer"
+										stroke="var(--color-suffer)"
+										dot={false}
+									/>
+								</LineChart>
+							</ChartContainer>
+						</div>
+						<div className="bg-muted/50 rounded-xl">
+							<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>
+							<ChartContainer config={heartRateConfig}>
+								<AreaChart className=" w-full" data={heartRateData}>
+									<CartesianGrid vertical={false} />
+									<Area
+										isAnimationActive={false}
+										dataKey="heartRate"
+										fill="var(--color-heartRate)"
+										stroke="var(--color-heartRate)"
+										strokeWidth={2}
+									/>
+								</AreaChart>
+							</ChartContainer>
+						</div>
 					</div>
-					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2 flex items-center gap-2">Effort</h2>
-						<ChartContainer config={sufferConfig}>
-							<LineChart className=" w-full" data={sufferData}>
-								<CartesianGrid vertical={false} />
-								<Line
-									isAnimationActive={false}
-									dataKey="suffer"
-									stroke="var(--color-suffer)"
-									dot={false}
-								/>
-							</LineChart>
-						</ChartContainer>
-					</div>
-					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>
-						<ChartContainer config={heartRateConfig}>
-							<AreaChart className=" w-full" data={heartRateData}>
-								<CartesianGrid vertical={false} />
-								<Area
-									isAnimationActive={false}
-									dataKey="heartRate"
-									fill="var(--color-heartRate)"
-									stroke="var(--color-heartRate)"
-									strokeWidth={2}
-								/>
-							</AreaChart>
-						</ChartContainer>
-					</div>
-				</div>
+				)}
+
 				<div
 					className={
 						isMobile
