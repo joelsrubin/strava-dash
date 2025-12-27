@@ -27,6 +27,8 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { EmojiDropdownMenu } from "./emoji-toolbar-button";
+import { StatusIndicator } from "./status-indicator";
 
 interface ToolbarProps {
 	editor: Editor | null;
@@ -265,6 +267,9 @@ export function Toolbar({ editor }: ToolbarProps) {
 			>
 				<Redo className="size-4" />
 			</ToolbarButton>
+			<ToolbarDivider />
+			<EmojiDropdownMenu editor={editor} />
+			<StatusIndicator className="ml-auto" />
 		</div>
 	);
 }

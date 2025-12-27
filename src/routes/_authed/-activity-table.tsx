@@ -53,6 +53,7 @@ export function DataTable<TData, TValue>({
 
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col overflow-auto rounded-md border">
+			<div className="p-2 text-sm font-medium">Activities</div>
 			<Table>
 				<TableHeader className="sticky top-0 z-10 bg-background">
 					{table.getHeaderGroups().map((headerGroup) => (

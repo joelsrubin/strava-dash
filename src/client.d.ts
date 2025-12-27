@@ -148,10 +148,14 @@ type TActivity = {
 	workout_type: number;
 	upload_id_str: string;
 	average_speed: number;
+	average_cadence: number;
 	max_speed: number;
 	has_kudoed: boolean;
 	hide_from_home: boolean;
 	gear_id: string;
+	gear: {
+		name: string;
+	}
 	kilojoules: number;
 	average_watts: number;
 	device_watts: boolean;

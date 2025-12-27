@@ -142,7 +142,12 @@
 /* TipTap Editor Styles */
 .tiptap {
   @apply outline-none min-h-[200px] px-4 py-3;
-
+  [data-type='emoji'] {
+    img {
+      height: 1em;
+      width: 1em;
+    }
+  }
   /* Paragraphs */
   p {
     @apply my-4 first:mt-0 last:mb-0 text-base leading-relaxed;
