@@ -1,79 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from "react";
 
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
 
-import { SidebarInset } from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { ActivitiesPage } from "./-activities-page";
+import { PendingComponent } from "./-pending-component";
 
 export const Route = createFileRoute("/_authed/dashboard/")({
 	component: RouteComponent,
-
+	pendingComponent: PendingComponent,
+	pendingMinMs: 0,
 	loader: async ({ context: { queryClient } }) => {
-		queryClient.prefetchQuery(fetchAthleteActivitiesQueryOptions());
+		await queryClient.ensureQueryData(fetchAthleteActivitiesQueryOptions());
 	},
 });
 
 function RouteComponent() {
-	return (
-		<Suspense fallback={<LoadingPage />}>
-			<ActivitiesPage />
-		</Suspense>
-	);
-}
-
-function LoadingPage() {
-	const { isMobile } = useIsMobile();
-	return (
-		<SidebarInset
-			className={
-				isMobile
-					? "flex flex-1 flex-col overflow-auto"
-					: "flex min-h-0 flex-1 flex-col"
-			}
-		>
-			<div
-				className={
-					isMobile
-						? "flex flex-1 flex-col gap-4 p-4"
-						: "flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"
-				}
-			>
-				<div className="grid auto-rows-min gap-4 md:grid-cols-3">
-					<div className="bg-muted/50 rounded-xl">
-						<Skeleton className="h-4 w-3/4" />
-						<Skeleton className="h-4 w-1/2" />
-						<Skeleton className="h-4 w-2/3" />
-						<Skeleton className="h-4 w-2/3" />
-						<Skeleton className="h-4 w-1/3" />
-					</div>
-					<div className="bg-muted/50 rounded-xl">
-						<Skeleton className="h-4 w-3/4" />
-						<Skeleton className="h-4 w-1/2" />
-						<Skeleton className="h-4 w-2/3" />
-						<Skeleton className="h-4 w-2/3" />
-						<Skeleton className="h-4 w-1/3" />
-					</div>
-					<div className="bg-muted/50 rounded-xl">
-						<Skeleton className="h-4 w-3/4" />
-						<Skeleton className="h-4 w-1/2" />
-						<Skeleton className="h-4 w-2/3" />
-						<Skeleton className="h-4 w-2/3" />
-						<Skeleton className="h-4 w-1/3" />
-					</div>
-				</div>
-				<div
-					className={
-						isMobile
-							? "bg-muted/50 flex flex-col rounded-xl"
-							: "bg-muted/50 flex min-h-0 flex-1 flex-col rounded-xl"
-					}
-				>
-					<Skeleton className="flex-1" />
-				</div>
-			</div>
-		</SidebarInset>
-	);
+	return <ActivitiesPage />;
 }

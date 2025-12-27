@@ -27,6 +27,7 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { EmojiDropdownMenu } from "./emoji-toolbar-button";
 import { StatusIndicator } from "./status-indicator";
 
@@ -69,7 +70,7 @@ function ToolbarDivider() {
 export function Toolbar({ editor }: ToolbarProps) {
 	const [linkUrl, setLinkUrl] = useState("");
 	const [linkPopoverOpen, setLinkPopoverOpen] = useState(false);
-
+	const { isMobile } = useIsMobile();
 	const setLink = useCallback(() => {
 		if (!editor) return;
 
@@ -267,8 +268,13 @@ export function Toolbar({ editor }: ToolbarProps) {
 			>
 				<Redo className="size-4" />
 			</ToolbarButton>
-			<ToolbarDivider />
-			<EmojiDropdownMenu editor={editor} />
+			{!isMobile ? (
+				<>
+					<ToolbarDivider />
+					<EmojiDropdownMenu editor={editor} />
+				</>
+			) : null}
+
 			<StatusIndicator className="ml-auto" />
 		</div>
 	);

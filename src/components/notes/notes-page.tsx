@@ -5,7 +5,7 @@ import { useState } from "react";
 import { fetchNotesByUserIdOptions } from "@/api/queries/notes";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
+
 import type { User } from "@/db";
 import { HashtagsCard } from "./hashtags-card";
 import { NoteCard } from "./note-card";
@@ -112,73 +112,6 @@ export default function NotesPage({
 						</CardContent>
 					</Card>
 				)}
-			</div>
-		</div>
-	);
-}
-
-export function LoadingNotesPage() {
-	return (
-		<div className="min-h-screen bg-background p-6">
-			<div className="max-w-7xl mx-auto space-y-6">
-				{/* Header */}
-				<div className="flex items-center justify-between">
-					<div>
-						<h1 className="text-4xl font-bold text-foreground">
-							Training Notes
-						</h1>
-						<p className="text-muted-foreground mt-1">
-							Track your thoughts, insights, and progress
-						</p>
-					</div>
-				</div>
-
-				{/* Search Bar */}
-				<div className="relative">
-					<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-					<Input placeholder="Search notes..." disabled className="pl-10" />
-				</div>
-
-				{/* Hashtag Filter Pills Skeleton */}
-				<Card>
-					<CardContent className="py-4">
-						<div className="flex flex-wrap gap-2">
-							{["tag-1", "tag-2", "tag-3", "tag-4", "tag-5", "tag-6"].map(
-								(id) => (
-									<Skeleton key={id} className="h-6 w-16 rounded-full" />
-								),
-							)}
-						</div>
-					</CardContent>
-				</Card>
-
-				{/* Notes Grid Skeleton */}
-				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-					{["note-1", "note-2", "note-3", "note-4", "note-5", "note-6"].map(
-						(id) => (
-							<Card key={id} className="max-h-[200px] overflow-hidden">
-								<CardContent className="pt-6">
-									<div className="space-y-3">
-										<div className="flex items-center gap-2">
-											<Skeleton className="h-3 w-3 rounded" />
-											<Skeleton className="h-3 w-24" />
-										</div>
-										<div className="space-y-2">
-											<Skeleton className="h-4 w-full" />
-											<Skeleton className="h-4 w-full" />
-											<Skeleton className="h-4 w-2/3" />
-										</div>
-										<div className="flex flex-wrap gap-1.5 pt-2">
-											<Skeleton className="h-5 w-14 rounded-full" />
-											<Skeleton className="h-5 w-18 rounded-full" />
-											<Skeleton className="h-5 w-12 rounded-full" />
-										</div>
-									</div>
-								</CardContent>
-							</Card>
-						),
-					)}
-				</div>
 			</div>
 		</div>
 	);

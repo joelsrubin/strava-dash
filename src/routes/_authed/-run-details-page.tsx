@@ -1,7 +1,7 @@
 import { type QueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
 import { Suspense } from "react";
-// import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+
 import { toast } from "sonner";
 import {
 	useCreateNoteMutation,
@@ -12,14 +12,7 @@ import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
 import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import ActivityMap from "@/components/activity-map/activity-map";
 import Tiptap from "@/components/editor/tip-tap";
-// import {
-// 	type ChartConfig,
-// 	ChartContainer,
-// 	ChartLegend,
-// 	ChartLegendContent,
-// 	ChartTooltip,
-// 	ChartTooltipContent,
-// } from "@/components/ui/chart";
+
 import { SidebarInset } from "@/components/ui/sidebar";
 import {
 	Table,
@@ -105,35 +98,6 @@ export function RunDetailsPage({
 		debounceMs: 2500,
 	});
 
-	// const splitsData = activity.splits_standard.map((split) => ({
-	// 	split: `Mile ${split.split}`,
-	// 	distance: Number((split.distance * 0.00062137).toFixed(2)),
-	// 	heartRate: split.average_heartrate,
-	// 	paceZone: split.pace_zone,
-	// }));
-
-	// const splitsConfig = {
-	// 	...(activity.average_heartrate && {
-	// 		heartRate: {
-	// 			label: "Avg Heart Rate",
-	// 			color: "var(--primary)",
-	// 		},
-	// 	}),
-	// 	...{
-	// 		paceZone: {
-	// 			label: "Pace Zone",
-	// 			color: "dodgerblue",
-	// 		},
-	// 	},
-	// } satisfies ChartConfig;
-
-	// const min =
-	// 	Number(Math.min(...splitsData.map((split) => split.heartRate)).toFixed(0)) -
-	// 	1;
-	// const max =
-	// 	Number(Math.max(...splitsData.map((split) => split.heartRate)).toFixed(0)) +
-	// 	1;
-
 	return (
 		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
 			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
@@ -173,7 +137,9 @@ export function RunDetailsPage({
 								<TableRow>
 									<TableCell className="py-2 font-medium">Average HR</TableCell>
 									<TableCell className="py-2">
-										{`${activity.average_heartrate} bpm`}
+										{activity.average_heartrate
+											? `${activity.average_heartrate} bpm`
+											: "no data"}
 									</TableCell>
 								</TableRow>
 								<TableRow>
@@ -181,7 +147,9 @@ export function RunDetailsPage({
 										Average Cadence
 									</TableCell>
 									<TableCell className="py-2">
-										{`${activity.average_cadence} spm`}
+										{activity.average_cadence
+											? `${activity.average_cadence} spm`
+											: "no data"}
 									</TableCell>
 								</TableRow>
 								<TableRow>
@@ -191,68 +159,7 @@ export function RunDetailsPage({
 							</TableBody>
 						</Table>
 					</div>
-					{/* <div className="bg-muted/50 rounded-xl hidden lg:block md:col-span-1 order-1 lg:order-2">
-						<h2 className="p-2">Splits Performance</h2>
-						<ChartContainer config={splitsConfig} className="">
-							<LineChart data={splitsData}>
-								<CartesianGrid strokeDasharray="3 3" vertical={false} />
-								<XAxis
-									dataKey="split"
-									tickLine={false}
-									axisLine={false}
-									tickMargin={8}
-									fontSize={12}
-								/>
-								<YAxis
-									yAxisId="heartRate"
-									orientation="left"
-									tickLine={false}
-									axisLine={false}
-									tickMargin={8}
-									fontSize={12}
-									domain={[min, max]}
-								/>
-								<YAxis
-									yAxisId="paceZone"
-									orientation="right"
-									tickLine={false}
-									axisLine={false}
-									tickMargin={8}
-									fontSize={12}
-									domain={[0, 5]}
-								/>
-								<ChartTooltip
-									content={
-										<ChartTooltipContent
-											formatter={(value, name) => {
-												if (name === "heartRate")
-													return `${(value as number).toFixed(0)} bpm`;
-												if (name === "paceZone") return `Zone ${value}`;
-												return value;
-											}}
-										/>
-									}
-								/>
-								<ChartLegend content={<ChartLegendContent />} />
-								<Line
-									yAxisId="heartRate"
-									type="monotone"
-									dataKey="heartRate"
-									stroke="var(--color-heartRate)"
-									strokeWidth={2}
-									dot={{ fill: "var(--color-heartRate)", r: 4 }}
-								/>
-								<Line
-									yAxisId="paceZone"
-									type="monotone"
-									dataKey="paceZone"
-									stroke="var(--color-paceZone)"
-									strokeWidth={2}
-									dot={{ fill: "var(--color-paceZone)", r: 4 }}
-								/>
-							</LineChart>
-						</ChartContainer>
-					</div> */}
+
 					{!isMobile && (
 						<div className="bg-muted/50 rounded-xl order-4 lg:order-3">
 							<h2 className="p-2">Route Preview</h2>

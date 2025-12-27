@@ -4,9 +4,7 @@
 		"**/*.tsx",
 		"eslint.config.js",
 		"prettier.config.js",
-		"vite.config.js",
-		"src/components/editor/suggestion.js",
-		"src/components/editor/EmojiList.jsx"
+		"vite.config.js"
 	],
 
 	"compilerOptions": {
