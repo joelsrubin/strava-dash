@@ -240,6 +240,7 @@ export function ActivitiesPage() {
 									<Link
 										to="/dashboard/run/$id"
 										params={{ id: row.original.id.toString() }}
+										preload="render"
 									>
 										View Run
 									</Link>

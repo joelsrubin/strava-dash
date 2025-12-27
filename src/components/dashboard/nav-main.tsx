@@ -60,7 +60,7 @@ export function NavMain({
 											{item.items?.map((subItem) => (
 												<SidebarMenuSubItem key={subItem.title}>
 													<SidebarMenuSubButton asChild>
-														<Link to={subItem.url}>
+														<Link to={subItem.url} preload={"render"}>
 															{subItem.icon && <subItem.icon />}
 															<span>{subItem.title}</span>
 														</Link>
