@@ -1,7 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import DOMPurify from "dompurify";
 import { Footprints, Link2, X } from "lucide-react";
-
 import { toast } from "sonner";
 import { useDeleteNoteMutation } from "@/api/mutations/notes";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +29,9 @@ export function NoteCard({
 			toast.error("Failed to delete note");
 		},
 	});
+
+	const { text, links } = parseNoteContent(note.content);
+
 	return (
 		<Card
 			key={note.id}
@@ -56,9 +59,11 @@ export function NoteCard({
 			</CardHeader>
 			<CardContent>
 				<Link to={`/dashboard/run/$id`} params={{ id: note.run_id.toString() }}>
-					<p className="text-sm leading-relaxed text-foreground line-clamp-3">
-						{parseNoteContent(note.content).text}
-					</p>
+					<p
+						className="text-sm leading-relaxed text-foreground line-clamp-3"
+						//biome-ignore lint/security/noDangerouslySetInnerHtml: sanitizing
+						dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(text) }}
+					/>
 				</Link>
 				<div className="flex flex-wrap gap-1.5 pt-2">
 					{note.hashtags.map((hashtag: string) => (
@@ -73,7 +78,7 @@ export function NoteCard({
 					))}
 				</div>
 				<div>
-					{parseNoteContent(note.content).links.map((link) => (
+					{links.map((link) => (
 						<a
 							key={link.url}
 							href={link.url}

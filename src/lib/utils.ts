@@ -43,7 +43,6 @@ export function parseNoteContent(html: string) {
 	const text = html
 		.replace(/<span[^>]*class="hashtag"[^>]*>[^<]*<\/span>/g, "") // remove hashtag spans
 		.replace(/<a[^>]*>[^<]*<\/a>/g, "") // remove links
-		.replace(/<[^>]+>/g, "") // strip remaining HTML tags
 		.replace(/\s+/g, " ")
 		.trim();
 

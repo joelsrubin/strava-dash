@@ -62,7 +62,7 @@ export const fetchAthleteActivities = async () => {
 
 export function fetchAthleteActivitiesQueryOptions() {
 	return queryOptions({
-		queryKey: ["athleteActivities"],
+		queryKey: ["athlete-activities"],
 		queryFn: () => fetchAthleteActivities(),
 		staleTime: Infinity,
 	});

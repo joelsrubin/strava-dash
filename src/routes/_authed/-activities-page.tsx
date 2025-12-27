@@ -271,7 +271,7 @@ export function ActivitiesPage() {
 				}
 			>
 				{!isMobile && (
-					<div className="grid auto-rows-min gap-4 md:grid-cols-3">
+					<div className="sm:grid auto-rows-min gap-4 md:grid-cols-3 hidden">
 						<div className="bg-muted/50 rounded-xl">
 							<h2 className="p-2 flex items-center gap-2">Distance</h2>
 							<ChartContainer config={distanceConfig}>
