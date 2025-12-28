@@ -1,42 +1,70 @@
-import { Clock, Notebook, SquareTerminal } from "lucide-react";
-
+import { Notebook, SquareTerminal } from "lucide-react";
+import { useMemo } from "react";
 import { NavMain } from "@/components/dashboard/nav-main";
-
 import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
 } from "@/components/ui/sidebar";
-import { useTheme } from "@/lib/theme";
 
-const data = {
-	navMain: [
-		{
-			title: "Profile",
-			url: "#",
-			icon: SquareTerminal,
-			isActive: true,
-			items: [
+import type { Note } from "@/db";
+import { useTheme } from "@/lib/theme";
+import { getActivityMonth, getActivityYear } from "@/lib/utils";
+
+// array of all hte months
+
+export function AppSidebar({
+	user,
+	notes,
+	...props
+}: React.ComponentProps<typeof Sidebar> & { user: TAthlete; notes: Note[] }) {
+	const { theme } = useTheme();
+	const notesByYear = notes.reduce(
+		(acc, note) => {
+			const year = getActivityYear(note.activity_date);
+			const month = getActivityMonth(note.activity_date);
+
+			if (!acc[year]) {
+				acc[year] = new Set();
+			}
+			acc[year].add(month);
+
+			return acc;
+		},
+		{} as Record<string, Set<string>>,
+	);
+	const availableYears = Object.keys(notesByYear).sort((a, b) =>
+		b.localeCompare(a),
+	);
+
+	const data = useMemo(
+		() => ({
+			navMain: [
 				{
 					title: "Activities",
 					url: "/dashboard",
-					icon: Clock,
+					icon: SquareTerminal,
 				},
 				{
 					title: "Notes",
 					url: "/dashboard/notes",
 					icon: Notebook,
+					items: availableYears.map((year) => {
+						const monthsInYear = Array.from(notesByYear[year] || []);
+						return {
+							title: year,
+							url: `/dashboard/notes?year=${year}`,
+							items: monthsInYear.map((month) => ({
+								title: month,
+								url: `/dashboard/notes?year=${year}&month=${month}`,
+							})),
+						};
+					}),
 				},
 			],
-		},
-	],
-};
-
-export function AppSidebar({
-	user,
-	...props
-}: React.ComponentProps<typeof Sidebar> & { user: TAthlete }) {
-	const { theme } = useTheme();
+		}),
+		[availableYears, notesByYear],
+	);
 
 	return (
 		<Sidebar

@@ -19,60 +19,72 @@ import {
 	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 
-export function NavMain({
-	items,
+export interface NavItem {
+	title: string;
+	url: string;
+	icon?: LucideIcon;
+	isActive?: boolean;
+	items?: NavItem[];
+}
+
+function NavItemComponent({
+	item,
+	level = 0,
 }: {
-	items: {
-		title: string;
-		url: string;
-		icon: LucideIcon;
-		isActive?: boolean;
-		items?: {
-			title: string;
-			url: string;
-			icon?: LucideIcon;
-		}[];
-	}[];
+	item: NavItem;
+	level?: number;
 }) {
+	const hasChildren = item.items && item.items.length > 0;
+	const isTopLevel = level === 0;
+
+	const Wrapper = isTopLevel ? SidebarMenuItem : SidebarMenuSubItem;
+	const Button = isTopLevel ? SidebarMenuButton : SidebarMenuSubButton;
+
+	return (
+		<Collapsible key={item.title} asChild defaultOpen={item.isActive}>
+			<Wrapper>
+				<div className="flex items-center w-full">
+					<Button asChild tooltip={item.title}>
+						<Link to={item.url} className="flex-1">
+							{item.icon && <item.icon />}
+							<span>{item.title}</span>
+						</Link>
+					</Button>
+					{hasChildren && (
+						<CollapsibleTrigger asChild>
+							<SidebarMenuAction className="data-[state=open]:rotate-90">
+								<ChevronRight />
+								<span className="sr-only">Toggle</span>
+							</SidebarMenuAction>
+						</CollapsibleTrigger>
+					)}
+				</div>
+
+				{hasChildren && (
+					<CollapsibleContent>
+						<SidebarMenuSub>
+							{item.items?.map((child) => (
+								<NavItemComponent
+									key={`${item.title}-${child.title}`}
+									item={child}
+									level={level + 1}
+								/>
+							))}
+						</SidebarMenuSub>
+					</CollapsibleContent>
+				)}
+			</Wrapper>
+		</Collapsible>
+	);
+}
+
+export function NavMain({ items }: { items: NavItem[] }) {
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Platform</SidebarGroupLabel>
 			<SidebarMenu>
 				{items.map((item) => (
-					<Collapsible key={item.title} asChild defaultOpen={item.isActive}>
-						<SidebarMenuItem>
-							<SidebarMenuButton asChild tooltip={item.title}>
-								<Link to={item.url}>
-									<item.icon />
-									<span>{item.title}</span>
-								</Link>
-							</SidebarMenuButton>
-							{item.items?.length ? (
-								<>
-									<CollapsibleTrigger asChild>
-										<SidebarMenuAction className="data-[state=open]:rotate-90">
-											<ChevronRight />
-											<span className="sr-only">Toggle</span>
-										</SidebarMenuAction>
-									</CollapsibleTrigger>
-									<CollapsibleContent>
-										<SidebarMenuSub>
-											{item.items?.map((subItem) => (
-												<SidebarMenuSubItem key={subItem.title}>
-													<SidebarMenuSubButton asChild>
-														<Link to={subItem.url} preload={"render"}>
-															{subItem.icon && <subItem.icon />}
-															<span>{subItem.title}</span>
-														</Link>
-													</SidebarMenuSubButton>
-												</SidebarMenuSubItem>
-											))}
-										</SidebarMenuSub>
-									</CollapsibleContent>
-								</>
-							) : null}
-						</SidebarMenuItem>
-					</Collapsible>
+					<NavItemComponent key={item.title} item={item} />
 				))}
 			</SidebarMenu>
 		</SidebarGroup>

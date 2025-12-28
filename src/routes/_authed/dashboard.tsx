@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { getStravaAccessToken } from "@/api/auth.server";
+import { fetchNotesByUserIdOptions } from "@/api/queries/notes";
 import {
 	fetchAthleteActivitiesQueryOptions,
 	fetchAthleteQueryOptions,
@@ -31,12 +32,20 @@ export const Route = createFileRoute("/_authed/dashboard")({
 		});
 		return { user };
 	},
+	loader: async ({ context: { queryClient, user } }) => {
+		await queryClient.ensureQueryData(
+			fetchNotesByUserIdOptions({ userId: user.id }),
+		);
+	},
 });
 
 function RouteComponent() {
 	const { isMobile } = useIsMobile();
+	const { user } = Route.useRouteContext();
 	const { data: athlete } = useSuspenseQuery(fetchAthleteQueryOptions());
-
+	const { data: notes } = useSuspenseQuery(
+		fetchNotesByUserIdOptions({ userId: user.id }),
+	);
 	return (
 		<div
 			className={
@@ -48,7 +57,7 @@ function RouteComponent() {
 			<SidebarProvider className="flex h-full flex-col">
 				<SiteHeader user={athlete} />
 				<div className={isMobile ? "flex flex-1" : "flex min-h-0 flex-1"}>
-					<AppSidebar user={athlete} />
+					<AppSidebar user={athlete} notes={notes.results} />
 					<Outlet />
 				</div>
 			</SidebarProvider>

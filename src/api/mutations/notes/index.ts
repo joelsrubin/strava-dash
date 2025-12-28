@@ -13,7 +13,7 @@ export const useUpdateNoteMutation = (
 			await updateNote({ data: { id, content } });
 			return { id };
 		},
-		mutationKey: ["notes"],
+		mutationKey: ["notes-update"],
 		...options,
 	});
 };
@@ -39,7 +39,7 @@ export const useCreateNoteMutation = (
 		}) => {
 			await createNote({ data: { content, run_id, user_id, activity_date } });
 		},
-		mutationKey: ["notes"],
+		mutationKey: ["notes-create"],
 		...options,
 	});
 };

@@ -1,7 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import DOMPurify from "dompurify";
-import { Footprints, Link2, X } from "lucide-react";
+
+import { ActivityIcon, Link2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useDeleteNoteMutation } from "@/api/mutations/notes";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +40,7 @@ export function NoteCard({
 			<CardHeader>
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-2 text-xs text-muted-foreground">
-						<Footprints className="h-3 w-3" />
+						<ActivityIcon className="h-3 w-3" />
 						{note?.activity_date
 							? new Date(note.activity_date).toLocaleDateString("en-US", {
 									month: "short",
@@ -58,11 +58,16 @@ export function NoteCard({
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Link to={`/dashboard/run/$id`} params={{ id: note.run_id.toString() }}>
+				<Link
+					to={`/dashboard/run/$id`}
+					params={{ id: note.run_id.toString() }}
+					preload={"viewport"}
+				>
 					<p
 						className="text-sm leading-relaxed text-foreground line-clamp-3"
 						//biome-ignore lint/security/noDangerouslySetInnerHtml: sanitizing
-						dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(text) }}
+						dangerouslySetInnerHTML={{ __html: text }}
+						suppressHydrationWarning
 					/>
 				</Link>
 				<div className="flex flex-wrap gap-1.5 pt-2">

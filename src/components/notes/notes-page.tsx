@@ -1,27 +1,40 @@
-import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { useRouteContext, useSearch } from "@tanstack/react-router";
 import { Hash, Search } from "lucide-react";
 import { useState } from "react";
 import { fetchNotesByUserIdOptions } from "@/api/queries/notes";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-import type { User } from "@/db";
+import { getActivityMonth, getActivityYear } from "@/lib/utils";
 import { HashtagsCard } from "./hashtags-card";
 import { NoteCard } from "./note-card";
 
-export default function NotesPage({
-	user,
-	queryClient,
-}: {
-	user: User;
-	queryClient: QueryClient;
-}) {
+export default function NotesPage() {
+	const { user, queryClient } = useRouteContext({
+		from: "/_authed/dashboard/notes",
+	});
 	const { data: notesData } = useSuspenseQuery(
 		fetchNotesByUserIdOptions({ userId: user.id }),
 	);
 
-	const notes = notesData.results;
+	const { year, month } = useSearch({ from: "/_authed/dashboard/notes" });
+
+	const notes = notesData.results.filter((note) => {
+		if (!year) return true;
+
+		if (year) {
+			if (month) {
+				return (
+					getActivityMonth(note.activity_date) === month &&
+					getActivityYear(note.activity_date) === year
+				);
+			}
+			return getActivityYear(note.activity_date) === year;
+		}
+
+		return false;
+	});
 
 	const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
@@ -51,8 +64,8 @@ export default function NotesPage({
 	};
 
 	return (
-		<div className="min-h-screen bg-background p-6 flex mx-auto">
-			<div className="max-w-7xl mx-auto space-y-6">
+		<div className="min-h-screen bg-background p-6 flex w-full">
+			<div className="max-w-7xl space-y-6 w-full">
 				{/* Header */}
 				<div className="flex items-center justify-between">
 					<div>
@@ -72,7 +85,7 @@ export default function NotesPage({
 						placeholder="Search notes..."
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
-						className="pl-10"
+						className="pl-10 text-[16px]"
 					/>
 				</div>
 

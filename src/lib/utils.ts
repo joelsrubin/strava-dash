@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { MONTHS } from "@/constants/months";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -23,6 +24,16 @@ export function formatDate(date: string) {
 	return new Intl.DateTimeFormat("en-US", { dateStyle: "long" }).format(
 		new Date(date),
 	);
+}
+
+export function getActivityYear(date: string) {
+	return new Date(date).getFullYear();
+}
+
+export function getActivityMonth(date: string) {
+	const monthNumber = new Date(date).getMonth();
+	const monthName = MONTHS[monthNumber];
+	return monthName;
 }
 
 export const extractHashtags = (content: string): string[] => {

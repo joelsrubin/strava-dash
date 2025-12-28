@@ -22,6 +22,7 @@ export function useAutosave({
 
 	const mutation = useMutation({
 		mutationFn: onSave,
+		mutationKey: ["auto-save"],
 		onSuccess: (_, content) => {
 			lastSavedContent.current = content;
 		},
