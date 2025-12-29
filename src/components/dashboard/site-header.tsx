@@ -24,12 +24,12 @@ export function SiteHeader({ user }: { user: TAthlete }) {
 				<Separator orientation="vertical" className="mr-2 h-full" />
 				<div className="flex items-center gap-2">
 					<Link to="/dashboard" className="flex items-center gap-2">
-						<span className="mt-2">Dash</span>
-						<Flame className=" text-primary" />
+						<span>Dash</span>
+						<Flame className="mb-2 text-primary" />
 					</Link>
 				</div>
 				<div className="w-full sm:ml-auto sm:w-auto" />
-				<div className="ml-2 self-end justify-end ">
+				<div className="ml-2 ">
 					<NavUser user={user} />
 				</div>
 			</div>
