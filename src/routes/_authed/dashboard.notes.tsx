@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Hash, Search } from "lucide-react";
 import { useState } from "react";
 import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
-import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
+
 import { HashtagsCard } from "@/components/notes/hashtags-card";
 import { NoteCard } from "@/components/notes/note-card";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,19 +16,17 @@ export const Route = createFileRoute("/_authed/dashboard/notes")({
 	pendingComponent: PendingComponent,
 	pendingMinMs: 0,
 
-	loader: async ({ context: { queryClient, athlete } }) => {
-		await queryClient.ensureQueryData(
+	loader: ({ context: { queryClient, athlete } }) => {
+		// Fire-and-forget prefetch - don't block navigation
+		queryClient.ensureQueryData(
 			fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
-		);
-		await queryClient.prefetchInfiniteQuery(
-			fetchAthleteActivitiesQueryOptions(),
 		);
 	},
 	validateSearch: (search: Record<string, unknown>) => {
 		// validate and parse the search params into a typed state
 		return {
-			year: search?.year,
-			month: search?.month,
+			year: search?.year ? Number(search.year) : undefined,
+			month: search?.month ? String(search.month) : undefined,
 		};
 	},
 });

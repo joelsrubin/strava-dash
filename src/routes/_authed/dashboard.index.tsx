@@ -37,10 +37,9 @@ export const Route = createFileRoute("/_authed/dashboard/")({
 	component: RouteComponent,
 	pendingComponent: PendingComponent,
 	pendingMinMs: 0,
-	loader: async ({ context: { queryClient } }) => {
-		await queryClient.prefetchInfiniteQuery(
-			fetchAthleteActivitiesQueryOptions(),
-		);
+	loader: ({ context: { queryClient } }) => {
+		// Fire-and-forget prefetch - don't block navigation
+		queryClient.prefetchInfiniteQuery(fetchAthleteActivitiesQueryOptions());
 	},
 });
 

@@ -45,7 +45,7 @@ function NavItemComponent({
 			<Wrapper>
 				<div className="flex items-center w-full">
 					<Button asChild tooltip={item.title}>
-						<Link to={item.url} className="flex-1">
+						<Link to={item.url} className="flex-1" preload="render">
 							{item.icon && <item.icon />}
 							<span>{item.title}</span>
 						</Link>

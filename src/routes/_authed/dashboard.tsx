@@ -20,14 +20,14 @@ export const Route = createFileRoute("/_authed/dashboard")({
 			throw redirect({ to: "/" });
 		}
 
-		await queryClient.prefetchInfiniteQuery(
-			fetchAthleteActivitiesQueryOptions(),
-		);
+		// Fire-and-forget prefetch - don't block navigation
+		queryClient.prefetchInfiniteQuery(fetchAthleteActivitiesQueryOptions());
 
 		return { athlete };
 	},
-	loader: async ({ context: { queryClient, athlete } }) => {
-		await queryClient.ensureQueryData(
+	loader: ({ context: { queryClient, athlete } }) => {
+		// Fire-and-forget prefetch - don't block navigation
+		queryClient.ensureQueryData(
 			fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 		);
 	},
