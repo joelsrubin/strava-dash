@@ -6,8 +6,9 @@ import {
 	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-
+import { Button } from "@/components/ui/button";
 import {
 	Table,
 	TableBody,
@@ -20,11 +21,15 @@ import {
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+	onLoadMore?: () => void;
+	isLoading: boolean;
 }
 
 export function DataTable<TData, TValue>({
 	columns,
 	data,
+	onLoadMore,
+	isLoading,
 }: DataTableProps<TData, TValue>) {
 	const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -79,8 +84,10 @@ export function DataTable<TData, TValue>({
 									{row.getVisibleCells().map((cell) => (
 										<TableCell
 											key={cell.id}
-											// biome-ignore lint/suspicious/noExplicitAny: False positive due to generic typing
-											className={(cell.column.columnDef as any).meta?.className}
+											className={
+												// biome-ignore lint/suspicious/noExplicitAny: False positive due to generic typing
+												(cell.column.columnDef as any).meta?.className
+											}
 										>
 											{flexRender(
 												cell.column.columnDef.cell,
@@ -100,6 +107,19 @@ export function DataTable<TData, TValue>({
 								</TableCell>
 							</TableRow>
 						)}
+						<TableRow>
+							<TableCell colSpan={columns.length} className="text-center py-4">
+								<Button
+									disabled={isLoading}
+									onClick={onLoadMore}
+									variant="outline"
+									className="w-[50%]"
+								>
+									{isLoading ? "Loading..." : "Load More"}
+									<ChevronDown />
+								</Button>
+							</TableCell>
+						</TableRow>
 					</TableBody>
 				</Table>
 			</div>

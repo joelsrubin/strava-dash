@@ -1,4 +1,4 @@
-import { queryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 
 import { getStravaAccessToken } from "@/api/auth.server";
 
@@ -50,21 +50,28 @@ export function fetchAthleteStatsQueryOptions({
 	});
 }
 
-export const fetchAthleteActivities = async () => {
+export const fetchAthleteActivities = async ({ page }: { page?: number }) => {
 	const token = await getStravaAccessToken();
-	const response = await fetch(`${BASE_URL}/athlete/activities`, {
-		headers: {
-			Authorization: `Bearer ${token}`,
+	const response = await fetch(
+		`${BASE_URL}/athlete/activities?page=${page || 1}`,
+		{
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
 		},
-	});
+	);
 	return response.json() as Promise<TActivity[]>;
 };
 
 export function fetchAthleteActivitiesQueryOptions() {
-	return queryOptions({
+	return infiniteQueryOptions({
 		queryKey: ["athlete-activities"],
-		queryFn: () => fetchAthleteActivities(),
+		queryFn: ({ pageParam }) => fetchAthleteActivities({ page: pageParam }),
 		staleTime: Infinity,
+		initialPageParam: 1,
+		getNextPageParam: (_lastPage, _allPages, lastPageParam) => {
+			return lastPageParam + 1;
+		},
 	});
 }
 

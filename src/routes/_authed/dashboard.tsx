@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authed/dashboard")({
 		}
 		const [athlete] = await Promise.all([
 			queryClient.ensureQueryData(fetchAthleteQueryOptions()),
-			queryClient.ensureQueryData(fetchAthleteActivitiesQueryOptions()),
+			queryClient.prefetchInfiniteQuery(fetchAthleteActivitiesQueryOptions()),
 		]);
 
 		const { user } = await createUserIfNotExists({

@@ -14,7 +14,9 @@ export const Route = createFileRoute("/_authed/dashboard/notes")({
 		await queryClient.ensureQueryData(
 			fetchNotesByUserIdOptions({ userId: user.id }),
 		);
-		await queryClient.ensureQueryData(fetchAthleteActivitiesQueryOptions());
+		await queryClient.prefetchInfiniteQuery(
+			fetchAthleteActivitiesQueryOptions(),
+		);
 	},
 	validateSearch: (search: Record<string, unknown>) => {
 		// validate and parse the search params into a typed state

@@ -1,4 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useSuspenseInfiniteQuery,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
@@ -34,28 +37,32 @@ import { DataTable } from "./-activity-table";
 
 export function ActivitiesPage() {
 	const { isMobile } = useIsMobile();
-	const { data: athleteActivities } = useSuspenseQuery(
-		fetchAthleteActivitiesQueryOptions(),
-	);
+	const {
+		data: athleteActivities,
+		fetchNextPage,
+		isFetching,
+		isFetchingNextPage,
+	} = useSuspenseInfiniteQuery(fetchAthleteActivitiesQueryOptions());
 
-	const distanceData = athleteActivities
+	const activitesToChart = athleteActivities.pages[0];
+	const distanceData = activitesToChart
 		.map((activity, index) => ({
-			distance: activity.distance || athleteActivities[index - 1]?.distance,
+			distance: activity.distance || activitesToChart[index - 1]?.distance,
 		}))
 		.reverse();
 
-	const sufferData = athleteActivities
+	const sufferData = activitesToChart
 		.map((activity, index) => ({
 			suffer:
-				activity.suffer_score || athleteActivities[index - 1]?.suffer_score,
+				activity.suffer_score || activitesToChart[index - 1]?.suffer_score,
 		}))
 		.reverse();
 
-	const heartRateData = athleteActivities
+	const heartRateData = activitesToChart
 		.map((activity, index) => ({
 			heartRate:
 				activity.average_heartrate ||
-				athleteActivities[index - 1]?.average_heartrate,
+				activitesToChart[index - 1]?.average_heartrate,
 		}))
 		.reverse();
 
@@ -331,7 +338,14 @@ export function ActivitiesPage() {
 				)}
 
 				<div className={"bg-muted/50 flex min-h-0 flex-1 flex-col rounded-xl"}>
-					<DataTable columns={columns} data={athleteActivities} />
+					<DataTable
+						columns={columns}
+						data={(athleteActivities.pages.flat() as TActivity[]).filter(
+							(activity) => activity.type === "Run",
+						)}
+						onLoadMore={fetchNextPage}
+						isLoading={isFetchingNextPage || isFetching}
+					/>
 				</div>
 			</div>
 		</SidebarInset>
