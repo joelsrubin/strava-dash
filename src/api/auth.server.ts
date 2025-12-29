@@ -60,6 +60,7 @@ export const refreshStravaAccessToken = createServerFn({
 
 export const getStravaAccessToken = createServerFn({ method: "GET" }).handler(
 	async () => {
+		console.log("FETCHING TOKEN");
 		const session = await useStravaSession();
 		let accessToken = session.data.accessToken;
 
@@ -163,6 +164,7 @@ export const exchangeStravaToken = createServerFn({ method: "POST" })
 
 export const getAthlete = createServerFn({ method: "GET" }).handler(
 	async () => {
+		console.log("FETCHING ATHLETE");
 		const session = await useStravaSession();
 		return session.data?.athlete;
 	},

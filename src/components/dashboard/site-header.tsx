@@ -21,11 +21,11 @@ export function SiteHeader({ user }: { user: TAthlete }) {
 				>
 					<SidebarIcon />
 				</Button>
-				<Separator orientation="vertical" className="mr-2 h-4" />
+				<Separator orientation="vertical" className="mr-2 h-full" />
 				<div className="flex items-center gap-2">
 					<Link to="/dashboard" className="flex items-center gap-2">
-						<span>Dash</span>
-						<Flame className="text-primary" />
+						<span className="mt-2">Dash</span>
+						<Flame className=" text-primary" />
 					</Link>
 				</div>
 				<div className="w-full sm:ml-auto sm:w-auto" />
