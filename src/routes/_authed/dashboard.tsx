@@ -9,7 +9,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
-	beforeLoad: async ({ context: { queryClient } }) => {
+	beforeLoad: async () => {
 		const token = await getStravaAccessToken();
 		if (!token) {
 			throw redirect({ to: "/" });
@@ -21,12 +21,12 @@ export const Route = createFileRoute("/_authed/dashboard")({
 		}
 
 		// Fire-and-forget prefetch - don't block navigation
-		queryClient.prefetchInfiniteQuery(fetchAthleteActivitiesQueryOptions());
 
 		return { athlete };
 	},
 	loader: ({ context: { queryClient, athlete } }) => {
 		// Fire-and-forget prefetch - don't block navigation
+		queryClient.prefetchInfiniteQuery(fetchAthleteActivitiesQueryOptions());
 		queryClient.ensureQueryData(
 			fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 		);
