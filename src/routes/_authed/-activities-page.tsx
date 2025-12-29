@@ -98,6 +98,7 @@ export function ActivitiesPage() {
 						</Button>
 					);
 				},
+
 				cell: ({ row }) => {
 					return (
 						<div>{new Date(row.original.start_date).toLocaleDateString()}</div>
@@ -144,6 +145,9 @@ export function ActivitiesPage() {
 						</Button>
 					);
 				},
+				meta: {
+					className: "hidden md:table-cell", // hidden on mobile
+				},
 				cell: ({ row }) => {
 					if (!row.original.moving_time) return <div>no data</div>;
 					if (row.original.moving_time > 3600) {
@@ -175,6 +179,10 @@ export function ActivitiesPage() {
 						</Button>
 					);
 				},
+
+				meta: {
+					className: "hidden md:table-cell", // hidden on mobile
+				},
 				cell: ({ row }) => {
 					return <div>{row.original.total_elevation_gain.toFixed(0)} ft</div>;
 				},
@@ -194,6 +202,9 @@ export function ActivitiesPage() {
 							<ArrowUpDown className="ml-2 h-4 w-4" />
 						</Button>
 					);
+				},
+				meta: {
+					className: "hidden md:table-cell", // hidden on mobile
 				},
 				cell: ({ row }) => {
 					if (!row.original.average_heartrate) return <div>no data</div>;
@@ -215,6 +226,9 @@ export function ActivitiesPage() {
 							<ArrowUpDown className="ml-2 h-4 w-4" />
 						</Button>
 					);
+				},
+				meta: {
+					className: "hidden md:table-cell", // hidden on mobile
 				},
 				cell: ({ row }) => {
 					if (!row.original.max_heartrate) return <div>no data</div>;
@@ -256,20 +270,8 @@ export function ActivitiesPage() {
 	);
 
 	return (
-		<SidebarInset
-			className={
-				isMobile
-					? "flex flex-1 flex-col overflow-auto"
-					: "flex min-h-0 flex-1 flex-col"
-			}
-		>
-			<div
-				className={
-					isMobile
-						? "flex flex-1 flex-col gap-4 p-4"
-						: "flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"
-				}
-			>
+		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
+			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
 				{!isMobile && (
 					<div className="sm:grid auto-rows-min gap-4 md:grid-cols-3 hidden">
 						<div className="bg-muted/50 rounded-xl">
@@ -328,13 +330,7 @@ export function ActivitiesPage() {
 					</div>
 				)}
 
-				<div
-					className={
-						isMobile
-							? "bg-muted/50 flex flex-col rounded-xl"
-							: "bg-muted/50 flex min-h-0 flex-1 flex-col rounded-xl"
-					}
-				>
+				<div className={"bg-muted/50 flex min-h-0 flex-1 flex-col rounded-xl"}>
 					<DataTable columns={columns} data={athleteActivities} />
 				</div>
 			</div>

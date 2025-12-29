@@ -10,7 +10,6 @@ import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { createUserIfNotExists } from "@/db";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
@@ -40,23 +39,16 @@ export const Route = createFileRoute("/_authed/dashboard")({
 });
 
 function RouteComponent() {
-	const { isMobile } = useIsMobile();
 	const { user } = Route.useRouteContext();
 	const { data: athlete } = useSuspenseQuery(fetchAthleteQueryOptions());
 	const { data: notes } = useSuspenseQuery(
 		fetchNotesByUserIdOptions({ userId: user.id }),
 	);
 	return (
-		<div
-			className={
-				isMobile
-					? "min-h-screen [--header-height:calc(--spacing(14))]"
-					: "h-screen overflow-hidden [--header-height:calc(--spacing(14))]"
-			}
-		>
+		<div className="h-dvh overflow-hidden [--header-height:calc(--spacing(14))]">
 			<SidebarProvider className="flex h-full flex-col">
 				<SiteHeader user={athlete} />
-				<div className={isMobile ? "flex flex-1" : "flex min-h-0 flex-1"}>
+				<div className="flex min-h-0 flex-1">
 					<AppSidebar user={athlete} notes={notes.results} />
 					<Outlet />
 				</div>
