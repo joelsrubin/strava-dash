@@ -6,9 +6,9 @@
 		"dev": "vite dev --port 5173",
 		"build": "vite build",
 		"test": "vitest run",
-		"lint": "eslint",
-		"format": "prettier",
-		"check": "prettier --write . && eslint --fix",
+		"lint": "biome lint",
+		"format": "biome format --write",
+		"check": "biome check",
 		"deploy": "npm run build && wrangler deploy",
 		"preview": "npm run build && vite preview",
 		"cf-typegen": "wrangler types"

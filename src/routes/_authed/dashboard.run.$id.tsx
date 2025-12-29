@@ -1,10 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
-import {
-	fetchActivityQueryOptions,
-	fetchAthleteQueryOptions,
-} from "@/api/queries/strava";
+import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import { PendingComponent } from "./-pending-component";
 import { RunDetailsPage } from "./-run-details-page";
 
@@ -17,13 +14,12 @@ export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 		await queryClient.ensureQueryData(
 			fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
 		);
-		await queryClient.ensureQueryData(fetchAthleteQueryOptions());
 	},
 });
 
 function RouteComponent() {
 	const { id } = Route.useParams();
-	const { user, queryClient } = Route.useRouteContext();
+	const { queryClient } = Route.useRouteContext();
 
-	return <RunDetailsPage id={id} user={user} queryClient={queryClient} />;
+	return <RunDetailsPage id={id} queryClient={queryClient} />;
 }

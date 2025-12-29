@@ -4,6 +4,7 @@ type SessionData = {
 	accessToken?: string;
 	refreshToken?: string;
 	expiresAt?: number;
+	athlete?: TAthlete;
 };
 export function useStravaSession() {
 	return useSession<SessionData>({

@@ -1,21 +1,15 @@
 import { type QueryClient, useSuspenseQuery } from "@tanstack/react-query";
-
+import { useRouteContext } from "@tanstack/react-router";
 import { Suspense } from "react";
-
 import { toast } from "sonner";
 import {
 	useCreateNoteMutation,
 	useUpdateNoteMutation,
 } from "@/api/mutations/notes";
-
 import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
-import {
-	fetchActivityQueryOptions,
-	fetchAthleteQueryOptions,
-} from "@/api/queries/strava";
+import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import ActivityMap from "@/components/activity-map/activity-map";
 import Tiptap from "@/components/editor/tip-tap";
-
 import { SidebarInset } from "@/components/ui/sidebar";
 import {
 	Table,
@@ -25,27 +19,23 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-
 import { useAutosave } from "@/hooks/use-autosave";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { formatDistance, formatTime } from "@/lib/utils";
+import { formatDistance, formatPace, formatTime } from "@/lib/utils";
 
 export function RunDetailsPage({
 	id,
 	queryClient,
 }: {
 	id: string;
-
 	queryClient: QueryClient;
 }) {
 	const { isMobile } = useIsMobile();
-
+	const { athlete } = useRouteContext({ from: "/_authed/dashboard/run/$id" });
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
 	const { data: note } = useSuspenseQuery(
 		fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
 	);
-
-	const { data: athlete } = useSuspenseQuery(fetchAthleteQueryOptions());
 
 	const didInitializeWithNote = Boolean(
 		note.results.length > 0 && note.results[0].id,
@@ -109,50 +99,28 @@ export function RunDetailsPage({
 								</TableRow>
 							</TableHeader>
 							<TableBody className="">
-								<TableRow className="overflow-x-scroll">
-									<TableCell className="py-2 font-medium">Name</TableCell>
-									<TableCell className="py-2">{activity.name}</TableCell>
-								</TableRow>
-								<TableRow className="overflow-x-scroll">
-									<TableCell className="py-2 font-medium">Distance</TableCell>
-									<TableCell className="py-2">
-										{formatDistance(activity.distance)}
-									</TableCell>
-								</TableRow>
-								<TableRow className="overflow-x-scroll">
-									<TableCell className="py-2 font-medium">
-										Moving Time
-									</TableCell>
-									<TableCell className="py-2">
-										{formatTime(activity.moving_time)}
-									</TableCell>
-								</TableRow>
-								<TableRow className="overflow-x-scroll">
-									<TableCell className="py-2 font-medium">Gear</TableCell>
-									<TableCell className="py-2">{activity.gear.name}</TableCell>
-								</TableRow>
-								<TableRow>
-									<TableCell className="py-2 font-medium">Average HR</TableCell>
-									<TableCell className="py-2">
-										{activity.average_heartrate
-											? `${activity.average_heartrate} bpm`
-											: "no data"}
-									</TableCell>
-								</TableRow>
-								<TableRow>
-									<TableCell className="py-2 font-medium">
-										Average Cadence
-									</TableCell>
-									<TableCell className="py-2">
-										{activity.average_cadence
-											? `${activity.average_cadence} spm`
-											: "no data"}
-									</TableCell>
-								</TableRow>
-								<TableRow>
-									<TableCell className="py-2 font-medium">Sport Type</TableCell>
-									<TableCell className="py-2">{activity.sport_type}</TableCell>
-								</TableRow>
+								<DetailsTableRow label="Name" value={activity.name} />
+								<DetailsTableRow
+									label="Distance"
+									value={formatDistance(activity.distance)}
+								/>
+								<DetailsTableRow
+									label="Moving Time"
+									value={formatTime(activity.moving_time)}
+								/>
+
+								<DetailsTableRow
+									label="Average Pace"
+									value={`${formatPace(activity.average_speed)} min/mi`}
+								/>
+								<DetailsTableRow
+									label="Average Cadence"
+									value={`${activity.average_cadence} spm`}
+								/>
+								<DetailsTableRow
+									label="Gear"
+									value={activity.gear?.name || "No gear"}
+								/>
 							</TableBody>
 						</Table>
 					</div>
@@ -177,5 +145,20 @@ export function RunDetailsPage({
 				</div>
 			</div>
 		</SidebarInset>
+	);
+}
+
+function DetailsTableRow({
+	label,
+	value,
+}: {
+	label: string;
+	value: string | number;
+}) {
+	return (
+		<TableRow>
+			<TableCell className="py-2 font-medium">{label}</TableCell>
+			<TableCell className="py-2">{value}</TableCell>
+		</TableRow>
 	);
 }

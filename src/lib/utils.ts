@@ -26,6 +26,22 @@ export function formatDate(date: string) {
 	);
 }
 
+export function formatPace(metersPerSecond: number) {
+	if (!metersPerSecond || metersPerSecond <= 0) return "--:--";
+
+	const metersPerMile = 1609.34;
+	const minutesPerMile = metersPerMile / (metersPerSecond * 60);
+
+	const minutes = Math.floor(minutesPerMile);
+	const seconds = Math.round((minutesPerMile - minutes) * 60);
+
+	if (seconds === 60) {
+		return `${minutes + 1}:00`;
+	}
+
+	return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export function getActivityYear(date: string) {
 	return new Date(date).getFullYear();
 }

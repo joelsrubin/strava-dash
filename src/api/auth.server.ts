@@ -3,6 +3,7 @@
 import { env } from "cloudflare:workers";
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { fetchAthlete } from "./queries/strava";
 import { useStravaSession } from "./session";
 
 export const refreshStravaAccessToken = createServerFn({
@@ -39,10 +40,13 @@ export const refreshStravaAccessToken = createServerFn({
 		refresh_token: string;
 	};
 
+	const athlete = await fetchAthlete();
+
 	await session.update({
 		accessToken: data.access_token,
 		refreshToken: data.refresh_token,
 		expiresAt: data.expires_at,
+		athlete: athlete,
 	});
 
 	return data.access_token;
@@ -73,6 +77,7 @@ export const setStravaAccessToken = createServerFn({ method: "POST" })
 			access_token: string;
 			expires_at: number;
 			refresh_token: string;
+			athlete: TAthlete;
 		}) => data,
 	)
 	.handler(async ({ data }) => {
@@ -82,6 +87,7 @@ export const setStravaAccessToken = createServerFn({ method: "POST" })
 			accessToken: data.access_token,
 			refreshToken: data.refresh_token,
 			expiresAt: data.expires_at,
+			athlete: data.athlete,
 		});
 
 		return data.access_token;
@@ -123,11 +129,14 @@ export const exchangeStravaToken = createServerFn({ method: "POST" })
 			refresh_token: string;
 		};
 
+		const athlete = await fetchAthlete();
+
 		await setStravaAccessToken({
 			data: {
 				access_token: tokenData.access_token,
 				expires_at: tokenData.expires_at,
 				refresh_token: tokenData.refresh_token,
+				athlete: athlete,
 			},
 		});
 
@@ -136,3 +145,10 @@ export const exchangeStravaToken = createServerFn({ method: "POST" })
 			to: "/dashboard",
 		});
 	});
+
+export const getAthlete = createServerFn({ method: "GET" }).handler(
+	async () => {
+		const session = await useStravaSession();
+		return session.data?.athlete;
+	},
+);
