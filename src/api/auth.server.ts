@@ -3,7 +3,6 @@
 import { env } from "cloudflare:workers";
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { fetchAthlete } from "./queries/strava";
 import { useStravaSession } from "./session";
 
 export const refreshStravaAccessToken = createServerFn({
@@ -40,7 +39,14 @@ export const refreshStravaAccessToken = createServerFn({
 		refresh_token: string;
 	};
 
-	const athlete = await fetchAthlete();
+	// Fetch athlete using the NEW token directly to avoid circular dependency
+	// (fetchAthlete() calls getStravaAccessToken() which would trigger another refresh)
+	const athleteResponse = await fetch("https://www.strava.com/api/v3/athlete", {
+		headers: {
+			Authorization: `Bearer ${data.access_token}`,
+		},
+	});
+	const athlete = (await athleteResponse.json()) as TAthlete;
 
 	await session.update({
 		accessToken: data.access_token,
@@ -129,7 +135,16 @@ export const exchangeStravaToken = createServerFn({ method: "POST" })
 			refresh_token: string;
 		};
 
-		const athlete = await fetchAthlete();
+		// Fetch athlete using the NEW token directly to avoid circular dependency
+		const athleteResponse = await fetch(
+			"https://www.strava.com/api/v3/athlete",
+			{
+				headers: {
+					Authorization: `Bearer ${tokenData.access_token}`,
+				},
+			},
+		);
+		const athlete = (await athleteResponse.json()) as TAthlete;
 
 		await setStravaAccessToken({
 			data: {
