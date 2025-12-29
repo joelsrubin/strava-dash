@@ -60,9 +60,10 @@ function RouteComponent() {
 		}))
 		.reverse();
 
-	const paceData = activitesToChart
-		.map((activity) => ({
-			average_speed: formatPace(activity.average_speed),
+	const sufferData = activitesToChart
+		.map((activity, index) => ({
+			sufferScore:
+				activity.suffer_score || activitesToChart[index - 1]?.suffer_score || 0,
 		}))
 		.reverse();
 
@@ -81,13 +82,13 @@ function RouteComponent() {
 		},
 	} satisfies ChartConfig;
 
-	const paceConfig = {
-		average_speed: {
-			label: "Pace (min/mi)",
+	const sufferConfig = {
+		sufferScore: {
+			label: "Effort",
 			color: "var(--primary)",
 		},
 	} satisfies ChartConfig;
-	console.log({ heartRateData, paceData, distanceData });
+
 	const heartRateConfig = {
 		heartRate: {
 			label: "Heart Rate",
@@ -335,15 +336,16 @@ function RouteComponent() {
 							</ChartContainer>
 						</div>
 						<div className="bg-muted/50 rounded-xl">
-							<h2 className="p-2 flex items-center gap-2">Pace</h2>
-							<ChartContainer config={paceConfig}>
-								<LineChart className=" w-full" data={paceData}>
+							<h2 className="p-2 flex items-center gap-2">Effort</h2>
+							<ChartContainer config={sufferConfig}>
+								<LineChart className=" w-full" data={sufferData}>
 									<CartesianGrid vertical={false} />
 									<Line
 										isAnimationActive={false}
-										dataKey="average_speed"
-										stroke="var(--color-suffer)"
+										dataKey="sufferScore"
+										stroke="var(--color-sufferScore)"
 										dot={false}
+										strokeWidth={2}
 									/>
 								</LineChart>
 							</ChartContainer>
