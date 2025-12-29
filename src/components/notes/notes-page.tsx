@@ -64,10 +64,10 @@ export default function NotesPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-background p-6 flex w-full">
-			<div className="max-w-7xl space-y-6 w-full">
+		<div className="h-full flex flex-col bg-background p-6 w-full overflow-hidden">
+			<div className="max-w-7xl space-y-6 w-full flex flex-col min-h-0 flex-1">
 				{/* Header */}
-				<div className="flex items-center justify-between">
+				<div className="flex items-center justify-between shrink-0">
 					<div>
 						<h1 className="text-4xl font-bold text-foreground">
 							Training Notes
@@ -79,7 +79,7 @@ export default function NotesPage() {
 				</div>
 
 				{/* Search Bar */}
-				<div className="relative">
+				<div className="relative shrink-0">
 					<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
 					<Input
 						placeholder="Search notes..."
@@ -90,41 +90,45 @@ export default function NotesPage() {
 				</div>
 
 				{/* Hashtag Filter Pills */}
-				<HashtagsCard
-					allHashtags={allHashtags}
-					selectedHashtags={selectedHashtags}
-					toggleHashtag={toggleHashtag}
-					setSelectedHashtags={setSelectedHashtags}
-				/>
-
-				{/* Notes Grid */}
-				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-					{filteredNotes.map((note) => (
-						<NoteCard
-							queryClient={queryClient}
-							key={note.id}
-							note={note}
-							toggleHashtag={toggleHashtag}
-						/>
-					))}
+				<div className="shrink-0">
+					<HashtagsCard
+						allHashtags={allHashtags}
+						selectedHashtags={selectedHashtags}
+						toggleHashtag={toggleHashtag}
+						setSelectedHashtags={setSelectedHashtags}
+					/>
 				</div>
 
-				{/* Empty State */}
-				{filteredNotes.length === 0 && (
-					<Card className="border-dashed">
-						<CardContent className="flex flex-col items-center justify-center py-16 text-center">
-							<Hash className="h-12 w-12 text-muted-foreground mb-4" />
-							<h3 className="text-lg font-semibold text-foreground mb-2">
-								No notes found
-							</h3>
-							<p className="text-muted-foreground max-w-md">
-								{selectedHashtags.length > 0 || searchQuery
-									? "Try adjusting your filters or search query"
-									: "Start tracking your training journey by adding your first note"}
-							</p>
-						</CardContent>
-					</Card>
-				)}
+				{/* Notes Grid - Scrollable */}
+				<div className="flex-1 overflow-auto min-h-0 -mx-1 px-1">
+					<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 pb-6 pt-1">
+						{filteredNotes.map((note) => (
+							<NoteCard
+								queryClient={queryClient}
+								key={note.id}
+								note={note}
+								toggleHashtag={toggleHashtag}
+							/>
+						))}
+					</div>
+
+					{/* Empty State */}
+					{filteredNotes.length === 0 && (
+						<Card className="border-dashed">
+							<CardContent className="flex flex-col items-center justify-center py-16 text-center">
+								<Hash className="h-12 w-12 text-muted-foreground mb-4" />
+								<h3 className="text-lg font-semibold text-foreground mb-2">
+									No notes found
+								</h3>
+								<p className="text-muted-foreground max-w-md">
+									{selectedHashtags.length > 0 || searchQuery
+										? "Try adjusting your filters or search query"
+										: "Start tracking your training journey by adding your first note"}
+								</p>
+							</CardContent>
+						</Card>
+					)}
+				</div>
 			</div>
 		</div>
 	);
