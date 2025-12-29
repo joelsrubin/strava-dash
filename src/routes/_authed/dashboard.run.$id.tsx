@@ -167,7 +167,9 @@ function DetailsTableRow({
 	return (
 		<TableRow>
 			<TableCell className="py-2 font-medium">{label}</TableCell>
-			<TableCell className="py-2">{value}</TableCell>
+			<TableCell className="py-2 whitespace-normal wrap-break-word">
+				{value}
+			</TableCell>
 		</TableRow>
 	);
 }
