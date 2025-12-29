@@ -14,15 +14,23 @@ export function fetchNoteByRunIdQueryOptions({ runId }: { runId: number }) {
 	});
 }
 
-export const fetchNotesByUserId = async ({ userId }: { userId: number }) => {
-	const notes = await getNotesByUserId({ data: { user_id: userId } });
+export const fetchNotesByStravaId = async ({
+	stravaId,
+}: {
+	stravaId: number;
+}) => {
+	const notes = await getNotesByUserId({ data: { strava_id: stravaId } });
 	return notes;
 };
 
-export function fetchNotesByUserIdOptions({ userId }: { userId: number }) {
+export function fetchNotesByStravaIdQueryOptions({
+	stravaId,
+}: {
+	stravaId: number;
+}) {
 	return queryOptions({
-		queryKey: ["notes", userId],
-		queryFn: () => fetchNotesByUserId({ userId }),
+		queryKey: ["notes", stravaId],
+		queryFn: () => fetchNotesByStravaId({ stravaId }),
 		staleTime: Infinity,
 	});
 }

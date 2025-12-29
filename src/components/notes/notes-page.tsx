@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouteContext, useSearch } from "@tanstack/react-router";
 import { Hash, Search } from "lucide-react";
 import { useState } from "react";
-import { fetchNotesByUserIdOptions } from "@/api/queries/notes";
+import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
@@ -11,11 +11,11 @@ import { HashtagsCard } from "./hashtags-card";
 import { NoteCard } from "./note-card";
 
 export default function NotesPage() {
-	const { user, queryClient } = useRouteContext({
+	const { athlete, queryClient } = useRouteContext({
 		from: "/_authed/dashboard/notes",
 	});
 	const { data: notesData } = useSuspenseQuery(
-		fetchNotesByUserIdOptions({ userId: user.id }),
+		fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 	);
 
 	const { year, month } = useSearch({ from: "/_authed/dashboard/notes" });

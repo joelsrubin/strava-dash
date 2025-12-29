@@ -7,14 +7,16 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { useSession } from "@tanstack/react-start/server";
+import { fetchAthleteQueryOptions } from "@/api/queries/strava";
+import { useStravaSession } from "@/api/session";
 import { Toaster } from "@/components/ui/sonner";
-import type { User } from "@/db";
 import { getThemeScript, ThemeProvider } from "@/lib/theme";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
-	user: User;
+	athlete: TAthlete;
 }>()({
 	head: () => ({
 		meta: [
@@ -36,6 +38,10 @@ export const Route = createRootRouteWithContext<{
 			},
 		],
 	}),
+	// beforeLoad: async ({context: {queryClient}}) => {
+	// 	const session = await useStravaSession()
+	// 	const athlete = await 	queryClient.ensureQueryData(fetchAthleteQueryOptions()),
+	// }
 	notFoundComponent: () => <div>Not Found</div>,
 	shellComponent: RootDocument,
 });

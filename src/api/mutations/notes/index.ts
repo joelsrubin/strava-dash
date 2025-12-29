@@ -22,22 +22,22 @@ export const useCreateNoteMutation = (
 	options?: UseMutationOptions<
 		void,
 		Error,
-		Pick<Note, "content" | "run_id" | "user_id" | "activity_date">
+		Pick<Note, "content" | "run_id" | "strava_id" | "activity_date">
 	>,
 ) => {
 	return useMutation({
 		mutationFn: async ({
 			content,
 			run_id,
-			user_id,
+			strava_id,
 			activity_date,
 		}: {
 			content: string;
 			run_id: number;
-			user_id: number;
+			strava_id: number;
 			activity_date: string;
 		}) => {
-			await createNote({ data: { content, run_id, user_id, activity_date } });
+			await createNote({ data: { content, run_id, strava_id, activity_date } });
 		},
 		mutationKey: ["notes-create"],
 		...options,

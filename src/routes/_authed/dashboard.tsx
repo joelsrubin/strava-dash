@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { getStravaAccessToken } from "@/api/auth.server";
-import { fetchNotesByUserIdOptions } from "@/api/queries/notes";
+import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
 import {
 	fetchAthleteActivitiesQueryOptions,
 	fetchAthleteQueryOptions,
@@ -9,7 +9,6 @@ import {
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { createUserIfNotExists } from "@/db";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
@@ -23,26 +22,20 @@ export const Route = createFileRoute("/_authed/dashboard")({
 			queryClient.prefetchInfiniteQuery(fetchAthleteActivitiesQueryOptions()),
 		]);
 
-		const { user } = await createUserIfNotExists({
-			data: {
-				name: `${athlete.firstname} ${athlete.lastname}`,
-				strava_id: athlete.id,
-			},
-		});
-		return { user };
+		return { athlete };
 	},
-	loader: async ({ context: { queryClient, user } }) => {
+	loader: async ({ context: { queryClient, athlete } }) => {
 		await queryClient.ensureQueryData(
-			fetchNotesByUserIdOptions({ userId: user.id }),
+			fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 		);
 	},
 });
 
 function RouteComponent() {
-	const { user } = Route.useRouteContext();
-	const { data: athlete } = useSuspenseQuery(fetchAthleteQueryOptions());
+	const { athlete } = Route.useRouteContext();
+
 	const { data: notes } = useSuspenseQuery(
-		fetchNotesByUserIdOptions({ userId: user.id }),
+		fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 	);
 	return (
 		<div className="h-dvh overflow-hidden [--header-height:calc(--spacing(14))]">

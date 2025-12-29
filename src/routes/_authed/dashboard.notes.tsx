@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { fetchNotesByUserIdOptions } from "@/api/queries/notes";
+import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
 import NotesPage from "@/components/notes/notes-page";
 import { PendingComponent } from "./-pending-component";
@@ -10,9 +10,9 @@ export const Route = createFileRoute("/_authed/dashboard/notes")({
 	pendingComponent: PendingComponent,
 	pendingMinMs: 0,
 
-	loader: async ({ context: { queryClient, user } }) => {
+	loader: async ({ context: { queryClient, athlete } }) => {
 		await queryClient.ensureQueryData(
-			fetchNotesByUserIdOptions({ userId: user.id }),
+			fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 		);
 		await queryClient.prefetchInfiniteQuery(
 			fetchAthleteActivitiesQueryOptions(),

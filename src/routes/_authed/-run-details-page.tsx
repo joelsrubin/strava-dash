@@ -7,9 +7,12 @@ import {
 	useCreateNoteMutation,
 	useUpdateNoteMutation,
 } from "@/api/mutations/notes";
-import { fetchAthleteByStravaIdQueryOptions } from "@/api/queries/athlete";
+
 import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
-import { fetchActivityQueryOptions } from "@/api/queries/strava";
+import {
+	fetchActivityQueryOptions,
+	fetchAthleteQueryOptions,
+} from "@/api/queries/strava";
 import ActivityMap from "@/components/activity-map/activity-map";
 import Tiptap from "@/components/editor/tip-tap";
 
@@ -23,18 +26,16 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 
-import type { User } from "@/db";
 import { useAutosave } from "@/hooks/use-autosave";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatDistance, formatTime } from "@/lib/utils";
 
 export function RunDetailsPage({
 	id,
-	user,
 	queryClient,
 }: {
 	id: string;
-	user: User;
+
 	queryClient: QueryClient;
 }) {
 	const { isMobile } = useIsMobile();
@@ -44,11 +45,7 @@ export function RunDetailsPage({
 		fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
 	);
 
-	const { data: athlete } = useSuspenseQuery(
-		fetchAthleteByStravaIdQueryOptions({
-			stravaId: Number(activity.athlete.id),
-		}),
-	);
+	const { data: athlete } = useSuspenseQuery(fetchAthleteQueryOptions());
 
 	const didInitializeWithNote = Boolean(
 		note.results.length > 0 && note.results[0].id,
@@ -57,7 +54,7 @@ export function RunDetailsPage({
 	const { mutate: updateNoteFn, isPending: updateNoteIsPending } =
 		useUpdateNoteMutation({
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ["notes", user.id] });
+				queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
 				queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
 			},
 			onError: () => {
@@ -67,7 +64,7 @@ export function RunDetailsPage({
 	const { mutate: createNoteFn, isPending: createNoteIsPending } =
 		useCreateNoteMutation({
 			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ["notes", user.id] });
+				queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
 				queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
 			},
 			onError: () => {
@@ -85,7 +82,7 @@ export function RunDetailsPage({
 			updateNoteFn({ id: note.results[0].id, content });
 		} else {
 			createNoteFn({
-				user_id: Number(athlete.results[0].id),
+				strava_id: Number(athlete.id),
 				run_id: Number(id),
 				activity_date: activity?.start_date,
 				content,
