@@ -62,16 +62,22 @@ function RouteComponent() {
 		new Set(notes.flatMap((note) => note.hashtags)),
 	).sort() as string[];
 
-	// Filter notes based on selected hashtags and search query
-	const filteredNotes = notes.filter((note) => {
-		const matchesHashtags =
-			selectedHashtags.length === 0 ||
-			selectedHashtags.some((tag) => note.hashtags.includes(tag));
-		const matchesSearch =
-			searchQuery === "" ||
-			note.content.toLowerCase().includes(searchQuery.toLowerCase());
-		return matchesHashtags && matchesSearch;
-	});
+	// Filter and sort notes based on selected hashtags and search query (newest first)
+	const filteredNotes = notes
+		.filter((note) => {
+			const matchesHashtags =
+				selectedHashtags.length === 0 ||
+				selectedHashtags.some((tag) => note.hashtags.includes(tag));
+			const matchesSearch =
+				searchQuery === "" ||
+				note.content.toLowerCase().includes(searchQuery.toLowerCase());
+			return matchesHashtags && matchesSearch;
+		})
+		.sort(
+			(a, b) =>
+				new Date(b.activity_date).getTime() -
+				new Date(a.activity_date).getTime(),
+		);
 
 	const toggleHashtag = (hashtag: string) => {
 		setSelectedHashtags((prev) =>

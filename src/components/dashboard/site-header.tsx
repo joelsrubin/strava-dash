@@ -29,7 +29,7 @@ export function SiteHeader({ user }: { user: TAthlete }) {
 					</Link>
 				</div>
 				<div className="w-full sm:ml-auto sm:w-auto" />
-				<div className="ml-2 ">
+				<div className="ml-2">
 					<NavUser user={user} />
 				</div>
 			</div>
