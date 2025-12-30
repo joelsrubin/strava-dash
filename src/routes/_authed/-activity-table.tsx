@@ -112,8 +112,8 @@ export function DataTable<TData, TValue>({
 								<Button
 									disabled={isLoading}
 									onClick={onLoadMore}
-									variant="outline"
-									className="w-[50%]"
+									variant="ghost"
+									className="w-full"
 								>
 									{isLoading ? "Loading..." : "Load More"}
 									<ChevronDown />

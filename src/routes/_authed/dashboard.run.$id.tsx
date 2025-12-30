@@ -117,7 +117,14 @@ export function RouteComponent() {
 									label="Moving Time"
 									value={formatTime(activity.moving_time)}
 								/>
-
+								<DetailsTableRow
+									label="Average HR"
+									value={
+										activity.average_heartrate
+											? `${activity.average_heartrate.toFixed(0)} bpm`
+											: "N/A"
+									}
+								/>
 								<DetailsTableRow
 									label="Average Pace"
 									value={`${formatPace(activity.average_speed)} min/mi`}
