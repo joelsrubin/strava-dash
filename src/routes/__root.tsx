@@ -26,13 +26,48 @@ export const Route = createRootRouteWithContext<{
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "Dash",
+				title: "not so fast",
+			},
+
+			// Open Graph / Facebook
+			{
+				property: "og:type",
+				content: "website",
+			},
+			{
+				property: "og:url",
+				content: "https://notsofast.run",
+			},
+			{
+				property: "og:title",
+				content: "not so fast",
+			},
+			{
+				property: "og:description",
+				content: "Keep your runs public and your thoughts private",
+			},
+			{
+				property: "og:image",
+				content: "/og-image.jpg",
 			},
 		],
 		links: [
 			{
 				rel: "stylesheet",
 				href: appCss,
+			},
+			// Favicon
+			{
+				rel: "icon",
+				type: "image/svg+xml",
+				href: "/favicon.svg",
+			},
+
+			// Apple Touch Icons
+			{
+				rel: "apple-touch-icon",
+				sizes: "180x180",
+				href: "/apple-touch-icon.png",
 			},
 		],
 	}),
@@ -46,7 +81,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
-				<link rel="icon" href="/favicon.svg" />
 				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: just going for it */}
 				<script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
 			</head>

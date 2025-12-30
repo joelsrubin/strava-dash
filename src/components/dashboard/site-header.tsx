@@ -24,8 +24,8 @@ export function SiteHeader({ user }: { user: TAthlete }) {
 				<Separator orientation="vertical" className="mr-2 h-full" />
 				<div className="flex items-center gap-2">
 					<Link to="/dashboard" className="flex items-center gap-2">
-						<span>Dash</span>
 						<Flame className="mb-2 text-primary" />
+						<span>not so fast</span>
 					</Link>
 				</div>
 				<div className="w-full sm:ml-auto sm:w-auto" />
