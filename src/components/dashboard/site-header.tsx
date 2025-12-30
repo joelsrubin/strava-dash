@@ -25,7 +25,7 @@ export function SiteHeader({ user }: { user: TAthlete }) {
 				<div className="flex items-center gap-2">
 					<Link to="/dashboard" className="flex items-center gap-2">
 						<Flame className="mb-2 text-primary" />
-						<span>not so fast</span>
+						<span className="hidden md:inline">not so fast</span>
 					</Link>
 				</div>
 				<div className="w-full sm:ml-auto sm:w-auto" />
