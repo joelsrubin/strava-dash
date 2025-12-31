@@ -44,7 +44,7 @@ export const Route = createRootRouteWithContext<{
 			},
 			{
 				property: "og:description",
-				content: "public runs; private thoughts",
+				content: "public runs. private thoughts.",
 			},
 			{
 				property: "og:image",
