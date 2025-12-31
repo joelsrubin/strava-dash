@@ -93,7 +93,6 @@ export function RouteComponent() {
 		onSave: (content) => handleSave(content),
 		debounceMs: 2500,
 	});
-
 	return (
 		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
 			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>

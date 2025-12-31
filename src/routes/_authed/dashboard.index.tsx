@@ -248,7 +248,7 @@ function RouteComponent() {
 				},
 			},
 			{
-				accessorKey: "max_heartrate",
+				accessorKey: "kudos_count",
 				header: ({ column }) => {
 					return (
 						<Button
@@ -258,17 +258,15 @@ function RouteComponent() {
 								column.toggleSorting(column.getIsSorted() === "asc")
 							}
 						>
-							Max Heart Rate
+							Kudos
 							<ArrowUpDown className="ml-2 h-4 w-4" />
 						</Button>
 					);
 				},
-				meta: {
-					className: "hidden md:table-cell", // hidden on mobile
-				},
+
 				cell: ({ row }) => {
-					if (!row.original.max_heartrate) return <div>no data</div>;
-					return <div>{row.original.max_heartrate} bpm</div>;
+					if (!row.original.kudos_count) return <div>no data</div>;
+					return <div>🎉 {row.original.kudos_count}</div>;
 				},
 			},
 
