@@ -1,6 +1,5 @@
 "use client";
 
-import { useLocation } from "@tanstack/react-router";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import { Slot } from "radix-ui";
@@ -124,14 +123,6 @@ function SidebarProvider({
 		}),
 		[state, open, setOpen, isMobile, openMobile, toggleSidebar],
 	);
-
-	const location = useLocation();
-	const pathname = location.pathname;
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
-	React.useEffect(() => {
-		setOpenMobile(false);
-	}, [pathname]);
 
 	return (
 		<SidebarContext.Provider value={contextValue}>
