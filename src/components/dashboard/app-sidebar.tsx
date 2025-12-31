@@ -26,17 +26,22 @@ export function AppSidebar({
 			const month = getActivityMonth(note.activity_date);
 
 			if (!acc[year]) {
-				acc[year] = new Set();
+				acc[year] = {};
 			}
-			acc[year].add(month);
+			if (!acc[year][month]) {
+				acc[year][month] = 0;
+			}
+			acc[year][month]++;
 
 			return acc;
 		},
-		{} as Record<string, Set<string>>,
+		{} as Record<string, Record<string, number>>,
 	);
 	const availableYears = Object.keys(notesByYear).sort((a, b) =>
 		b.localeCompare(a),
 	);
+
+	console.log({ notesByYear });
 
 	const data = useMemo(
 		() => ({
@@ -51,13 +56,14 @@ export function AppSidebar({
 					url: "/dashboard/notes",
 					icon: Notebook,
 					items: availableYears.map((year) => {
-						const monthsInYear = Array.from(notesByYear[year] || []);
+						const monthsInYear = Object.entries(notesByYear[year] || {});
 						return {
 							title: year,
 							url: `/dashboard/notes?year=${year}`,
-							items: monthsInYear.map((month) => ({
+							items: monthsInYear.map(([month, count]) => ({
 								title: month,
 								url: `/dashboard/notes?year=${year}&month=${month}`,
+								count,
 							})),
 						};
 					}),

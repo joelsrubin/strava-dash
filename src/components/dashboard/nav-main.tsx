@@ -18,6 +18,7 @@ import {
 	SidebarMenuSubButton,
 	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { Badge } from "../ui/badge";
 
 export interface NavItem {
 	title: string;
@@ -25,6 +26,7 @@ export interface NavItem {
 	icon?: LucideIcon;
 	isActive?: boolean;
 	items?: NavItem[];
+	count?: number;
 }
 
 function NavItemComponent({
@@ -47,7 +49,17 @@ function NavItemComponent({
 					<Button asChild tooltip={item.title}>
 						<Link to={item.url} className="flex-1" preload="intent">
 							{item.icon && <item.icon />}
-							<span>{item.title}</span>
+							<div className="flex justify-between gap-2 w-full">
+								<span className="truncate flex-1">{item.title}</span>
+								{item.count !== undefined && (
+									<Badge
+										variant="secondary"
+										className="h-2 w-2 rounded-full p-2 tabular-nums"
+									>
+										{item.count}
+									</Badge>
+								)}
+							</div>
 						</Link>
 					</Button>
 					{hasChildren && (
