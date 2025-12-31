@@ -182,7 +182,7 @@ function RouteComponent() {
 					);
 				},
 				meta: {
-					className: "hidden md:table-cell", // hidden on mobile
+					className: "hidden lg:table-cell", // hidden on mobile
 				},
 				cell: ({ row }) => {
 					if (!row.original.moving_time) return <div>no data</div>;
@@ -217,7 +217,7 @@ function RouteComponent() {
 				},
 
 				meta: {
-					className: "hidden md:table-cell", // hidden on mobile
+					className: "hidden lg:table-cell", // hidden on mobile
 				},
 				cell: ({ row }) => {
 					return <div>{row.original.total_elevation_gain.toFixed(0)} ft</div>;
@@ -309,7 +309,7 @@ function RouteComponent() {
 		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
 			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
 				{!isMobile && (
-					<div className="sm:grid auto-rows-min gap-4 md:grid-cols-3 hidden">
+					<div className="sm:grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-3 hidden">
 						<div className="bg-muted/50 rounded-xl">
 							<h2 className="p-2 flex items-center gap-2">Distance</h2>
 							<ChartContainer config={distanceConfig}>
@@ -334,7 +334,7 @@ function RouteComponent() {
 								</BarChart>
 							</ChartContainer>
 						</div>
-						<div className="bg-muted/50 rounded-xl">
+						<div className="bg-muted/50 rounded-xl hidden lg:block">
 							<h2 className="p-2 flex items-center gap-2">Effort</h2>
 							<ChartContainer config={sufferConfig}>
 								<LineChart className=" w-full" data={sufferData}>
