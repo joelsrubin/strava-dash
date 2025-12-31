@@ -263,7 +263,9 @@ function RouteComponent() {
 						</Button>
 					);
 				},
-
+				meta: {
+					className: "hidden md:table-cell", // hidden on mobile
+				},
 				cell: ({ row }) => {
 					if (!row.original.kudos_count) return <div>no data</div>;
 					return <div>🎉 {row.original.kudos_count}</div>;
