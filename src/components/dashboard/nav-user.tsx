@@ -1,6 +1,14 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ChevronsUpDown, LogOut, Monitor, Moon, Sun } from "lucide-react";
+import {
+	ChevronsUpDown,
+	LogOut,
+	Mail,
+	MessageCircle,
+	Monitor,
+	Moon,
+	Sun,
+} from "lucide-react";
 import { clearStravaSession } from "@/api/auth.server";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -106,10 +114,15 @@ export function NavUser({ user }: { user: TAthlete }) {
 							</DropdownMenuSubContent>
 						</DropdownMenuSub>
 						<DropdownMenuSeparator />
-
+						<a href="mailto:hello@notsofast.run" target="_blank" rel="noopener">
+							<DropdownMenuItem>
+								<Mail className="mr-2 h-4 w-4" />
+								Support
+							</DropdownMenuItem>
+						</a>
 						<DropdownMenuItem onClick={handleLogout}>
-							<LogOut />
-							Log out
+							<LogOut className="mr-2 h-4 w-4" />
+							<span>Log out</span>
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>

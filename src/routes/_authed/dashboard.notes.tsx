@@ -93,12 +93,7 @@ function RouteComponent() {
 				{/* Header */}
 				<div className="flex items-center justify-between shrink-0">
 					<div>
-						<h1 className="text-4xl font-bold text-foreground">
-							Training Notes
-						</h1>
-						<p className="text-muted-foreground mt-1">
-							Track your thoughts, insights, and progress
-						</p>
+						<h1 className="text-4xl font-bold text-foreground">Notes</h1>
 					</div>
 				</div>
 
