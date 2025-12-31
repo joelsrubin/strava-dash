@@ -106,12 +106,7 @@ export function NavUser({ user }: { user: TAthlete }) {
 							</DropdownMenuSubContent>
 						</DropdownMenuSub>
 						<DropdownMenuSeparator />
-						<a href="mailto:hello@notsofast.run" target="_blank" rel="noopener">
-							<DropdownMenuItem>
-								<Mail className="mr-2 h-4 w-4" />
-								Support
-							</DropdownMenuItem>
-						</a>
+
 						<DropdownMenuItem onClick={handleLogout}>
 							<LogOut className="mr-2 h-4 w-4" />
 							<span>Log out</span>

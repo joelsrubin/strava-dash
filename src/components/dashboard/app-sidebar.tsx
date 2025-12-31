@@ -1,4 +1,4 @@
-import { Notebook, SquareTerminal } from "lucide-react";
+import { Notebook, Send, SquareTerminal } from "lucide-react";
 import { useMemo } from "react";
 import { NavMain } from "@/components/dashboard/nav-main";
 import {
@@ -10,6 +10,7 @@ import {
 import type { Note } from "@/db";
 import { useTheme } from "@/lib/theme";
 import { getActivityMonth, getActivityYear } from "@/lib/utils";
+import { NavSecondary } from "./nav-secondary";
 
 // array of all hte months
 
@@ -73,6 +74,16 @@ export function AppSidebar({
 		>
 			<SidebarContent>
 				<NavMain items={data.navMain} />
+				<NavSecondary
+					className="mt-auto"
+					items={[
+						{
+							title: "Feedback",
+							url: "mailto:hello@notsofast.run",
+							icon: Send,
+						},
+					]}
+				/>
 			</SidebarContent>
 			<SidebarFooter>
 				<div className="flex items-center justify-center">
