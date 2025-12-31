@@ -40,16 +40,12 @@ function NavItemComponent({
 
 	const Wrapper = isTopLevel ? SidebarMenuItem : SidebarMenuSubItem;
 	const Button = isTopLevel ? SidebarMenuButton : SidebarMenuSubButton;
-	const { setOpenMobile } = useSidebar();
+
 	return (
 		<Collapsible key={item.title} asChild defaultOpen={item.isActive}>
 			<Wrapper>
 				<div className="flex items-center w-full">
-					<Button
-						asChild
-						tooltip={item.title}
-						onClick={() => setTimeout(() => setOpenMobile(false), 100)}
-					>
+					<Button asChild tooltip={item.title}>
 						<Link to={item.url} className="flex-1" preload="intent">
 							{item.icon && <item.icon />}
 							<span>{item.title}</span>

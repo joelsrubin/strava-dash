@@ -14,8 +14,7 @@
 			"**/*.json",
 			"**/*.config.ts",
 			"!node_modules",
-			"!**/*.d.ts",
-			"!src/components/ui/**/*.tsx"
+			"!**/*.d.ts"
 		],
 		"ignoreUnknown": true
 	},
