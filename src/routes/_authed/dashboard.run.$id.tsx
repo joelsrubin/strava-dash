@@ -107,8 +107,7 @@ export function RouteComponent() {
 									</TableHead>
 								</TableRow>
 							</TableHeader>
-							<TableBody className="">
-								<DetailsTableRow label="Name" value={activity.name} />
+							<TableBody>
 								<DetailsTableRow
 									label="Distance"
 									value={formatDistance(activity.distance)}
@@ -117,22 +116,18 @@ export function RouteComponent() {
 									label="Moving Time"
 									value={formatTime(activity.moving_time)}
 								/>
+
 								<DetailsTableRow
 									label="Average HR"
-									value={
-										activity.average_heartrate
-											? `${activity.average_heartrate.toFixed(0)} bpm`
-											: "N/A"
-									}
+									value={activity.average_heartrate?.toFixed(0)}
+									type="heartrate"
 								/>
 								<DetailsTableRow
 									label="Average Pace"
-									value={`${formatPace(activity.average_speed)} min/mi`}
+									value={formatPace(activity.average_speed)}
+									type="pace"
 								/>
-								<DetailsTableRow
-									label="Average Cadence"
-									value={`${activity.average_cadence} spm`}
-								/>
+
 								<DetailsTableRow
 									label="Gear"
 									value={activity.gear?.name || "No gear"}
@@ -167,15 +162,19 @@ export function RouteComponent() {
 function DetailsTableRow({
 	label,
 	value,
+	type,
 }: {
 	label: string;
 	value: string | number;
+	type?: "heartrate" | "pace";
 }) {
+	if (!value) return null;
+	const suffix = !type ? "" : type === "heartrate" ? " bpm" : " min/mi";
 	return (
 		<TableRow>
 			<TableCell className="py-2 font-medium">{label}</TableCell>
 			<TableCell className="py-2 whitespace-normal wrap-break-word">
-				{value}
+				{`${value} ${suffix}`}
 			</TableCell>
 		</TableRow>
 	);
