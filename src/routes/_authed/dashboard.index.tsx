@@ -53,47 +53,79 @@ function RouteComponent() {
 	} = useSuspenseInfiniteQuery(fetchAthleteActivitiesQueryOptions());
 
 	const activitesToChart = athleteActivities.pages[0];
-	const distanceData = activitesToChart
-		.map((activity, index) => ({
-			distance: activity.distance || activitesToChart[index - 1]?.distance,
-		}))
-		.reverse();
 
-	const sufferData = activitesToChart
-		.map((activity, index) => ({
-			sufferScore:
-				activity.suffer_score || activitesToChart[index - 1]?.suffer_score || 0,
-		}))
-		.reverse();
+	const distanceData = useMemo(
+		() =>
+			activitesToChart
+				.map((activity, index) => ({
+					distance: activity.distance || activitesToChart[index - 1]?.distance,
+				}))
+				.reverse(),
+		[activitesToChart],
+	);
 
-	const heartRateData = activitesToChart
-		.map((activity, index) => ({
-			heartRate:
-				activity.average_heartrate ||
-				activitesToChart[index - 1]?.average_heartrate,
-		}))
-		.reverse();
+	const sufferData = useMemo(
+		() =>
+			activitesToChart
+				.map((activity, index) => ({
+					sufferScore:
+						activity.suffer_score ||
+						activitesToChart[index - 1]?.suffer_score ||
+						0,
+				}))
+				.reverse(),
+		[activitesToChart],
+	);
 
-	const distanceConfig = {
-		distance: {
-			label: "Distance",
-			color: "#2563eb",
-		},
-	} satisfies ChartConfig;
+	const heartRateData = useMemo(
+		() =>
+			activitesToChart
+				.map((activity, index) => ({
+					heartRate:
+						activity.average_heartrate ||
+						activitesToChart[index - 1]?.average_heartrate,
+				}))
+				.reverse(),
+		[activitesToChart],
+	);
 
-	const sufferConfig = {
-		sufferScore: {
-			label: "Effort",
-			color: "var(--primary)",
-		},
-	} satisfies ChartConfig;
+	const distanceConfig = useMemo<ChartConfig>(
+		() => ({
+			distance: {
+				label: "Distance",
+				color: "#2563eb",
+			},
+		}),
+		[],
+	);
 
-	const heartRateConfig = {
-		heartRate: {
-			label: "Heart Rate",
-			color: "#FF0800",
-		},
-	} satisfies ChartConfig;
+	const sufferConfig = useMemo<ChartConfig>(
+		() => ({
+			sufferScore: {
+				label: "Effort",
+				color: "var(--primary)",
+			},
+		}),
+		[],
+	);
+
+	const heartRateConfig = useMemo<ChartConfig>(
+		() => ({
+			heartRate: {
+				label: "Heart Rate",
+				color: "#FF0800",
+			},
+		}),
+		[],
+	);
+
+	const tableData = useMemo(
+		() =>
+			(athleteActivities.pages.flat() as TActivity[]).filter(
+				(activity) => activity.type === "Run",
+			),
+		[athleteActivities.pages],
+	);
 
 	const columns: ColumnDef<TActivity>[] = useMemo(
 		() => [
@@ -370,9 +402,7 @@ function RouteComponent() {
 				<div className={"bg-muted/50 flex min-h-0 flex-1 flex-col rounded-xl"}>
 					<DataTable
 						columns={columns}
-						data={(athleteActivities.pages.flat() as TActivity[]).filter(
-							(activity) => activity.type === "Run",
-						)}
+						data={tableData}
 						onLoadMore={fetchNextPage}
 						isLoading={isFetchingNextPage || isFetching}
 					/>

@@ -22,8 +22,11 @@ export function useIsMobile() {
 		return () => mql.removeEventListener("change", onChange);
 	}, []);
 
-	return {
-		isMobile: !!isMobile,
-		isTablet: !!isTablet,
-	};
+	return React.useMemo(
+		() => ({
+			isMobile: !!isMobile,
+			isTablet: !!isTablet,
+		}),
+		[isMobile, isTablet],
+	);
 }

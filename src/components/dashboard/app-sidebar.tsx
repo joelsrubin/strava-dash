@@ -41,8 +41,6 @@ export function AppSidebar({
 		b.localeCompare(a),
 	);
 
-	console.log({ notesByYear });
-
 	const data = useMemo(
 		() => ({
 			navMain: [
