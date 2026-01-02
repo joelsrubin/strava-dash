@@ -1,5 +1,5 @@
 import { Notebook, Send, SquareTerminal } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavMain } from "@/components/dashboard/nav-main";
 import {
 	Sidebar,
@@ -20,6 +20,14 @@ export function AppSidebar({
 	...props
 }: React.ComponentProps<typeof Sidebar> & { user: TAthlete; notes: Note[] }) {
 	const { theme } = useTheme();
+	const [imgUrl, setImgUrl] = useState("/powered-by-strava-light.png");
+	useEffect(() => {
+		setImgUrl(
+			theme === "light"
+				? "/powered-by-strava-light.png"
+				: "/powered-by-strava.png",
+		);
+	}, [theme]);
 	const notesByYear = notes.reduce(
 		(acc, note) => {
 			const year = getActivityYear(note.activity_date);
@@ -40,7 +48,7 @@ export function AppSidebar({
 	const availableYears = Object.keys(notesByYear).sort((a, b) =>
 		b.localeCompare(a),
 	);
-
+	console.log({ theme });
 	const data = useMemo(
 		() => ({
 			navMain: [
@@ -91,15 +99,7 @@ export function AppSidebar({
 			</SidebarContent>
 			<SidebarFooter>
 				<div className="flex items-center justify-center">
-					<img
-						className="w-40 pb-2"
-						src={
-							theme === "light"
-								? "/powered-by-strava-light.png"
-								: "/powered-by-strava.png"
-						}
-						alt="Powered by Strava"
-					/>
+					<img className="w-40 pb-2" src={imgUrl} alt="Powered by Strava" />
 				</div>
 			</SidebarFooter>
 		</Sidebar>
