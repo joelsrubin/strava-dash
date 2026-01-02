@@ -1,18 +1,14 @@
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { useMemo } from "react";
+import { Area, AreaChart, Bar, BarChart, CartesianGrid } from "recharts";
 import {
-	Area,
-	AreaChart,
-	Bar,
-	BarChart,
-	CartesianGrid,
-	Line,
-	LineChart,
-} from "recharts";
-import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
+	fetchAthleteActivitiesAllQueryOptions,
+	fetchAthleteActivitiesQueryOptions,
+} from "@/api/queries/strava";
+import ActivityHeatmap from "@/components/charts/heat-map";
 import { Button } from "@/components/ui/button";
 import {
 	type ChartConfig,
@@ -29,6 +25,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarInset } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatPace } from "@/lib/utils";
 import { DataTable } from "./-activity-table";
@@ -40,6 +37,7 @@ export const Route = createFileRoute("/_authed/dashboard/")({
 	loader: ({ context: { queryClient } }) => {
 		// Fire-and-forget prefetch - don't block navigation
 		queryClient.prefetchInfiniteQuery(fetchAthleteActivitiesQueryOptions());
+		queryClient.prefetchQuery(fetchAthleteActivitiesAllQueryOptions());
 	},
 });
 
@@ -52,6 +50,9 @@ function RouteComponent() {
 		isFetchingNextPage,
 	} = useSuspenseInfiniteQuery(fetchAthleteActivitiesQueryOptions());
 
+	const { isLoading: isLoadingAllActivities } = useQuery(
+		fetchAthleteActivitiesAllQueryOptions(),
+	);
 	const activitesToChart = athleteActivities.pages[0];
 
 	const distanceData = useMemo(
@@ -59,19 +60,6 @@ function RouteComponent() {
 			activitesToChart
 				.map((activity, index) => ({
 					distance: activity.distance || activitesToChart[index - 1]?.distance,
-				}))
-				.reverse(),
-		[activitesToChart],
-	);
-
-	const sufferData = useMemo(
-		() =>
-			activitesToChart
-				.map((activity, index) => ({
-					sufferScore:
-						activity.suffer_score ||
-						activitesToChart[index - 1]?.suffer_score ||
-						0,
 				}))
 				.reverse(),
 		[activitesToChart],
@@ -93,16 +81,6 @@ function RouteComponent() {
 		() => ({
 			distance: {
 				label: "Distance",
-				color: "#2563eb",
-			},
-		}),
-		[],
-	);
-
-	const sufferConfig = useMemo<ChartConfig>(
-		() => ({
-			sufferScore: {
-				label: "Effort",
 				color: "var(--primary)",
 			},
 		}),
@@ -113,7 +91,7 @@ function RouteComponent() {
 		() => ({
 			heartRate: {
 				label: "Heart Rate",
-				color: "#FF0800",
+				color: "var(--primary)",
 			},
 		}),
 		[],
@@ -365,20 +343,20 @@ function RouteComponent() {
 								</BarChart>
 							</ChartContainer>
 						</div>
-						<div className="bg-muted/50 rounded-xl hidden lg:block">
-							<h2 className="p-2 flex items-center gap-2">Effort</h2>
-							<ChartContainer config={sufferConfig}>
-								<LineChart className=" w-full" data={sufferData}>
-									<CartesianGrid vertical={false} />
-									<Line
-										isAnimationActive={false}
-										dataKey="sufferScore"
-										stroke="var(--color-sufferScore)"
-										dot={false}
-										strokeWidth={2}
-									/>
-								</LineChart>
-							</ChartContainer>
+						<div
+							className={`${isLoadingAllActivities ? "bg-white" : "bg-muted/50"} rounded-xl hidden lg:block`}
+						>
+							{isLoadingAllActivities ? (
+								<div className=" flex flex-col gap-2">
+									<Skeleton className="h-[calc(40px)] w-[calc(200px)] rounded-lg" />
+									<Skeleton className="h-[150px] w-[calc(285px)] rounded-lg" />
+								</div>
+							) : (
+								<>
+									<h2 className="p-2 flex items-center gap-2">Heat Map</h2>
+									<ActivityHeatmap />
+								</>
+							)}
 						</div>
 						<div className="bg-muted/50 rounded-xl">
 							<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>

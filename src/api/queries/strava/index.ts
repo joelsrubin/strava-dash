@@ -50,10 +50,16 @@ export function fetchAthleteStatsQueryOptions({
 	});
 }
 
-export const fetchAthleteActivities = async ({ page }: { page?: number }) => {
+export const fetchAthleteActivities = async ({
+	page = 1,
+	per_page = 30,
+}: {
+	page?: number;
+	per_page?: number;
+}) => {
 	const token = await getStravaAccessToken();
 	const response = await fetch(
-		`${BASE_URL}/athlete/activities?page=${page || 1}`,
+		`${BASE_URL}/athlete/activities?page=${page}&per_page=${per_page}`,
 		{
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -72,6 +78,21 @@ export function fetchAthleteActivitiesQueryOptions() {
 		getNextPageParam: (_lastPage, _allPages, lastPageParam) => {
 			return lastPageParam + 1;
 		},
+	});
+}
+
+export function fetchAthleteActivitiesAllQueryOptions() {
+	return queryOptions({
+		queryKey: ["athlete-activities-all"],
+		queryFn: async () => {
+			const activities = await fetchAthleteActivities({
+				page: 1,
+				per_page: 120,
+			});
+
+			return activities;
+		},
+		staleTime: Infinity,
 	});
 }
 
