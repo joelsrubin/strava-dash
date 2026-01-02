@@ -347,9 +347,14 @@ function RouteComponent() {
 							className={`${isLoadingAllActivities ? "bg-white" : "bg-muted/50"} rounded-xl hidden lg:block`}
 						>
 							{isLoadingAllActivities ? (
-								<div className=" flex flex-col gap-2">
-									<Skeleton className="h-[calc(40px)] w-[calc(200px)] rounded-lg" />
-									<Skeleton className="h-[150px] w-[calc(285px)] rounded-lg" />
+								<div className="flex flex-col gap-2 h-full">
+									<Skeleton className="h-6 w-48" />
+									<div className="space-y-2 flex-1 flex flex-col">
+										<Skeleton className="h-4 w-full rounded-xl" />
+										<Skeleton className="h-4 w-full rounded-xl" />
+										<Skeleton className="h-4 w-full rounded-xl" />
+										<Skeleton className="flex-1 w-full rounded-xl" />
+									</div>
 								</div>
 							) : (
 								<>

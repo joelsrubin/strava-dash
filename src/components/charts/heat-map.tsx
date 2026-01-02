@@ -35,7 +35,7 @@ export default function ActivityHeatmap() {
 		x: number;
 		y: number;
 	} | null>(null);
-
+	console.log({ hoveredCell });
 	const handleMouseEnter = (
 		cell: { date: string; value: number },
 		event: React.MouseEvent<HTMLDivElement>,
@@ -145,9 +145,6 @@ export default function ActivityHeatmap() {
 								key={week[0]?.date || weekIndex}
 								className="flex flex-col gap-1"
 							>
-								{/* <div className="text-xs text-muted-foreground h-5 flex items-center justify-center">
-									{weekIndex + 1}
-								</div> */}
 								{week.map((cell) => (
 									// biome-ignore lint/a11y/noStaticElementInteractions: ok
 									<div
@@ -169,7 +166,7 @@ export default function ActivityHeatmap() {
 						))}
 					</div>
 				</div>
-				{hoveredCell && (
+				{hoveredCell && hoveredCell?.value > 0 ? (
 					<div
 						className="fixed bg-popover text-popover-foreground px-3 py-2 rounded-md shadow-md text-sm whitespace-nowrap border z-50 pointer-events-none"
 						style={{
@@ -183,7 +180,7 @@ export default function ActivityHeatmap() {
 							{hoveredCell.value.toFixed(1)} miles
 						</div>
 					</div>
-				)}
+				) : null}
 			</div>
 		</div>
 	);
