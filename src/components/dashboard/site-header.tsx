@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Flame, SidebarIcon } from "lucide-react";
+import { SidebarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
