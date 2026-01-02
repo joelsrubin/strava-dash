@@ -151,7 +151,7 @@ export default function ActivityHeatmap() {
 								{week.map((cell) => (
 									// biome-ignore lint/a11y/noStaticElementInteractions: ok
 									<div
-										key={`${weekIndex}-${cell}`}
+										key={`${weekIndex}-${cell.date}`}
 										className={`w-full aspect-square rounded-sm transition-all cursor-pointer hover:ring-2 hover:ring-ring hover:scale-110 ${getIntensityColor(
 											cell.intensity,
 										)}`}
