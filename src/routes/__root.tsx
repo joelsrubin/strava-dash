@@ -7,6 +7,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Container } from "@/components/container";
 
 import { Toaster } from "@/components/ui/sonner";
 import { getThemeScript, ThemeProvider } from "@/lib/theme";
@@ -14,7 +15,7 @@ import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
-	athlete: TAthlete;
+	athlete?: TAthlete;
 }>()({
 	head: () => ({
 		meta: [
@@ -72,7 +73,15 @@ export const Route = createRootRouteWithContext<{
 		],
 	}),
 
-	notFoundComponent: () => <div>Not Found</div>,
+	notFoundComponent: () => (
+		<Container>
+			<div className="flex justify-center items-center flex-col">
+				<h1 className="text-6xl">404</h1>
+				<span>Page Not Found!</span>
+			</div>
+		</Container>
+	),
+
 	shellComponent: RootDocument,
 });
 

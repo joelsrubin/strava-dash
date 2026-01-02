@@ -41,7 +41,7 @@ export function HashtagsCard({
 								variant={
 									selectedHashtags.includes(hashtag) ? "default" : "outline"
 								}
-								className="cursor-pointer hover:bg-primary/90 hover:text-black transition-colors px-3 py-1.5 text-sm"
+								className="cursor-pointer hover:bg-primary/90 dark:hover:text-black hover:text-white transition-colors px-3 py-1.5 text-sm"
 								onClick={() => toggleHashtag(hashtag)}
 							>
 								{`#${hashtag}`}
