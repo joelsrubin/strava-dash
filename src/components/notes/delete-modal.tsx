@@ -40,7 +40,7 @@ export function DeleteConfirmationModal({
 						</div>
 						<DialogTitle className="text-balance">{title}</DialogTitle>
 					</div>
-					<DialogDescription className="text-balance pt-2">
+					<DialogDescription className="pt-2">
 						{itemName ? (
 							<>
 								{description}{" "}
