@@ -19,15 +19,16 @@ export function AppSidebar({
 	notes,
 	...props
 }: React.ComponentProps<typeof Sidebar> & { user: TAthlete; notes: Note[] }) {
-	const { theme } = useTheme();
+	const { resolvedTheme } = useTheme();
 	const [imgUrl, setImgUrl] = useState("/powered-by-strava-light.png");
 	useEffect(() => {
 		setImgUrl(
-			theme === "light"
+			resolvedTheme === "light"
 				? "/powered-by-strava-light.png"
 				: "/powered-by-strava.png",
 		);
-	}, [theme]);
+	}, [resolvedTheme]);
+
 	const notesByYear = notes.reduce(
 		(acc, note) => {
 			const year = getActivityYear(note.activity_date);
@@ -48,7 +49,7 @@ export function AppSidebar({
 	const availableYears = Object.keys(notesByYear).sort((a, b) =>
 		b.localeCompare(a),
 	);
-	console.log({ theme });
+
 	const data = useMemo(
 		() => ({
 			navMain: [

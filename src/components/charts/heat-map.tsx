@@ -35,7 +35,7 @@ export default function ActivityHeatmap() {
 		x: number;
 		y: number;
 	} | null>(null);
-	console.log({ hoveredCell });
+
 	const handleMouseEnter = (
 		cell: { date: string; value: number },
 		event: React.MouseEvent<HTMLDivElement>,
