@@ -22,7 +22,7 @@ const getIntensityColor = (intensity: number) => {
 	return colors[intensity] || colors[0];
 };
 
-const dayLabels = ["Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"];
+const dayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 export default function ActivityHeatmap() {
 	const { data: activities } = useQuery(
@@ -66,16 +66,24 @@ export default function ActivityHeatmap() {
 		const weeks = 12;
 		const daysPerWeek = 7;
 		const today = new Date();
+		today.setHours(0, 0, 0, 0);
 		const data = [];
+
+		// Find the end of the current week (Saturday)
+		const endOfWeek = new Date(today);
+		const daysUntilSaturday = (6 - today.getDay() + 7) % 7;
+		endOfWeek.setDate(today.getDate() + daysUntilSaturday);
+
+		// Calculate start date (beginning of the first week, which is a Sunday)
+		const startDate = new Date(endOfWeek);
+		startDate.setDate(endOfWeek.getDate() - (weeks * 7 - 1));
 
 		for (let week = 0; week < weeks; week++) {
 			const weekData = [];
 
 			for (let day = 0; day < daysPerWeek; day++) {
-				const currentDate = new Date(today);
-				currentDate.setDate(
-					today.getDate() - ((weeks - week - 1) * 7 + (daysPerWeek - day - 1)),
-				);
+				const currentDate = new Date(startDate);
+				currentDate.setDate(startDate.getDate() + week * 7 + day);
 
 				const dateKey = currentDate.toISOString().split("T")[0];
 				const dayActivities = activitiesByDate[dateKey] || [];
@@ -125,46 +133,41 @@ export default function ActivityHeatmap() {
 	return (
 		<div className="flex-1 flex flex-col p-2">
 			<div className="relative h-full flex flex-col">
-				<div className="flex-1 flex gap-2">
-					<div className="flex flex-col gap-1 justify-around py-1">
-						{dayLabels.map((label) => (
+				<div
+					className="flex-1 grid gap-1"
+					style={{
+						gridTemplateColumns: `auto repeat(12, minmax(0, 1fr))`,
+						gridTemplateRows: `repeat(7, minmax(0, 1fr))`,
+					}}
+				>
+					{/* Day labels in first column */}
+					{dayLabels.map((label, index) => (
+						<div
+							key={label}
+							className="text-xs text-muted-foreground flex items-center justify-end pr-2"
+							style={{ gridColumn: 1, gridRow: index + 1 }}
+						>
+							{label}
+						</div>
+					))}
+					{/* Activity cells */}
+					{heatmapData.map((week, weekIndex) =>
+						week.map((cell) => (
+							// biome-ignore lint/a11y/noStaticElementInteractions: ok
 							<div
-								key={label}
-								className="text-xs text-muted-foreground flex items-center justify-center"
-							>
-								{label}
-							</div>
-						))}
-					</div>
-					<div
-						className="flex-1 grid gap-1"
-						style={{ gridTemplateColumns: `repeat(12, minmax(0, 1fr))` }}
-					>
-						{heatmapData.map((week, weekIndex) => (
-							<div
-								key={week[0]?.date || weekIndex}
-								className="flex flex-col gap-1"
-							>
-								{week.map((cell) => (
-									// biome-ignore lint/a11y/noStaticElementInteractions: ok
-									<div
-										key={`${weekIndex}-${cell.date}`}
-										className={`w-full aspect-square rounded-sm transition-all cursor-pointer hover:ring-2 hover:ring-ring hover:scale-110 ${getIntensityColor(
-											cell.intensity,
-										)}`}
-										onMouseEnter={(e) =>
-											handleMouseEnter(
-												{ date: cell.date, value: cell.value },
-												e,
-											)
-										}
-										onMouseLeave={() => setHoveredCell(null)}
-										title={`${cell.date}: ${cell.value > 0 ? `${cell.value.toFixed(1)} miles` : "No activity"}`}
-									/>
-								))}
-							</div>
-						))}
-					</div>
+								key={`${weekIndex}-${cell.date}`}
+								className={`aspect-square rounded-sm transition-all cursor-pointer hover:ring-2 hover:ring-ring hover:scale-110 ${getIntensityColor(
+									cell.intensity,
+								)}`}
+								style={{ gridColumn: weekIndex + 2, gridRow: cell.day + 1 }}
+								onMouseEnter={(e) =>
+									handleMouseEnter({ date: cell.date, value: cell.value }, e)
+								}
+								onMouseLeave={() => setHoveredCell(null)}
+								title={`${cell.date}: ${cell.value > 0 ? `${cell.value.toFixed(1)} miles` : "No activity"}`}
+							/>
+						)),
+					)}
 				</div>
 				{hoveredCell && hoveredCell?.value > 0 ? (
 					<div
