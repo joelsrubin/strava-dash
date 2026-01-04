@@ -21,42 +21,7 @@ export interface Hashtag {
 	tag: string;
 }
 
-export const getNotes = createServerFn({ method: "GET" })
-	.inputValidator((input: { strava_id: number }) => input)
-	.handler(async ({ data }) => {
-		const { strava_id } = data;
-		const { results } = await env.DB.prepare(
-			"SELECT * FROM notes WHERE strava_id = ?",
-		)
-			.bind(strava_id)
-			.all<Note>();
-
-		const notes = results.map((note) => ({
-			...note,
-			hashtags: JSON.parse(note.hashtags || "[]"),
-		}));
-
-		return { results: notes };
-	});
-
 export const getNotesByUserId = createServerFn({ method: "GET" })
-	.inputValidator((input: { strava_id: number }) => input)
-	.handler(async ({ data }) => {
-		const { strava_id } = data;
-		const { results } = await env.DB.prepare(
-			"SELECT * FROM notes WHERE strava_id = ?",
-		)
-			.bind(strava_id)
-			.all<Note>();
-		const notes = results.map((note) => ({
-			...note,
-			hashtags: JSON.parse(note.hashtags || "[]"),
-		}));
-
-		return { results: notes };
-	});
-
-export const getNotesByStravaId = createServerFn({ method: "GET" })
 	.inputValidator((input: { strava_id: number }) => input)
 	.handler(async ({ data }) => {
 		const { strava_id } = data;

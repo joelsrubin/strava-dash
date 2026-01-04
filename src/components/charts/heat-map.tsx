@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { fetchAthleteActivitiesAllQueryOptions } from "@/api/queries/strava";
 
@@ -25,7 +25,7 @@ const getIntensityColor = (intensity: number) => {
 const dayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 export default function ActivityHeatmap() {
-	const { data: activities } = useQuery(
+	const { data: activities } = useSuspenseQuery(
 		fetchAthleteActivitiesAllQueryOptions(),
 	);
 

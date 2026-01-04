@@ -16,9 +16,9 @@ export const Route = createFileRoute("/_authed/dashboard/notes")({
 	pendingComponent: PendingComponent,
 	pendingMinMs: 0,
 
-	loader: ({ context: { queryClient, athlete } }) => {
+	loader: async ({ context: { queryClient, athlete } }) => {
 		// Fire-and-forget prefetch - don't block navigation
-		queryClient.ensureQueryData(
+		await queryClient.ensureQueryData(
 			fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 		);
 	},

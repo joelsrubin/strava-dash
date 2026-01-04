@@ -1,6 +1,10 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useRouteContext } from "@tanstack/react-router";
-import { Suspense } from "react";
+import {
+	ClientOnly,
+	createFileRoute,
+	useRouteContext,
+} from "@tanstack/react-router";
+
 import { toast } from "sonner";
 import {
 	useCreateNoteMutation,
@@ -21,6 +25,7 @@ import {
 } from "@/components/ui/table";
 import { useAutosave } from "@/hooks/use-autosave";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 import { formatDistance, formatPace, formatTime } from "@/lib/utils";
 import { PendingComponent } from "./-pending-component";
 
@@ -138,9 +143,9 @@ export function RouteComponent() {
 					{!isMobile && (
 						<div className="bg-muted/50 rounded-xl order-4 lg:order-3">
 							<h2 className="p-2">Route Preview</h2>
-							<Suspense>
+							<ClientOnly>
 								<ActivityMap encodedPolyline={polyline || ""} />
-							</Suspense>
+							</ClientOnly>
 						</div>
 					)}
 				</div>

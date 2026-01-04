@@ -15,6 +15,7 @@ export const getRouter = () => {
 		},
 		defaultPreload: "intent",
 		scrollRestoration: true,
+		defaultStaleTime: Infinity,
 		defaultPreloadStaleTime: 5 * 1000,
 		defaultErrorComponent: ({ error }) => <ErrorComponent error={error} />,
 	});

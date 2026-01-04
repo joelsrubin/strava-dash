@@ -1,5 +1,7 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Notebook, Send, SquareTerminal } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
 import { NavMain } from "@/components/dashboard/nav-main";
 import {
 	Sidebar,
@@ -7,7 +9,6 @@ import {
 	SidebarFooter,
 } from "@/components/ui/sidebar";
 
-import type { Note } from "@/db";
 import { useTheme } from "@/lib/theme";
 import { getActivityMonth, getActivityYear } from "@/lib/utils";
 import { NavSecondary } from "./nav-secondary";
@@ -16,10 +17,13 @@ import { NavSecondary } from "./nav-secondary";
 
 export function AppSidebar({
 	user,
-	notes,
+
 	...props
-}: React.ComponentProps<typeof Sidebar> & { user: TAthlete; notes: Note[] }) {
+}: React.ComponentProps<typeof Sidebar> & { user: TAthlete }) {
 	const { resolvedTheme } = useTheme();
+	const { data: notes } = useSuspenseQuery(
+		fetchNotesByStravaIdQueryOptions({ stravaId: user.id }),
+	);
 	const [imgUrl, setImgUrl] = useState("/powered-by-strava-light.png");
 	useEffect(() => {
 		setImgUrl(
@@ -29,7 +33,7 @@ export function AppSidebar({
 		);
 	}, [resolvedTheme]);
 
-	const notesByYear = notes.reduce(
+	const notesByYear = notes.results.reduce(
 		(acc, note) => {
 			const year = getActivityYear(note.activity_date);
 			const month = getActivityMonth(note.activity_date);
