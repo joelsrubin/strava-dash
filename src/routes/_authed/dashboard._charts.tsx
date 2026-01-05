@@ -28,14 +28,14 @@ function RouteComponent() {
 							<DistanceChart />
 						</div>
 						<div
-							className={`${isLoadingAllActivities ? "bg-transparent" : "bg-muted/50"} rounded-xl hidden lg:block`}
+							className={`${isLoadingAllActivities ? "bg-transparent" : "bg-muted/50"} rounded-xl`}
 						>
 							<Suspense fallback={<ChartLoader />}>
 								<h2 className="p-2 flex items-center gap-2">Heat Map</h2>
 								<ActivityHeatmap />
 							</Suspense>
 						</div>
-						<div className="bg-muted/50 rounded-xl">
+						<div className="bg-muted/50 rounded-xl hidden lg:block">
 							<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>
 							<HeartRateChart />
 						</div>

@@ -78,7 +78,7 @@ export function RouteComponent() {
 
 	const polyline = activity.map.polyline;
 
-	const defaultContent = `<p><b>${activity.name}</b> - ${(activity.distance * 0.00062137).toFixed(2)} miles</p>`;
+	const defaultContent = `<p><b>${activity.name}</b> - ${formatDistance(activity.distance)} miles</p>`;
 	const initialState = note?.results[0]?.content || defaultContent;
 
 	const handleSave = async (content: string) => {

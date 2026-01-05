@@ -15,6 +15,7 @@ import {
 	AlertCircle,
 	ArrowUpDown,
 	ArrowUpRightIcon,
+	FilterIcon,
 	MoreHorizontal,
 	Search,
 } from "lucide-react";
@@ -71,16 +72,21 @@ import {
 	EmptyTitle,
 } from "../ui/empty";
 import { Input } from "../ui/input";
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupInput,
+} from "../ui/input-group";
 import { HashtagList } from "./hashtag-list";
 
-export function NotesTable({ stravaId }: { stravaId: number }) {
-	const { queryClient } = useRouteContext({
+export function NotesTable() {
+	const { queryClient, athlete } = useRouteContext({
 		from: "/_authed/dashboard/_charts/notes",
 	});
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 	const [noteToDelete, setNoteToDelete] = useState<number | null>(null);
 	const { data: notesData } = useSuspenseQuery(
-		fetchNotesByStravaIdQueryOptions({ stravaId }),
+		fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 	);
 	const { isMobile } = useIsMobile();
 	const allHashtags = Array.from(
@@ -171,11 +177,17 @@ export function NotesTable({ stravaId }: { stravaId: number }) {
 					const parsed = parseNoteContent(row.original.content);
 
 					return (
-						<div
-							className="truncate line-clamp-1"
-							// biome-ignore lint/security/noDangerouslySetInnerHtml: safe html content
-							dangerouslySetInnerHTML={{ __html: parsed.text }}
-						/>
+						<Link
+							to="/dashboard/run/$id"
+							params={{ id: row.original.run_id.toString() }}
+							preload="intent"
+						>
+							<div
+								className="truncate line-clamp-2 min-h-[33px]"
+								// biome-ignore lint/security/noDangerouslySetInnerHtml: safe html content
+								dangerouslySetInnerHTML={{ __html: parsed.text }}
+							/>
+						</Link>
 					);
 				},
 			},
@@ -266,23 +278,30 @@ export function NotesTable({ stravaId }: { stravaId: number }) {
 			<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
 				<div className="flex flex-row items-center justify-between mb-2 p-2 gap-4">
 					<div className="text-sm font-medium">Notes</div>
-					<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2">
-						<div className="w-full max-w-md relative">
-							<Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-							<Input
-								value={
-									(table.getColumn("content")?.getFilterValue() as string) ?? ""
-								}
-								onChange={(event) =>
-									table.getColumn("content")?.setFilterValue(event.target.value)
-								}
-								placeholder="Search notes..."
-								className="w-full pl-10 pr-4 py-2 bg-background border border-input rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-							/>
+					<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2 sm:grow">
+						<div className="w-full">
+							<InputGroup className="rounded-md bg-background">
+								<InputGroupInput
+									value={
+										(table.getColumn("content")?.getFilterValue() as string) ??
+										""
+									}
+									onChange={(event) =>
+										table
+											.getColumn("content")
+											?.setFilterValue(event.target.value)
+									}
+									placeholder="Search notes..."
+									className="rounded-2xl"
+								/>
+								<InputGroupAddon>
+									<Search />
+								</InputGroupAddon>
+							</InputGroup>
 						</div>
 						{!isMobile ? (
 							<Filter
-								column={table.getColumn("hashtags")!}
+								column={table.getColumn("hashtags")}
 								hashtags={allHashtags}
 							/>
 						) : null}
@@ -422,14 +441,16 @@ export function NotesTable({ stravaId }: { stravaId: number }) {
 	);
 }
 
-function Filter({
+function Filter<T extends { hashtags?: string[] }>({
 	column,
 	hashtags,
 }: {
-	column: Column<any, unknown>;
+	column?: Column<T, unknown>;
 	hashtags: string[];
 }) {
-	const columnFilterValue = (column.getFilterValue() as string[]) ?? [];
+	const columnFilterValue = column
+		? ((column.getFilterValue() as string[]) ?? [])
+		: [];
 	const anchor = useComboboxAnchor();
 
 	return (
@@ -437,7 +458,7 @@ function Filter({
 			multiple
 			value={columnFilterValue}
 			onValueChange={(value) => {
-				column.setFilterValue(value.length > 0 ? value : undefined);
+				column?.setFilterValue(value.length > 0 ? value : undefined);
 			}}
 			autoHighlight
 			items={hashtags}

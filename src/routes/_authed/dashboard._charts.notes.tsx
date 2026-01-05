@@ -27,11 +27,5 @@ export const Route = createFileRoute("/_authed/dashboard/_charts/notes")({
 });
 
 function RouteComponent() {
-	const { athlete } = Route.useRouteContext();
-
-	// Extract all unique hashtags from all notes
-
-	// Filter and sort notes based on selected hashtags and search query (newest first)
-
-	return <NotesTable stravaId={athlete.id} />;
+	return <NotesTable />;
 }
