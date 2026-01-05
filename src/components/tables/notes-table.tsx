@@ -15,7 +15,6 @@ import {
 	AlertCircle,
 	ArrowUpDown,
 	ArrowUpRightIcon,
-	FilterIcon,
 	MoreHorizontal,
 	Search,
 } from "lucide-react";
@@ -71,7 +70,7 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "../ui/empty";
-import { Input } from "../ui/input";
+
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -278,7 +277,7 @@ export function NotesTable() {
 			<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
 				<div className="flex flex-row items-center justify-between mb-2 p-2 gap-4">
 					<div className="text-sm font-medium">Notes</div>
-					<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2 sm:grow">
+					<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2">
 						<div className="w-full">
 							<InputGroup className="rounded-md bg-background">
 								<InputGroupInput
@@ -465,11 +464,11 @@ function Filter<T extends { hashtags?: string[] }>({
 		>
 			<ComboboxChips ref={anchor} className="rounded-md bg-background w-full">
 				{columnFilterValue.map((tag) => (
-					<ComboboxChip key={tag}>{tag}</ComboboxChip>
+					<ComboboxChip key={tag}>{`#${tag}`}</ComboboxChip>
 				))}
 				<ComboboxChipsInput
 					className="text-xs"
-					placeholder="Filter by hashtag"
+					placeholder={columnFilterValue.length ? "" : "Filter by hashtag"}
 				/>
 			</ComboboxChips>
 			<ComboboxContent anchor={anchor}>
@@ -477,7 +476,7 @@ function Filter<T extends { hashtags?: string[] }>({
 				<ComboboxList>
 					{(item: string) => (
 						<ComboboxItem key={item} value={item}>
-							{item}
+							{`#${item}`}
 						</ComboboxItem>
 					)}
 				</ComboboxList>
