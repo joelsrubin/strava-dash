@@ -298,12 +298,11 @@ export function NotesTable() {
 								</InputGroupAddon>
 							</InputGroup>
 						</div>
-						{!isMobile ? (
-							<Filter
-								column={table.getColumn("hashtags")}
-								hashtags={allHashtags}
-							/>
-						) : null}
+
+						<Filter
+							column={table.getColumn("hashtags")}
+							hashtags={allHashtags}
+						/>
 					</div>
 				</div>
 				<div className="min-h-0 flex-1 overflow-auto">
@@ -462,7 +461,10 @@ function Filter<T extends { hashtags?: string[] }>({
 			autoHighlight
 			items={hashtags}
 		>
-			<ComboboxChips ref={anchor} className="rounded-md bg-background w-full">
+			<ComboboxChips
+				ref={anchor}
+				className="hidden sm:inline-flex rounded-md bg-background w-full"
+			>
 				{columnFilterValue.map((tag) => (
 					<ComboboxChip key={tag}>{`#${tag}`}</ComboboxChip>
 				))}
