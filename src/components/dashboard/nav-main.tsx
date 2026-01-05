@@ -1,6 +1,4 @@
-"use client";
-
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { Collapsible } from "@/components/ui/collapsible";
 import {
@@ -9,8 +7,8 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from "@/components/ui/sidebar";
-import { Badge } from "../ui/badge";
 
 export interface NavItem {
 	title: string;
@@ -18,29 +16,27 @@ export interface NavItem {
 	icon?: LucideIcon;
 	isActive?: boolean;
 	items?: NavItem[];
-	count?: number;
 }
 
 function NavItemComponent({ item }: { item: NavItem }) {
+	const navigate = useNavigate();
+	const { setOpenMobile } = useSidebar();
+
+	const handleClick = async () => {
+		await navigate({ to: item.url });
+		setOpenMobile(false);
+	};
 	return (
 		<Collapsible key={item.title} asChild defaultOpen={item.isActive}>
 			<SidebarMenuItem>
 				<div className="flex items-center w-full">
 					<SidebarMenuButton asChild tooltip={item.title}>
-						<Link to={item.url} className="flex-1" preload="intent">
+						<SidebarMenuButton className="flex-1" onClick={handleClick}>
 							{item.icon && <item.icon />}
 							<div className="flex justify-between gap-2 w-full">
 								<span className="truncate flex-1">{item.title}</span>
-								{item.count !== undefined && (
-									<Badge
-										variant="secondary"
-										className="h-2 w-2 rounded-full p-2 tabular-nums"
-									>
-										{item.count}
-									</Badge>
-								)}
 							</div>
-						</Link>
+						</SidebarMenuButton>
 					</SidebarMenuButton>
 				</div>
 			</SidebarMenuItem>
