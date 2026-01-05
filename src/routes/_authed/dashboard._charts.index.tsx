@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { DataTable } from "../../components/tables/activity-table";
 import { PendingComponent } from "./-pending-component";
-export const Route = createFileRoute("/_authed/dashboard/_charts/activities")({
+export const Route = createFileRoute("/_authed/dashboard/_charts/")({
 	component: RouteComponent,
 	pendingComponent: PendingComponent,
 	pendingMinMs: 0,

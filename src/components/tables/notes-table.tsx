@@ -185,7 +185,7 @@ export function NotesTable({ stravaId }: { stravaId: number }) {
 					return <div>Hashtags</div>;
 				},
 				meta: {
-					className: "hidden lg:table-cell", // hidden on mobile
+					className: "hidden sm:table-cell", // hidden on mobile
 					filterVariant: "select",
 				},
 				filterFn: (row, columnId, filterValue: string[] | undefined) => {

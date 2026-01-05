@@ -33,7 +33,7 @@ export function AppSidebar({
 	const items = [
 		{
 			title: "Activities",
-			url: "/dashboard/activities",
+			url: "/dashboard",
 			icon: SquareTerminal,
 		},
 		{
