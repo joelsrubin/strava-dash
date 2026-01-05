@@ -5,9 +5,9 @@ import { fetchAthleteActivitiesAllQueryOptions } from "@/api/queries/strava";
 import { DistanceChart } from "@/components/charts/distance";
 import { HeartRateChart } from "@/components/charts/heart-rate";
 import ActivityHeatmap from "@/components/charts/heat-map";
+import { ChartLoader } from "@/components/ui/loaders/chart-loader";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ChartLoader } from "./dashboard";
 
 export const Route = createFileRoute("/_authed/dashboard/_charts")({
 	component: RouteComponent,

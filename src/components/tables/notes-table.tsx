@@ -1,9 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useRouteContext } from "@tanstack/react-router";
 import {
-	Column,
+	type Column,
 	type ColumnDef,
-	ColumnFiltersState,
+	type ColumnFiltersState,
 	flexRender,
 	getCoreRowModel,
 	getFilteredRowModel,
@@ -40,7 +40,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { ParsedNote } from "@/db";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 import { parseNoteContent } from "@/lib/utils";
 import {
 	Combobox,
@@ -87,7 +87,7 @@ export function NotesTable() {
 	const { data: notesData } = useSuspenseQuery(
 		fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 	);
-	const { isMobile } = useIsMobile();
+
 	const allHashtags = Array.from(
 		new Set(notesData.results.flatMap((note) => note.hashtags)),
 	).sort() as string[];
