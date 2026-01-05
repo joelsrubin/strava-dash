@@ -162,7 +162,7 @@ export function RouteComponent() {
 		</SidebarInset>
 	);
 }
-
+//
 function DetailsTableRow({
 	label,
 	value,
