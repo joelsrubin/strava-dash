@@ -1,4 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	notFound,
@@ -9,9 +8,12 @@ import { Suspense } from "react";
 import { getAthlete, getStravaAccessToken } from "@/api/auth.server";
 import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
+
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
+
 import { SidebarMenuSkeleton, SidebarProvider } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
@@ -50,6 +52,20 @@ function RouteComponent() {
 					<Outlet />
 				</div>
 			</SidebarProvider>
+		</div>
+	);
+}
+
+export function ChartLoader() {
+	return (
+		<div className="flex flex-col gap-2 h-full">
+			<Skeleton className="h-6 w-48 rounded-xl" />
+			<div className="space-y-2 flex-1 flex flex-col">
+				<Skeleton className="h-4 w-full rounded-xl" />
+				<Skeleton className="h-4 w-full rounded-xl" />
+				<Skeleton className="h-4 w-full rounded-xl" />
+				<Skeleton className="flex-1 w-full rounded-xl" />
+			</div>
 		</div>
 	);
 }

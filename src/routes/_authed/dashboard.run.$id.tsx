@@ -153,6 +153,7 @@ export function RouteComponent() {
 					className={`flex min-h-0 flex-1 flex-col bg-muted/50 rounded-xl order-3 lg:order-4 ${isMobile ? "max-h-[60vh]" : ""}`}
 				>
 					<Tiptap
+						key={note?.results[0]?.updated_at ?? id}
 						initialContent={initialState}
 						onChange={triggerSave}
 						isPending={updateNoteIsPending || createNoteIsPending}

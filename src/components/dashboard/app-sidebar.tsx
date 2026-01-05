@@ -1,7 +1,6 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Notebook, Send, SquareTerminal } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
+import { useEffect, useState } from "react";
+
 import { NavMain } from "@/components/dashboard/nav-main";
 import {
 	Sidebar,
@@ -10,7 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { useTheme } from "@/lib/theme";
-import { getActivityMonth, getActivityYear } from "@/lib/utils";
+
 import { NavSecondary } from "./nav-secondary";
 
 // array of all hte months
@@ -21,9 +20,7 @@ export function AppSidebar({
 	...props
 }: React.ComponentProps<typeof Sidebar> & { user: TAthlete }) {
 	const { resolvedTheme } = useTheme();
-	const { data: notes } = useSuspenseQuery(
-		fetchNotesByStravaIdQueryOptions({ stravaId: user.id }),
-	);
+
 	const [imgUrl, setImgUrl] = useState("/powered-by-strava-light.png");
 	useEffect(() => {
 		setImgUrl(
@@ -33,56 +30,18 @@ export function AppSidebar({
 		);
 	}, [resolvedTheme]);
 
-	const notesByYear = notes.results.reduce(
-		(acc, note) => {
-			const year = getActivityYear(note.activity_date);
-			const month = getActivityMonth(note.activity_date);
-
-			if (!acc[year]) {
-				acc[year] = {};
-			}
-			if (!acc[year][month]) {
-				acc[year][month] = 0;
-			}
-			acc[year][month]++;
-
-			return acc;
+	const items = [
+		{
+			title: "Activities",
+			url: "/dashboard/activities",
+			icon: SquareTerminal,
 		},
-		{} as Record<string, Record<string, number>>,
-	);
-	const availableYears = Object.keys(notesByYear).sort((a, b) =>
-		b.localeCompare(a),
-	);
-
-	const data = useMemo(
-		() => ({
-			navMain: [
-				{
-					title: "Activities",
-					url: "/dashboard",
-					icon: SquareTerminal,
-				},
-				{
-					title: "Notes",
-					url: "/dashboard/notes",
-					icon: Notebook,
-					items: availableYears.map((year) => {
-						const monthsInYear = Object.entries(notesByYear[year] || {});
-						return {
-							title: year,
-							url: `/dashboard/notes?year=${year}`,
-							items: monthsInYear.map(([month, count]) => ({
-								title: month,
-								url: `/dashboard/notes?year=${year}&month=${month}`,
-								count,
-							})),
-						};
-					}),
-				},
-			],
-		}),
-		[availableYears, notesByYear],
-	);
+		{
+			title: "Notes",
+			url: "/dashboard/notes",
+			icon: Notebook,
+		},
+	];
 
 	return (
 		<Sidebar
@@ -90,7 +49,7 @@ export function AppSidebar({
 			{...props}
 		>
 			<SidebarContent>
-				<NavMain items={data.navMain} />
+				<NavMain items={items} />
 				<NavSecondary
 					className="mt-auto"
 					items={[

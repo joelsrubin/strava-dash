@@ -12,9 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ExchangeIndexRouteImport } from './routes/exchange/index'
 import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
-import { Route as AuthedDashboardIndexRouteImport } from './routes/_authed/dashboard.index'
-import { Route as AuthedDashboardNotesRouteImport } from './routes/_authed/dashboard.notes'
+import { Route as AuthedDashboardChartsRouteImport } from './routes/_authed/dashboard._charts'
 import { Route as AuthedDashboardRunIdRouteImport } from './routes/_authed/dashboard.run.$id'
+import { Route as AuthedDashboardChartsNotesRouteImport } from './routes/_authed/dashboard._charts.notes'
+import { Route as AuthedDashboardChartsActivitiesRouteImport } from './routes/_authed/dashboard._charts.activities'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,14 +32,8 @@ const AuthedDashboardRoute = AuthedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthedDashboardIndexRoute = AuthedDashboardIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthedDashboardRoute,
-} as any)
-const AuthedDashboardNotesRoute = AuthedDashboardNotesRouteImport.update({
-  id: '/notes',
-  path: '/notes',
+const AuthedDashboardChartsRoute = AuthedDashboardChartsRouteImport.update({
+  id: '/_charts',
   getParentRoute: () => AuthedDashboardRoute,
 } as any)
 const AuthedDashboardRunIdRoute = AuthedDashboardRunIdRouteImport.update({
@@ -46,20 +41,33 @@ const AuthedDashboardRunIdRoute = AuthedDashboardRunIdRouteImport.update({
   path: '/run/$id',
   getParentRoute: () => AuthedDashboardRoute,
 } as any)
+const AuthedDashboardChartsNotesRoute =
+  AuthedDashboardChartsNotesRouteImport.update({
+    id: '/notes',
+    path: '/notes',
+    getParentRoute: () => AuthedDashboardChartsRoute,
+  } as any)
+const AuthedDashboardChartsActivitiesRoute =
+  AuthedDashboardChartsActivitiesRouteImport.update({
+    id: '/activities',
+    path: '/activities',
+    getParentRoute: () => AuthedDashboardChartsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof AuthedDashboardRouteWithChildren
+  '/dashboard': typeof AuthedDashboardChartsRouteWithChildren
   '/exchange': typeof ExchangeIndexRoute
-  '/dashboard/notes': typeof AuthedDashboardNotesRoute
-  '/dashboard/': typeof AuthedDashboardIndexRoute
+  '/dashboard/activities': typeof AuthedDashboardChartsActivitiesRoute
+  '/dashboard/notes': typeof AuthedDashboardChartsNotesRoute
   '/dashboard/run/$id': typeof AuthedDashboardRunIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof AuthedDashboardChartsRouteWithChildren
   '/exchange': typeof ExchangeIndexRoute
-  '/dashboard/notes': typeof AuthedDashboardNotesRoute
-  '/dashboard': typeof AuthedDashboardIndexRoute
+  '/dashboard/activities': typeof AuthedDashboardChartsActivitiesRoute
+  '/dashboard/notes': typeof AuthedDashboardChartsNotesRoute
   '/dashboard/run/$id': typeof AuthedDashboardRunIdRoute
 }
 export interface FileRoutesById {
@@ -67,8 +75,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authed/dashboard': typeof AuthedDashboardRouteWithChildren
   '/exchange/': typeof ExchangeIndexRoute
-  '/_authed/dashboard/notes': typeof AuthedDashboardNotesRoute
-  '/_authed/dashboard/': typeof AuthedDashboardIndexRoute
+  '/_authed/dashboard/_charts': typeof AuthedDashboardChartsRouteWithChildren
+  '/_authed/dashboard/_charts/activities': typeof AuthedDashboardChartsActivitiesRoute
+  '/_authed/dashboard/_charts/notes': typeof AuthedDashboardChartsNotesRoute
   '/_authed/dashboard/run/$id': typeof AuthedDashboardRunIdRoute
 }
 export interface FileRouteTypes {
@@ -77,23 +86,25 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/exchange'
+    | '/dashboard/activities'
     | '/dashboard/notes'
-    | '/dashboard/'
     | '/dashboard/run/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/exchange'
-    | '/dashboard/notes'
     | '/dashboard'
+    | '/exchange'
+    | '/dashboard/activities'
+    | '/dashboard/notes'
     | '/dashboard/run/$id'
   id:
     | '__root__'
     | '/'
     | '/_authed/dashboard'
     | '/exchange/'
-    | '/_authed/dashboard/notes'
-    | '/_authed/dashboard/'
+    | '/_authed/dashboard/_charts'
+    | '/_authed/dashboard/_charts/activities'
+    | '/_authed/dashboard/_charts/notes'
     | '/_authed/dashboard/run/$id'
   fileRoutesById: FileRoutesById
 }
@@ -126,18 +137,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authed/dashboard/': {
-      id: '/_authed/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof AuthedDashboardIndexRouteImport
-      parentRoute: typeof AuthedDashboardRoute
-    }
-    '/_authed/dashboard/notes': {
-      id: '/_authed/dashboard/notes'
-      path: '/notes'
-      fullPath: '/dashboard/notes'
-      preLoaderRoute: typeof AuthedDashboardNotesRouteImport
+    '/_authed/dashboard/_charts': {
+      id: '/_authed/dashboard/_charts'
+      path: ''
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthedDashboardChartsRouteImport
       parentRoute: typeof AuthedDashboardRoute
     }
     '/_authed/dashboard/run/$id': {
@@ -147,18 +151,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardRunIdRouteImport
       parentRoute: typeof AuthedDashboardRoute
     }
+    '/_authed/dashboard/_charts/notes': {
+      id: '/_authed/dashboard/_charts/notes'
+      path: '/notes'
+      fullPath: '/dashboard/notes'
+      preLoaderRoute: typeof AuthedDashboardChartsNotesRouteImport
+      parentRoute: typeof AuthedDashboardChartsRoute
+    }
+    '/_authed/dashboard/_charts/activities': {
+      id: '/_authed/dashboard/_charts/activities'
+      path: '/activities'
+      fullPath: '/dashboard/activities'
+      preLoaderRoute: typeof AuthedDashboardChartsActivitiesRouteImport
+      parentRoute: typeof AuthedDashboardChartsRoute
+    }
   }
 }
 
+interface AuthedDashboardChartsRouteChildren {
+  AuthedDashboardChartsActivitiesRoute: typeof AuthedDashboardChartsActivitiesRoute
+  AuthedDashboardChartsNotesRoute: typeof AuthedDashboardChartsNotesRoute
+}
+
+const AuthedDashboardChartsRouteChildren: AuthedDashboardChartsRouteChildren = {
+  AuthedDashboardChartsActivitiesRoute: AuthedDashboardChartsActivitiesRoute,
+  AuthedDashboardChartsNotesRoute: AuthedDashboardChartsNotesRoute,
+}
+
+const AuthedDashboardChartsRouteWithChildren =
+  AuthedDashboardChartsRoute._addFileChildren(
+    AuthedDashboardChartsRouteChildren,
+  )
+
 interface AuthedDashboardRouteChildren {
-  AuthedDashboardNotesRoute: typeof AuthedDashboardNotesRoute
-  AuthedDashboardIndexRoute: typeof AuthedDashboardIndexRoute
+  AuthedDashboardChartsRoute: typeof AuthedDashboardChartsRouteWithChildren
   AuthedDashboardRunIdRoute: typeof AuthedDashboardRunIdRoute
 }
 
 const AuthedDashboardRouteChildren: AuthedDashboardRouteChildren = {
-  AuthedDashboardNotesRoute: AuthedDashboardNotesRoute,
-  AuthedDashboardIndexRoute: AuthedDashboardIndexRoute,
+  AuthedDashboardChartsRoute: AuthedDashboardChartsRouteWithChildren,
   AuthedDashboardRunIdRoute: AuthedDashboardRunIdRoute,
 }
 
