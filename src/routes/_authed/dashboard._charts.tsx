@@ -5,9 +5,11 @@ import { fetchAthleteActivitiesAllQueryOptions } from "@/api/queries/strava";
 import { DistanceChart } from "@/components/charts/distance";
 import { HeartRateChart } from "@/components/charts/heart-rate";
 import ActivityHeatmap from "@/components/charts/heat-map";
+
 import { ChartLoader } from "@/components/ui/loaders/chart-loader";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authed/dashboard/_charts")({
 	component: RouteComponent,
@@ -18,6 +20,7 @@ function RouteComponent() {
 	const { isLoading: isLoadingAllActivities } = useQuery(
 		fetchAthleteActivitiesAllQueryOptions(),
 	);
+
 	return (
 		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
 			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
@@ -28,7 +31,9 @@ function RouteComponent() {
 							<DistanceChart />
 						</div>
 						<div
-							className={`${isLoadingAllActivities ? "bg-transparent" : "bg-muted/50"} rounded-xl`}
+							className={cn(`bg-muted/50 rounded-xl`, {
+								"bg-transparent": isLoadingAllActivities,
+							})}
 						>
 							<Suspense fallback={<ChartLoader />}>
 								<h2 className="p-2 flex items-center gap-2">Heat Map</h2>
