@@ -45,15 +45,11 @@ export const useCreateNoteMutation = (
 };
 
 export const useDeleteNoteMutation = (
-	options?: UseMutationOptions<
-		void,
-		Error,
-		{ ids: number[]; runIds: number[] }
-	>,
+	options?: UseMutationOptions<void, Error, { runIds: number[] }>,
 ) => {
 	return useMutation({
-		mutationFn: async ({ ids }: { ids: number[]; runIds: number[] }) => {
-			await deleteNotes({ data: { ids } });
+		mutationFn: async ({ runIds }: { runIds: number[] }) => {
+			await deleteNotes({ data: { runIds } });
 		},
 		...options,
 	});

@@ -35,6 +35,7 @@ import {
 import type { ParsedNote } from "@/db";
 
 import { parseNoteContent } from "@/lib/utils";
+
 import { Checkbox } from "../ui/checkbox";
 import {
 	Combobox,
@@ -79,7 +80,9 @@ export function NotesTable() {
 		onSuccess: (_data, variables) => {
 			const deletedCount = variables.runIds.length;
 			const didDeleteMultipleNotes = deletedCount > 1;
-			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
+			queryClient.invalidateQueries({
+				queryKey: ["notes", athlete.id],
+			});
 			// Remove the specific note queries entirely so the run page fetches fresh data
 			for (const runId of variables.runIds) {
 				queryClient.removeQueries({ queryKey: ["note", runId] });
@@ -142,7 +145,7 @@ export function NotesTable() {
 								column.toggleSorting(column.getIsSorted() === "asc")
 							}
 						>
-							Date
+							Activity Date
 							<ArrowUpDown className="ml-2 h-4 w-4" />
 						</Button>
 					);
@@ -383,13 +386,12 @@ export function NotesTable() {
 							size="sm"
 							onClick={() =>
 								deleteNotes({
-									ids: selectedRows.map((row) => row.original.id),
 									runIds: selectedRows.map((row) => row.original.run_id),
 								})
 							}
 						>
 							<Trash2 className="h-4 w-4 mr-1" />
-							Delete {selectedCount}
+							Delete <span className="ml-1 tabular-nums">{selectedCount}</span>
 						</Button>
 					</div>
 				</div>
