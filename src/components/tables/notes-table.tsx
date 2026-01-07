@@ -281,6 +281,7 @@ export function NotesTable() {
 						<div className="w-full">
 							<InputGroup className="rounded-md bg-background">
 								<InputGroupInput
+									type="search"
 									value={
 										(table.getColumn("content")?.getFilterValue() as string) ??
 										""
@@ -469,7 +470,7 @@ function Filter<T extends { hashtags?: string[] }>({
 					<ComboboxChip key={tag}>{`#${tag}`}</ComboboxChip>
 				))}
 				<ComboboxChipsInput
-					className="text-xs"
+					className="text-[16px]"
 					placeholder={columnFilterValue.length ? "" : "Filter by hashtag"}
 				/>
 			</ComboboxChips>
