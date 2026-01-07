@@ -282,25 +282,7 @@ export function NotesTable() {
 					<Filter column={table.getColumn("hashtags")} hashtags={allHashtags} />
 				</div>
 			</div>
-			{selectedCount > 0 && (
-				<div className="flex items-end justify-end p-2">
-					<div className="flex gap-2">
-						<Button
-							disabled={isDeleting}
-							size="xs"
-							onClick={() =>
-								deleteNotes({
-									ids: selectedRows.map((row) => row.original.id),
-									runIds: selectedRows.map((row) => row.original.run_id),
-								})
-							}
-						>
-							<Trash2 className="h-4 w-4 mr-1" />
-							Delete
-						</Button>
-					</div>
-				</div>
-			)}
+
 			<div className="min-h-0 flex-1 overflow-auto">
 				<Table className="">
 					<TableHeader className="sticky top-0 z-10 bg-background">
@@ -386,6 +368,25 @@ export function NotesTable() {
 					</TableBody>
 				</Table>
 			</div>
+			{selectedCount > 0 && (
+				<div className="flex items-end justify-end pb-2 pr-2">
+					<div className="flex gap-2">
+						<Button
+							disabled={isDeleting}
+							size="sm"
+							onClick={() =>
+								deleteNotes({
+									ids: selectedRows.map((row) => row.original.id),
+									runIds: selectedRows.map((row) => row.original.run_id),
+								})
+							}
+						>
+							<Trash2 className="h-4 w-4 mr-1" />
+							Delete {selectedCount}
+						</Button>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
