@@ -47,7 +47,6 @@ import {
 	ComboboxList,
 	useComboboxAnchor,
 } from "../ui/combobox";
-
 import {
 	Empty,
 	EmptyContent,
@@ -237,6 +236,7 @@ export function NotesTable() {
 		],
 		[],
 	);
+
 	const table = useReactTable({
 		data: tableData,
 		columns,
@@ -249,6 +249,13 @@ export function NotesTable() {
 		state: {
 			sorting,
 			columnFilters,
+			columnOrder: [
+				"select",
+				"content",
+				"hashtags",
+				"activity_date",
+				"updated_at",
+			],
 		},
 	});
 
