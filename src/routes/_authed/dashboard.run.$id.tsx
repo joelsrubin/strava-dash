@@ -1,9 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-	ClientOnly,
-	createFileRoute,
-	useRouteContext,
-} from "@tanstack/react-router";
+import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 
 import { toast } from "sonner";
 import {
@@ -43,9 +39,9 @@ export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 
 export function RouteComponent() {
 	const { id } = Route.useParams();
-	const { queryClient } = Route.useRouteContext();
+	const { queryClient, athlete } = Route.useRouteContext();
 	const { isMobile } = useIsMobile();
-	const { athlete } = useRouteContext({ from: "/_authed/dashboard/run/$id" });
+
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
 	const { data: note } = useSuspenseQuery(
 		fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
@@ -80,7 +76,7 @@ export function RouteComponent() {
 
 	const defaultContent = `<p><b>${activity.name}</b> - ${formatDistance(activity.distance)} miles</p>`;
 	const initialState = note?.results[0]?.content || defaultContent;
-
+	console.log({ initialState, didInitializeWithNote });
 	const handleSave = async (content: string) => {
 		if (didInitializeWithNote) {
 			updateNoteFn({ id: note.results[0].id, content });
