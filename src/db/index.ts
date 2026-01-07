@@ -118,12 +118,21 @@ export const updateNote = createServerFn({ method: "POST" })
 		}
 	});
 
-export const deleteNote = createServerFn({ method: "POST" })
-	.inputValidator((input: { id: number }) => input)
+export const deleteNotes = createServerFn({ method: "POST" })
+	.inputValidator((input: { ids: number[] }) => input)
 	.handler(async ({ data }) => {
-		const { id } = data;
-		const result = await env.DB.prepare("DELETE FROM notes WHERE id = ?")
-			.bind(id)
+		const { ids } = data;
+
+		if (ids.length === 0) {
+			return { success: true, deleted: 0 };
+		}
+
+		const placeholders = ids.map(() => "?").join(", ");
+		const result = await env.DB.prepare(
+			`DELETE FROM notes WHERE id IN (${placeholders})`,
+		)
+			.bind(...ids)
 			.run();
-		return { success: result.success };
+
+		return { success: result.success, deleted: result.meta.changes };
 	});

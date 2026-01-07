@@ -15,22 +15,15 @@ import {
 	AlertCircle,
 	ArrowUpDown,
 	ArrowUpRightIcon,
-	MoreHorizontal,
 	Search,
+	Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useDeleteNoteMutation } from "@/api/mutations/notes";
 import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
 import { Button } from "@/components/ui/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import {
 	Table,
 	TableBody,
@@ -42,6 +35,7 @@ import {
 import type { ParsedNote } from "@/db";
 
 import { parseNoteContent } from "@/lib/utils";
+import { Checkbox } from "../ui/checkbox";
 import {
 	Combobox,
 	ComboboxChip,
@@ -53,15 +47,7 @@ import {
 	ComboboxList,
 	useComboboxAnchor,
 } from "../ui/combobox";
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "../ui/dialog";
+
 import {
 	Empty,
 	EmptyContent,
@@ -70,7 +56,6 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "../ui/empty";
-
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -82,8 +67,7 @@ export function NotesTable() {
 	const { queryClient, athlete } = useRouteContext({
 		from: "/_authed/dashboard/_charts/notes",
 	});
-	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-	const [noteToDelete, setNoteToDelete] = useState<number | null>(null);
+
 	const { data: notesData } = useSuspenseQuery(
 		fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 	);
@@ -92,10 +76,19 @@ export function NotesTable() {
 		new Set(notesData.results.flatMap((note) => note.hashtags)),
 	).sort() as string[];
 
-	const { mutate: deleteNote, isPending: isDeleting } = useDeleteNoteMutation({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes"] });
-			toast.success("Note deleted successfully");
+	const { mutate: deleteNotes, isPending: isDeleting } = useDeleteNoteMutation({
+		onSuccess: (_data, variables) => {
+			const deletedCount = variables.runIds.length;
+			const didDeleteMultipleNotes = deletedCount > 1;
+			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
+			// Remove the specific note queries entirely so the run page fetches fresh data
+			for (const runId of variables.runIds) {
+				queryClient.removeQueries({ queryKey: ["note", runId] });
+			}
+
+			toast.success(
+				`${deletedCount} ${didDeleteMultipleNotes ? "notes" : "note"} deleted successfully`,
+			);
 		},
 		onError: (error) => {
 			console.error("Failed to delete note:", error);
@@ -114,6 +107,31 @@ export function NotesTable() {
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const columns: ColumnDef<ParsedNote>[] = useMemo(
 		() => [
+			{
+				id: "select",
+				header: ({ table }) => (
+					<Checkbox
+						className="mr-2"
+						checked={
+							table.getIsAllPageRowsSelected() ||
+							(table.getIsSomePageRowsSelected() && "indeterminate")
+						}
+						onCheckedChange={(value) =>
+							table.toggleAllPageRowsSelected(!!value)
+						}
+						aria-label="Select all"
+					/>
+				),
+				cell: ({ row }) => (
+					<Checkbox
+						checked={row.getIsSelected()}
+						onCheckedChange={(value) => row.toggleSelected(!!value)}
+						aria-label="Select row"
+					/>
+				),
+				enableSorting: false,
+				enableHiding: false,
+			},
 			{
 				accessorKey: "activity_date",
 				header: ({ column }) => {
@@ -216,44 +234,6 @@ export function NotesTable() {
 					);
 				},
 			},
-
-			{
-				id: "actions",
-				cell: ({ row }) => {
-					return (
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button variant="ghost" className="flex h-4 w-4 p-0 ml-auto">
-									<span className="sr-only">Open menu</span>
-									<MoreHorizontal className="h-4 w-4" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								<DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-								<DropdownMenuItem asChild>
-									<Link
-										to="/dashboard/run/$id"
-										params={{ id: row.original.run_id.toString() }}
-										preload="render"
-									>
-										View Run
-									</Link>
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() => {
-										setNoteToDelete(row.original.id);
-										setDeleteDialogOpen(true);
-									}}
-								>
-									Delete Note
-								</DropdownMenuItem>
-								<DropdownMenuSeparator />
-							</DropdownMenuContent>
-						</DropdownMenu>
-					);
-				},
-			},
 		],
 		[],
 	);
@@ -272,171 +252,141 @@ export function NotesTable() {
 		},
 	});
 
-	return (
-		<>
-			<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
-				<div className="flex flex-row items-center justify-between mb-2 p-2 gap-4">
-					<div className="text-sm font-medium">Notes</div>
-					<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2">
-						<div className="w-full">
-							<InputGroup className="rounded-md bg-background">
-								<InputGroupInput
-									type="search"
-									value={
-										(table.getColumn("content")?.getFilterValue() as string) ??
-										""
-									}
-									onChange={(event) =>
-										table
-											.getColumn("content")
-											?.setFilterValue(event.target.value)
-									}
-									placeholder="Search notes..."
-									className="rounded-2xl"
-								/>
-								<InputGroupAddon>
-									<Search />
-								</InputGroupAddon>
-							</InputGroup>
-						</div>
+	const selectedRows = table.getFilteredSelectedRowModel().rows;
+	const selectedCount = selectedRows.length;
 
-						<Filter
-							column={table.getColumn("hashtags")}
-							hashtags={allHashtags}
-						/>
+	return (
+		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
+			<div className="flex flex-row items-center justify-between p-2 gap-4">
+				<div className="text-sm font-medium">Notes</div>
+				<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2">
+					<div className="w-full">
+						<InputGroup className="rounded-md bg-background">
+							<InputGroupInput
+								type="search"
+								value={
+									(table.getColumn("content")?.getFilterValue() as string) ?? ""
+								}
+								onChange={(event) =>
+									table.getColumn("content")?.setFilterValue(event.target.value)
+								}
+								placeholder="Search notes..."
+								className="rounded-2xl"
+							/>
+							<InputGroupAddon>
+								<Search />
+							</InputGroupAddon>
+						</InputGroup>
 					</div>
-				</div>
-				<div className="min-h-0 flex-1 overflow-auto">
-					<Table className="">
-						<TableHeader className="sticky top-0 z-10 bg-background">
-							{table.getHeaderGroups().map((headerGroup) => (
-								<TableRow key={headerGroup.id}>
-									{headerGroup.headers.map((header) => {
-										return (
-											<TableHead
-												key={header.id}
-												className={
-													// biome-ignore lint/suspicious/noExplicitAny: False positive due to generic typing
-													(header.column.columnDef as any).meta?.className
-												}
-											>
-												{header.isPlaceholder
-													? null
-													: flexRender(
-															header.column.columnDef.header,
-															header.getContext(),
-														)}
-											</TableHead>
-										);
-									})}
-								</TableRow>
-							))}
-						</TableHeader>
-						<TableBody>
-							{table.getRowModel().rows?.length ? (
-								table.getRowModel().rows.map((row) => (
-									<TableRow
-										key={row.id}
-										data-state={row.getIsSelected() && "selected"}
-									>
-										{row.getVisibleCells().map((cell) => (
-											<TableCell
-												key={cell.id}
-												className={
-													// biome-ignore lint/suspicious/noExplicitAny: False positive due to generic typing
-													(cell.column.columnDef as any).meta?.className
-												}
-											>
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext(),
-												)}
-											</TableCell>
-										))}
-									</TableRow>
-								))
-							) : (
-								<TableRow>
-									<TableCell
-										colSpan={columns.length}
-										rowSpan={20}
-										className="h-24 text-center"
-									>
-										<Empty>
-											<EmptyHeader>
-												<EmptyMedia variant="icon">
-													<AlertCircle />
-												</EmptyMedia>
-												<EmptyTitle>No Notes Found</EmptyTitle>
-												<EmptyDescription>
-													If you haven't added any notes, add one to an activity
-												</EmptyDescription>
-											</EmptyHeader>
-											<EmptyContent>
-												<Button
-													variant="link"
-													asChild
-													className="text-muted-foreground"
-													size="sm"
-												>
-													<Link to={"/dashboard"}>
-														View Activities <ArrowUpRightIcon />
-													</Link>
-												</Button>
-											</EmptyContent>
-										</Empty>
-									</TableCell>
-								</TableRow>
-							)}
-						</TableBody>
-					</Table>
+
+					<Filter column={table.getColumn("hashtags")} hashtags={allHashtags} />
 				</div>
 			</div>
-
-			<Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-				<DialogContent className="sm:max-w-md">
-					<DialogHeader>
-						<div className="flex items-center gap-3">
-							<div className="flex size-10 items-center justify-center rounded-full bg-destructive/10">
-								<AlertCircle className="size-5 text-destructive" />
-							</div>
-							<DialogTitle className="text-balance">Are you sure?</DialogTitle>
-						</div>
-						<DialogDescription className="pt-2">
-							This action cannot be undone. This will permanently delete the
-							note.
-						</DialogDescription>
-					</DialogHeader>
-					<DialogFooter className="gap-2">
-						<DialogClose asChild>
-							<Button type="button" variant="outline" disabled={isDeleting}>
-								Cancel
-							</Button>
-						</DialogClose>
+			{selectedCount > 0 && (
+				<div className="flex items-end justify-end p-2">
+					<div className="flex gap-2">
 						<Button
-							type="button"
-							variant="destructive"
-							onClick={() => {
-								if (noteToDelete) {
-									deleteNote(
-										{ id: noteToDelete },
-										{
-											onSuccess: () => {
-												setDeleteDialogOpen(false);
-												setNoteToDelete(null);
-											},
-										},
-									);
-								}
-							}}
 							disabled={isDeleting}
+							size="xs"
+							onClick={() =>
+								deleteNotes({
+									ids: selectedRows.map((row) => row.original.id),
+									runIds: selectedRows.map((row) => row.original.run_id),
+								})
+							}
 						>
-							{isDeleting ? "Deleting..." : "Delete"}
+							<Trash2 className="h-4 w-4 mr-1" />
+							Delete
 						</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
-		</>
+					</div>
+				</div>
+			)}
+			<div className="min-h-0 flex-1 overflow-auto">
+				<Table className="">
+					<TableHeader className="sticky top-0 z-10 bg-background">
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => {
+									return (
+										<TableHead
+											key={header.id}
+											className={
+												// biome-ignore lint/suspicious/noExplicitAny: False positive due to generic typing
+												(header.column.columnDef as any).meta?.className
+											}
+										>
+											{header.isPlaceholder
+												? null
+												: flexRender(
+														header.column.columnDef.header,
+														header.getContext(),
+													)}
+										</TableHead>
+									);
+								})}
+							</TableRow>
+						))}
+					</TableHeader>
+					<TableBody>
+						{table.getRowModel().rows?.length ? (
+							table.getRowModel().rows.map((row) => (
+								<TableRow
+									key={row.id}
+									data-state={row.getIsSelected() && "selected"}
+								>
+									{row.getVisibleCells().map((cell) => (
+										<TableCell
+											key={cell.id}
+											className={
+												// biome-ignore lint/suspicious/noExplicitAny: False positive due to generic typing
+												(cell.column.columnDef as any).meta?.className
+											}
+										>
+											{flexRender(
+												cell.column.columnDef.cell,
+												cell.getContext(),
+											)}
+										</TableCell>
+									))}
+								</TableRow>
+							))
+						) : (
+							<TableRow>
+								<TableCell
+									colSpan={columns.length}
+									rowSpan={20}
+									className="h-24 text-center"
+								>
+									<Empty>
+										<EmptyHeader>
+											<EmptyMedia variant="icon">
+												<AlertCircle />
+											</EmptyMedia>
+											<EmptyTitle>No Notes Found</EmptyTitle>
+											<EmptyDescription>
+												If you haven't added any notes, add one to an activity
+											</EmptyDescription>
+										</EmptyHeader>
+										<EmptyContent>
+											<Button
+												variant="link"
+												asChild
+												className="text-muted-foreground"
+												size="sm"
+											>
+												<Link to={"/dashboard"}>
+													View Activities <ArrowUpRightIcon />
+												</Link>
+											</Button>
+										</EmptyContent>
+									</Empty>
+								</TableCell>
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
+			</div>
+		</div>
 	);
 }
 
