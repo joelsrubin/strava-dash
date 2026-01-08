@@ -153,7 +153,7 @@ export function NotesTable() {
 
 				cell: ({ row }) => {
 					return (
-						<div>
+						<div className="text-right mr-2">
 							{new Date(row.original.activity_date).toLocaleDateString()}
 						</div>
 					);
@@ -180,7 +180,9 @@ export function NotesTable() {
 				},
 				cell: ({ row }) => {
 					return (
-						<div>{new Date(row.original.updated_at).toLocaleDateString()}</div>
+						<div className="text-right mr-2">
+							{new Date(row.original.updated_at).toLocaleDateString()}
+						</div>
 					);
 				},
 			},
@@ -228,7 +230,8 @@ export function NotesTable() {
 				},
 				cell: ({ row }) => {
 					if (!row.original.hashtags) return <div>no data</div>;
-					if (row.original.hashtags.length === 0) return <div> - </div>;
+					if (row.original.hashtags.length === 0)
+						return <div className="text-center"> - </div>;
 					return (
 						<div className="max-w-xs">
 							<HashtagList maxVisible={2} hashtags={row.original.hashtags} />
