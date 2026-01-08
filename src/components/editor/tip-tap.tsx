@@ -25,48 +25,43 @@ const Tiptap = ({
 	placeholder = "Start writing...",
 	onChange,
 }: TiptapProps) => {
-	const editor = useEditor(
-		{
-			immediatelyRender: false,
-			autofocus: "end",
-			parseOptions: {
-				preserveWhitespace: "full",
-			},
-			extensions: [
-				StarterKit.configure({
-					codeBlock: false, // Disable default code block, we use CodeBlockLowlight instead
-				}),
-				Emoji.configure({
-					emojis: gitHubEmojis,
-					enableEmoticons: true,
-				}),
-				Link.configure({
-					openOnClick: false, // Don't open links on click in editor
-					HTMLAttributes: {
-						rel: "noopener noreferrer",
-						target: "_blank",
-					},
-				}),
-				Placeholder.configure({
-					placeholder,
-				}),
-				CodeBlockLowlight.configure({
-					lowlight,
-				}),
-				Hashtag,
-			],
-			content: initialContent,
-			onUpdate: ({ editor }) => {
-				onChange?.(editor.getHTML());
-			},
-			editorProps: {
-				attributes: {
-					class: "tiptap",
+	const editor = useEditor({
+		immediatelyRender: false,
+		extensions: [
+			StarterKit.configure({
+				codeBlock: false, // Disable default code block, we use CodeBlockLowlight instead
+			}),
+			Emoji.configure({
+				emojis: gitHubEmojis,
+				enableEmoticons: true,
+			}),
+			Link.configure({
+				openOnClick: false, // Don't open links on click in editor
+				HTMLAttributes: {
+					rel: "noopener noreferrer",
+					target: "_blank",
 				},
+			}),
+			Placeholder.configure({
+				placeholder,
+			}),
+			CodeBlockLowlight.configure({
+				lowlight,
+			}),
+			Hashtag,
+		],
+
+		content: initialContent,
+		onUpdate: ({ editor }) => {
+			onChange?.(editor.getHTML());
+		},
+
+		editorProps: {
+			attributes: {
+				class: "tiptap",
 			},
 		},
-		[initialContent],
-	);
+	});
 
 	return (
 		<div className="rounded-md border border-border bg-transparent flex flex-col min-h-0 flex-1 overflow-hidden">

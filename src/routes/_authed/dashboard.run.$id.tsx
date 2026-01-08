@@ -10,6 +10,7 @@ import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
 import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import ActivityMap from "@/components/activity-map/activity-map";
 import Tiptap from "@/components/editor/tip-tap";
+import { ChartLoader } from "@/components/ui/loaders/chart-loader";
 import { SidebarInset } from "@/components/ui/sidebar";
 import {
 	Table,
@@ -21,7 +22,6 @@ import {
 } from "@/components/ui/table";
 import { useAutosave } from "@/hooks/use-autosave";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 import { formatDistance, formatPace, formatTime } from "@/lib/utils";
 import { PendingComponent } from "./-pending-component";
 
@@ -76,7 +76,7 @@ export function RouteComponent() {
 
 	const defaultContent = `<p><b>${activity.name}</b> - ${formatDistance(activity.distance)} miles</p>`;
 	const initialState = note?.results[0]?.content || defaultContent;
-	console.log({ initialState, didInitializeWithNote });
+
 	const handleSave = async (content: string) => {
 		if (didInitializeWithNote) {
 			updateNoteFn({ id: note.results[0].id, content });
@@ -92,7 +92,7 @@ export function RouteComponent() {
 
 	const { triggerSave } = useAutosave({
 		onSave: (content) => handleSave(content),
-		debounceMs: 2500,
+		debounceMs: 1500,
 	});
 	return (
 		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
@@ -139,7 +139,7 @@ export function RouteComponent() {
 					{!isMobile && (
 						<div className="bg-muted/50 rounded-xl order-4 lg:order-3">
 							<h2 className="p-2">Route Preview</h2>
-							<ClientOnly>
+							<ClientOnly fallback={<ChartLoader />}>
 								<ActivityMap encodedPolyline={polyline || ""} />
 							</ClientOnly>
 						</div>

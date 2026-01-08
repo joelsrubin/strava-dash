@@ -12,7 +12,7 @@ export function BulkToolbar({
 	isDeleting: boolean;
 	selectedCount: number;
 	selectedRows: Row<ParsedNote>[];
-	onDelete: (data: { ids: number[]; runIds: number[] }) => void;
+	onDelete: (data: { runIds: number[] }) => void;
 }) {
 	return (
 		<div className="flex items-end justify-end pb-2 pr-2">
@@ -22,7 +22,6 @@ export function BulkToolbar({
 					size="sm"
 					onClick={() =>
 						onDelete({
-							ids: selectedRows.map((row) => row.original.id),
 							runIds: selectedRows.map((row) => row.original.run_id),
 						})
 					}
