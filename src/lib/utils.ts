@@ -12,8 +12,15 @@ export function formatTime(seconds: number) {
 	return `${hours ? `${hours}h ` : ""}${minutes ? `${minutes} min ` : ""}`;
 }
 
-export function formatDistance(distance: number) {
-	return `${(distance * 0.00062137).toFixed(2)} mi`;
+export function formatDistance(
+	distance: number,
+	unitOfMeasurement: "miles" | "kilometers",
+) {
+	if (unitOfMeasurement === "miles") {
+		return `${(distance * 0.00062137).toFixed(2)} mi`;
+	} else {
+		return `${(distance / 1000).toFixed(2)} km`;
+	}
 }
 
 export function formatElevation(elevation: number) {
@@ -26,14 +33,25 @@ export function formatDate(date: string) {
 	);
 }
 
-export function formatPace(metersPerSecond: number) {
+export function formatPace(
+	metersPerSecond: number,
+	unitOfMeasurement: "miles" | "kilometers",
+) {
 	if (!metersPerSecond || metersPerSecond <= 0) return "--:--";
 
 	const metersPerMile = 1609.34;
-	const minutesPerMile = metersPerMile / (metersPerSecond * 60);
+	const metersPerKilometer = 1000;
 
-	const minutes = Math.floor(minutesPerMile);
-	const seconds = Math.round((minutesPerMile - minutes) * 60);
+	let minutesPerUnit: number;
+
+	if (unitOfMeasurement === "miles") {
+		minutesPerUnit = metersPerMile / (metersPerSecond * 60);
+	} else {
+		minutesPerUnit = metersPerKilometer / (metersPerSecond * 60);
+	}
+
+	const minutes = Math.floor(minutesPerUnit);
+	const seconds = Math.round((minutesPerUnit - minutes) * 60);
 
 	if (seconds === 60) {
 		return `${minutes + 1}:00`;

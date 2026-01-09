@@ -9,9 +9,9 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Container } from "@/components/container";
 
-import { Toaster } from "@/components/ui/sonner";
-import { getThemeScript, ThemeProvider } from "@/lib/theme";
+import { getThemeScript } from "@/lib/theme";
 import appCss from "../styles.css?url";
+import { Providers } from "./-providers";
 
 export const Route = createRootRouteWithContext<{
 	queryClient: QueryClient;
@@ -85,7 +85,13 @@ export const Route = createRootRouteWithContext<{
 	shellComponent: RootDocument,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({
+	children,
+	athlete,
+}: {
+	children: React.ReactNode;
+	athlete?: TAthlete;
+}) {
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
@@ -94,10 +100,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<script dangerouslySetInnerHTML={{ __html: getThemeScript() }} />
 			</head>
 			<body suppressHydrationWarning>
-				<ThemeProvider>
-					{children}
-					<Toaster position="top-center" />
-				</ThemeProvider>
+				<Providers stravaId={athlete?.id}>{children}</Providers>
 				<TanStackDevtools
 					config={{
 						position: "bottom-right",

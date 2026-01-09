@@ -28,7 +28,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { formatPace } from "@/lib/utils";
+import { useUnitOfMeasurement } from "@/lib/user-preferences";
+import { formatDistance, formatPace } from "@/lib/utils";
 import { EmptyState } from "./empty-state";
 
 export function DataTable() {
@@ -39,6 +40,7 @@ export function DataTable() {
 		isFetchingNextPage,
 	} = useSuspenseInfiniteQuery(fetchAthleteActivitiesQueryOptions());
 	const [sorting, setSorting] = useState<SortingState>([]);
+	const { unitOfMeasurement } = useUnitOfMeasurement();
 	const tableData = useMemo(
 		() =>
 			(athleteActivities.pages.flat() as TActivity[]).filter(
@@ -90,7 +92,7 @@ export function DataTable() {
 				cell: ({ row }) => {
 					return (
 						<div>
-							{((row.original.distance as number) * 0.00062137).toFixed(2)} mi
+							{formatDistance(row.original.distance, unitOfMeasurement)}
 						</div>
 					);
 				},
@@ -113,7 +115,12 @@ export function DataTable() {
 				},
 
 				cell: ({ row }) => {
-					return <div>{formatPace(row.original.average_speed)} /mi</div>;
+					return (
+						<div>
+							{formatPace(row.original.average_speed, unitOfMeasurement)}{" "}
+							{unitOfMeasurement === "miles" ? "/mi" : "/km"}
+						</div>
+					);
 				},
 			},
 			{
@@ -252,7 +259,7 @@ export function DataTable() {
 				},
 			},
 		],
-		[],
+		[unitOfMeasurement],
 	);
 	const table = useReactTable({
 		data: tableData,

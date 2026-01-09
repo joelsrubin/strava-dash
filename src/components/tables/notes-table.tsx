@@ -183,7 +183,7 @@ export function NotesTable() {
 							preload="intent"
 						>
 							<div
-								className="truncate line-clamp-2 min-h-[33px]"
+								className="line-clamp-2 min-h-[33px] break-words"
 								// biome-ignore lint/security/noDangerouslySetInnerHtml: safe html content
 								dangerouslySetInnerHTML={{ __html: parsed.text }}
 							/>
@@ -435,7 +435,7 @@ function Filter<T extends { hashtags?: string[] }>({
 					<ComboboxChip key={tag}>{`#${tag}`}</ComboboxChip>
 				))}
 				<ComboboxChipsInput
-					className="text-[16px]"
+					className="text-[16px] text-foreground"
 					placeholder={columnFilterValue.length ? "" : "Filter by hashtag"}
 				/>
 			</ComboboxChips>

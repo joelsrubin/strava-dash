@@ -9,9 +9,6 @@ import {
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -19,13 +16,16 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
 import { useTheme } from "@/lib/theme";
+import { useUnitOfMeasurement } from "@/lib/user-preferences";
+
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 export function NavUser({ user }: { user: TAthlete }) {
 	const clearStravaSessionFn = useServerFn(clearStravaSession);
 	const navigate = useNavigate();
 	const { theme, setTheme } = useTheme();
+	const { unitOfMeasurement, setUnitOfMeasurement } = useUnitOfMeasurement();
 	const handleLogout = async () => {
 		await clearStravaSessionFn();
 		navigate({ to: "/" });
@@ -34,7 +34,7 @@ export function NavUser({ user }: { user: TAthlete }) {
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
-				<DropdownMenu>
+				<DropdownMenu modal={false}>
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton
 							size="lg"
@@ -64,47 +64,67 @@ export function NavUser({ user }: { user: TAthlete }) {
 						sideOffset={4}
 					>
 						<DropdownMenuLabel className="p-0 font-normal"></DropdownMenuLabel>
-						<DropdownMenuSub>
-							<DropdownMenuSubTrigger>
-								{theme === "dark" ? (
-									<Moon className="size-4" />
-								) : theme === "light" ? (
-									<Sun className="size-4" />
-								) : (
-									<Monitor className="size-4" />
-								)}
-								Theme
-							</DropdownMenuSubTrigger>
-							<DropdownMenuSubContent>
-								<DropdownMenuItem onClick={() => setTheme("light")}>
-									<Sun className="size-4" />
-									Light
-									{theme === "light" && (
-										<span className="ml-auto text-xs text-muted-foreground">
-											✓
-										</span>
-									)}
-								</DropdownMenuItem>
-								<DropdownMenuItem onClick={() => setTheme("dark")}>
-									<Moon className="size-4" />
-									Dark
-									{theme === "dark" && (
-										<span className="ml-auto text-xs text-muted-foreground">
-											✓
-										</span>
-									)}
-								</DropdownMenuItem>
-								<DropdownMenuItem onClick={() => setTheme("system")}>
-									<Monitor className="size-4" />
-									System
-									{theme === "system" && (
-										<span className="ml-auto text-xs text-muted-foreground">
-											✓
-										</span>
-									)}
-								</DropdownMenuItem>
-							</DropdownMenuSubContent>
-						</DropdownMenuSub>
+						<DropdownMenuSeparator />
+
+						<DropdownMenuLabel>Preferences</DropdownMenuLabel>
+						<div className="flex flex-col gap-3 p-2">
+							<div className="flex flex-row justify-between items-center">
+								<span className="text-xs text-accent-foreground">Theme</span>
+								<Tabs
+									defaultValue={theme}
+									onValueChange={(value) =>
+										setTheme(value as "light" | "dark" | "system")
+									}
+								>
+									<TabsList className="rounded-xl transition-all duration-200 ease-in-out">
+										<TabsTrigger
+											className="rounded-full transition-all duration-200 ease-in-out data-[state=active]:scale-105 data-[state=active]:shadow-sm"
+											value="light"
+										>
+											<Sun className="h-3 w-3" />
+										</TabsTrigger>
+										<TabsTrigger
+											className="rounded-full transition-all duration-200 ease-in-out data-[state=active]:scale-105 data-[state=active]:shadow-sm"
+											value="dark"
+										>
+											<Moon className="h-3 w-3" />
+										</TabsTrigger>
+										<TabsTrigger
+											className="rounded-full transition-all duration-200 ease-in-out data-[state=active]:scale-105 data-[state=active]:shadow-sm"
+											value="system"
+										>
+											<Monitor className="h-3 w-3" />
+										</TabsTrigger>
+									</TabsList>
+								</Tabs>
+							</div>
+							<div className="flex flex-row justify-between items-center">
+								<span className="text-xs text-accent-foreground">
+									Unit of measurement
+								</span>
+								<Tabs
+									value={unitOfMeasurement}
+									onValueChange={(value) =>
+										setUnitOfMeasurement(value as "miles" | "kilometers")
+									}
+								>
+									<TabsList className="rounded-xl transition-all duration-200 ease-in-out">
+										<TabsTrigger
+											className="rounded-full transition-all duration-200 ease-in-out data-[state=active]:scale-105 data-[state=active]:shadow-sm"
+											value="miles"
+										>
+											mi
+										</TabsTrigger>
+										<TabsTrigger
+											className="rounded-full transition-all duration-200 ease-in-out data-[state=active]:scale-105 data-[state=active]:shadow-sm"
+											value="kilometers"
+										>
+											km
+										</TabsTrigger>
+									</TabsList>
+								</Tabs>
+							</div>
+						</div>
 						<DropdownMenuSeparator />
 
 						<DropdownMenuItem onClick={handleLogout}>

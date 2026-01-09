@@ -10,5 +10,14 @@ CREATE TABLE IF NOT EXISTS notes (
   activity_date TEXT
 );
 
+-- create user preferences table
+CREATE TABLE IF NOT EXISTS user_preferences (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  strava_id INTEGER NOT NULL UNIQUE,
+  preferences JSON NOT NULL DEFAULT '{}',
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 
 

@@ -36,5 +36,5 @@ export function TableLoader() {
 				<Skeleton className="flex-1 w-full rounded-xl" />
 			</div>
 		</div>
-	)
+	);
 }

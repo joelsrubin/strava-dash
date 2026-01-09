@@ -11,6 +11,8 @@ import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
 
 import { SidebarMenuSkeleton, SidebarProvider } from "@/components/ui/sidebar";
+import { getUserPreferences } from "@/db";
+import { UserPreferencesProvider } from "@/lib/user-preferences";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
@@ -24,25 +26,33 @@ export const Route = createFileRoute("/_authed/dashboard")({
 		if (!athlete) {
 			throw notFound();
 		}
-
-		return { athlete };
+		const userPreferences = await getUserPreferences({
+			data: { strava_id: athlete.id },
+		});
+		console.log({ userPreferences });
+		return { athlete, userPreferences };
 	},
 });
 
 function RouteComponent() {
-	const { athlete } = Route.useRouteContext();
+	const { athlete, userPreferences } = Route.useRouteContext();
 
 	return (
-		<div className="h-dvh overflow-hidden [--header-height:calc(--spacing(14))]">
-			<SidebarProvider className="flex h-full flex-col">
-				<SiteHeader user={athlete} />
-				<div className="flex min-h-0 flex-1">
-					<Suspense fallback={<SidebarMenuSkeleton />}>
-						<AppSidebar user={athlete} />
-					</Suspense>
-					<Outlet />
-				</div>
-			</SidebarProvider>
-		</div>
+		<UserPreferencesProvider
+			stravaId={athlete.id}
+			defaultPreferences={userPreferences.preferences}
+		>
+			<div className="h-dvh overflow-hidden [--header-height:calc(--spacing(14))]">
+				<SidebarProvider className="flex h-full flex-col">
+					<SiteHeader user={athlete} />
+					<div className="flex min-h-0 flex-1">
+						<Suspense fallback={<SidebarMenuSkeleton />}>
+							<AppSidebar user={athlete} />
+						</Suspense>
+						<Outlet />
+					</div>
+				</SidebarProvider>
+			</div>
+		</UserPreferencesProvider>
 	);
 }

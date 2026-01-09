@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/sidebar";
 
 import { useTheme } from "@/lib/theme";
-
 import { NavSecondary } from "./nav-secondary";
 
 // array of all hte months
@@ -19,16 +18,16 @@ export function AppSidebar({
 
 	...props
 }: React.ComponentProps<typeof Sidebar> & { user: TAthlete }) {
-	const { resolvedTheme } = useTheme();
+	const { theme } = useTheme();
 
 	const [imgUrl, setImgUrl] = useState("/powered-by-strava-light.png");
 	useEffect(() => {
 		setImgUrl(
-			resolvedTheme === "light"
+			theme === "light"
 				? "/powered-by-strava-light.png"
 				: "/powered-by-strava.png",
 		);
-	}, [resolvedTheme]);
+	}, [theme]);
 
 	const items = [
 		{

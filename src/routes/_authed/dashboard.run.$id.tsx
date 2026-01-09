@@ -22,6 +22,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUnitOfMeasurement } from "@/lib/user-preferences";
 import { formatDistance, formatPace, formatTime } from "@/lib/utils";
 import { PendingComponent } from "./-pending-component";
 
@@ -41,7 +42,7 @@ export function RouteComponent() {
 	const { id } = Route.useParams();
 	const { queryClient, athlete } = Route.useRouteContext();
 	const { isMobile } = useIsMobile();
-
+	const { unitOfMeasurement } = useUnitOfMeasurement();
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
 	const { data: note } = useSuspenseQuery(
 		fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
@@ -72,7 +73,7 @@ export function RouteComponent() {
 
 	const polyline = activity.map.polyline;
 
-	const defaultContent = `<p><b>${activity.name}</b> - ${formatDistance(activity.distance)} miles</p>`;
+	const defaultContent = `<p><b>${activity.name}</b> - ${formatDistance(activity.distance, unitOfMeasurement)} ${unitOfMeasurement}</p>`;
 	const initialState = note?.results[0]?.content || defaultContent;
 
 	const handleSave = async (content: string) => {
@@ -93,7 +94,7 @@ export function RouteComponent() {
 	return (
 		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
 			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
-				<div className="grid auto-rows-min gap-4 grid-cols-1 lg:grid-cols-3 order-2 lg:order-1">
+				<div className="grid auto-rows-min gap-4 grid-cols-1 md:grid-cols-3 order-2 lg:order-1">
 					<div className="bg-muted/50 rounded-xl p-2 col-span-2">
 						<Table>
 							<TableHeader>
@@ -106,25 +107,30 @@ export function RouteComponent() {
 							<TableBody>
 								<DetailsTableRow
 									label="Distance"
-									value={formatDistance(activity.distance)}
+									value={formatDistance(activity.distance, unitOfMeasurement)}
+									unitOfMeasurement={unitOfMeasurement}
 								/>
 								<DetailsTableRow
 									label="Moving Time"
 									value={formatTime(activity.moving_time)}
+									unitOfMeasurement={unitOfMeasurement}
 								/>
 
 								<DetailsTableRow
 									label="Average HR"
 									value={activity.average_heartrate?.toFixed(0)}
 									type="heartrate"
+									unitOfMeasurement={unitOfMeasurement}
 								/>
 								<DetailsTableRow
 									label="Average Pace"
-									value={formatPace(activity.average_speed)}
+									value={formatPace(activity.average_speed, unitOfMeasurement)}
 									type="pace"
+									unitOfMeasurement={unitOfMeasurement}
 								/>
 
 								<DetailsTableRow
+									unitOfMeasurement={unitOfMeasurement}
 									label="Gear"
 									value={activity.gear?.name || "No gear"}
 								/>
@@ -133,7 +139,7 @@ export function RouteComponent() {
 					</div>
 
 					{!isMobile && (
-						<div className="bg-muted/50 rounded-xl order-4 lg:order-3">
+						<div className="bg-muted/50 rounded-xl order-3 lg:order-3">
 							<h2 className="p-2">Route Preview</h2>
 							<ClientOnly fallback={<ChartLoader />}>
 								<ActivityMap encodedPolyline={polyline || ""} />
@@ -155,13 +161,20 @@ function DetailsTableRow({
 	label,
 	value,
 	type,
+	unitOfMeasurement,
 }: {
 	label: string;
 	value: string | number;
 	type?: "heartrate" | "pace";
+	unitOfMeasurement: "miles" | "kilometers";
 }) {
 	if (!value) return null;
-	const suffix = !type ? "" : type === "heartrate" ? " bpm" : " min/mi";
+
+	const suffix = !type
+		? ""
+		: type === "heartrate"
+			? " bpm"
+			: ` min/${unitOfMeasurement === "miles" ? "mi" : "km"}`;
 	return (
 		<TableRow>
 			<TableCell className="py-2 font-medium">{label}</TableCell>
