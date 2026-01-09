@@ -1,3 +1,4 @@
+import { useDebouncedCallback } from "@tanstack/react-pacer";
 import {
 	createContext,
 	type ReactNode,
@@ -55,6 +56,9 @@ export function UserPreferencesProvider({
 		[stravaId],
 	);
 
+	const debouncedSavePreferences = useDebouncedCallback(savePreferences, {
+		wait: 500,
+	});
 	// Update preferences locally and in database
 	const setPreferences = useCallback(
 		(updates: Partial<UserPreferences>) => {
@@ -62,9 +66,9 @@ export function UserPreferencesProvider({
 			setPreferencesState(newPreferences);
 
 			// Save to database asynchronously
-			savePreferences(newPreferences);
+			debouncedSavePreferences(newPreferences);
 		},
-		[preferences, savePreferences],
+		[preferences, debouncedSavePreferences],
 	);
 
 	return (

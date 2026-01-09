@@ -183,7 +183,7 @@ export function NotesTable() {
 							preload="intent"
 						>
 							<div
-								className="line-clamp-2 min-h-[33px] break-words"
+								className="line-clamp-2 min-h-[33px] wrap-break-word"
 								// biome-ignore lint/security/noDangerouslySetInnerHtml: safe html content
 								dangerouslySetInnerHTML={{ __html: parsed.text }}
 							/>
