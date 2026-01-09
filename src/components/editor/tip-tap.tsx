@@ -52,9 +52,7 @@ const Tiptap = ({
 		onUpdate: async ({ editor }) => {
 			onUpdate(editor.getHTML());
 		},
-		onUnmount: async ({ editor }) => {
-			onUpdate(editor.getHTML());
-		},
+
 		editorProps: {
 			attributes: {
 				class: "tiptap",
