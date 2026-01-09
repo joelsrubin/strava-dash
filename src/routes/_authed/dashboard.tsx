@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_authed/dashboard")({
 		const userPreferences = await getUserPreferences({
 			data: { strava_id: athlete.id },
 		});
-		console.log({ userPreferences });
+
 		return { athlete, userPreferences };
 	},
 });
