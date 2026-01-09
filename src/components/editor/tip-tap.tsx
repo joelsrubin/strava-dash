@@ -5,7 +5,6 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
-
 import { Hashtag } from "./extensions/hashtag";
 import { Toolbar } from "./toolbar";
 
@@ -15,15 +14,13 @@ const lowlight = createLowlight(common);
 interface TiptapProps {
 	initialContent?: string;
 	placeholder?: string;
-	onChange?: (content: string) => void;
-	onSave?: (content: string) => void;
-	isPending?: boolean;
+	onUpdate: (content: string) => void;
 }
 
 const Tiptap = ({
 	initialContent = "",
 	placeholder = "Start writing...",
-	onChange,
+	onUpdate,
 }: TiptapProps) => {
 	const editor = useEditor({
 		immediatelyRender: false,
@@ -52,10 +49,12 @@ const Tiptap = ({
 		],
 
 		content: initialContent,
-		onUpdate: ({ editor }) => {
-			onChange?.(editor.getHTML());
+		onUpdate: async ({ editor }) => {
+			onUpdate(editor.getHTML());
 		},
-
+		onUnmount: async ({ editor }) => {
+			onUpdate(editor.getHTML());
+		},
 		editorProps: {
 			attributes: {
 				class: "tiptap",

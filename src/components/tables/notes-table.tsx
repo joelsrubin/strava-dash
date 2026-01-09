@@ -61,7 +61,7 @@ import {
 	InputGroupAddon,
 	InputGroupInput,
 } from "../ui/input-group";
-import { BulkToolbar } from "./bulk-toolbar";
+
 import { HashtagList } from "./hashtag-list";
 
 export function NotesTable() {

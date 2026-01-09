@@ -29,7 +29,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { EmojiDropdownMenu } from "./emoji-toolbar-button";
-import { StatusIndicator } from "./status-indicator";
 
 interface ToolbarProps {
 	editor: Editor | null;
@@ -71,6 +70,7 @@ export function Toolbar({ editor }: ToolbarProps) {
 	const [linkUrl, setLinkUrl] = useState("");
 	const [linkPopoverOpen, setLinkPopoverOpen] = useState(false);
 	const { isMobile } = useIsMobile();
+
 	const setLink = useCallback(() => {
 		if (!editor) return;
 
@@ -274,8 +274,6 @@ export function Toolbar({ editor }: ToolbarProps) {
 					<EmojiDropdownMenu editor={editor} />
 				</>
 			) : null}
-
-			<StatusIndicator className="ml-auto" />
 		</div>
 	);
 }

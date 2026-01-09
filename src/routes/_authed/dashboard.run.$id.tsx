@@ -1,3 +1,4 @@
+import { useDebouncedCallback } from "@tanstack/react-pacer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ClientOnly, createFileRoute } from "@tanstack/react-router";
 
@@ -20,7 +21,6 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { useAutosave } from "@/hooks/use-autosave";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { formatDistance, formatPace, formatTime } from "@/lib/utils";
 import { PendingComponent } from "./-pending-component";
@@ -51,26 +51,24 @@ export function RouteComponent() {
 		note.results.length > 0 && note.results[0].id,
 	);
 
-	const { mutate: updateNoteFn, isPending: updateNoteIsPending } =
-		useUpdateNoteMutation({
-			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
-				queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
-			},
-			onError: () => {
-				toast.error("Failed to update note");
-			},
-		});
-	const { mutate: createNoteFn, isPending: createNoteIsPending } =
-		useCreateNoteMutation({
-			onSuccess: () => {
-				queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
-				queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
-			},
-			onError: () => {
-				toast.error("Failed to create note");
-			},
-		});
+	const { mutate: updateNoteFn } = useUpdateNoteMutation({
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
+			queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
+		},
+		onError: () => {
+			toast.error("Failed to update note");
+		},
+	});
+	const { mutate: createNoteFn } = useCreateNoteMutation({
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
+			queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
+		},
+		onError: () => {
+			toast.error("Failed to create note");
+		},
+	});
 
 	const polyline = activity.map.polyline;
 
@@ -78,7 +76,9 @@ export function RouteComponent() {
 	const initialState = note?.results[0]?.content || defaultContent;
 
 	const handleSave = async (content: string) => {
-		if (didInitializeWithNote) {
+		const hasContentChanged = content !== initialState;
+
+		if (didInitializeWithNote && hasContentChanged) {
 			updateNoteFn({ id: note.results[0].id, content });
 		} else {
 			createNoteFn({
@@ -90,10 +90,8 @@ export function RouteComponent() {
 		}
 	};
 
-	const { triggerSave } = useAutosave({
-		onSave: (content) => handleSave(content),
-		debounceMs: 1500,
-	});
+	const debounceFn = useDebouncedCallback(handleSave, { wait: 1500 });
+
 	return (
 		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
 			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
@@ -148,11 +146,7 @@ export function RouteComponent() {
 				<div
 					className={`flex min-h-0 flex-1 flex-col bg-muted/50 rounded-xl order-3 lg:order-4 ${isMobile ? "max-h-[60vh]" : ""}`}
 				>
-					<Tiptap
-						initialContent={initialState}
-						onChange={triggerSave}
-						isPending={updateNoteIsPending || createNoteIsPending}
-					/>
+					<Tiptap initialContent={initialState} onUpdate={debounceFn} />
 				</div>
 			</div>
 		</SidebarInset>
