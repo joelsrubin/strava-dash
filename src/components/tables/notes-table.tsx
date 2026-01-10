@@ -16,11 +16,9 @@ import {
 	ArrowUpDown,
 	ArrowUpRightIcon,
 	Search,
-	Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
-import { useDeleteNoteMutation } from "@/api/mutations/notes";
+
 import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
 import { Button } from "@/components/ui/button";
 
@@ -61,11 +59,11 @@ import {
 	InputGroupAddon,
 	InputGroupInput,
 } from "../ui/input-group";
-
+import { BulkToolbar } from "./bulk-toolbar";
 import { HashtagList } from "./hashtag-list";
 
 export function NotesTable() {
-	const { queryClient, athlete } = useRouteContext({
+	const { athlete } = useRouteContext({
 		from: "/_authed/dashboard/_charts/notes",
 	});
 
@@ -244,30 +242,7 @@ export function NotesTable() {
 		},
 	});
 
-	const { mutate: deleteNotes, isPending: isDeleting } = useDeleteNoteMutation({
-		onSuccess: (_data, variables) => {
-			const deletedCount = variables.runIds.length;
-			const didDeleteMultipleNotes = deletedCount > 1;
-			queryClient.invalidateQueries({
-				queryKey: ["notes", athlete.id],
-			});
-			// Remove the specific note queries entirely so the run page fetches fresh data
-			for (const runId of variables.runIds) {
-				queryClient.removeQueries({ queryKey: ["note", runId] });
-			}
-
-			toast.success(
-				`${deletedCount} ${didDeleteMultipleNotes ? "notes" : "note"} deleted successfully`,
-			);
-		},
-		onError: (error) => {
-			console.error("Failed to delete note:", error);
-			toast.error("Failed to delete note");
-		},
-	});
-
 	const selectedRows = table.getFilteredSelectedRowModel().rows;
-	const selectedCount = selectedRows.length;
 
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
@@ -382,25 +357,7 @@ export function NotesTable() {
 					</TableBody>
 				</Table>
 			</div>
-			{selectedCount > 0 && (
-				<div className="flex items-end justify-end pb-2 pr-2">
-					<div className="flex gap-2">
-						<Button
-							disabled={isDeleting}
-							size="sm"
-							onClick={() => {
-								table.toggleAllPageRowsSelected(false);
-								deleteNotes({
-									runIds: selectedRows.map((row) => row.original.run_id),
-								});
-							}}
-						>
-							<Trash2 className="h-4 w-4 mr-1" />
-							Delete <span className="ml-1 tabular-nums">{selectedCount}</span>
-						</Button>
-					</div>
-				</div>
-			)}
+			<BulkToolbar selectedRows={selectedRows} />
 		</div>
 	);
 }

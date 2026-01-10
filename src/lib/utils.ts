@@ -13,13 +13,13 @@ export function formatTime(seconds: number) {
 }
 
 export function formatDistance(
-	distance: number,
+	distance: number | string,
 	unitOfMeasurement: "miles" | "kilometers",
 ) {
 	if (unitOfMeasurement === "miles") {
-		return `${(distance * 0.00062137).toFixed(2)} mi`;
+		return `${(Number(distance) * 0.00062137).toFixed(2)} mi`;
 	} else {
-		return `${(distance / 1000).toFixed(2)} km`;
+		return `${(Number(distance) / 1000).toFixed(2)} km`;
 	}
 }
 

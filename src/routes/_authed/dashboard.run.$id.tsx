@@ -77,6 +77,7 @@ export function RouteComponent() {
 	const initialState = note?.results[0]?.content || defaultContent;
 
 	const handleSave = async (content: string) => {
+		console.log("saving content: ", content);
 		if (didInitializeWithNote) {
 			updateNoteFn({ id: note.results[0].id, content });
 		} else {
@@ -89,7 +90,7 @@ export function RouteComponent() {
 		}
 	};
 
-	const debounceFn = useDebouncedCallback(handleSave, { wait: 1500 });
+	const debounceFn = useDebouncedCallback(handleSave, { wait: 500 });
 
 	return (
 		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>

@@ -117,21 +117,12 @@ export const updateNote = createServerFn({ method: "POST" })
 		const { id, content } = data;
 		const hashtags = extractHashtags(content);
 
-		if (hashtags.length > 0) {
-			const result = await env.DB.prepare(
-				"UPDATE notes SET content = ?, hashtags = ?, updated_at = ? WHERE id = ?",
-			)
-				.bind(content, JSON.stringify(hashtags), new Date().toISOString(), id)
-				.run();
-			return { success: result.success };
-		} else {
-			const result = await env.DB.prepare(
-				"UPDATE notes SET content = ?, updated_at = ? WHERE id = ?",
-			)
-				.bind(content, new Date().toISOString(), id)
-				.run();
-			return { success: result.success };
-		}
+		const result = await env.DB.prepare(
+			"UPDATE notes SET content = ?, hashtags = ?, updated_at = ? WHERE id = ?",
+		)
+			.bind(content, JSON.stringify(hashtags), new Date().toISOString(), id)
+			.run();
+		return { success: result.success };
 	});
 
 export const deleteNotes = createServerFn({ method: "POST" })

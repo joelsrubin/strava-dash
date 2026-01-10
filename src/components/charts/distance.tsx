@@ -2,6 +2,8 @@ import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid } from "recharts";
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
+import { useUnitOfMeasurement } from "@/lib/user-preferences";
+import { formatDistance } from "@/lib/utils";
 import {
 	type ChartConfig,
 	ChartContainer,
@@ -13,6 +15,7 @@ export function DistanceChart() {
 	const { data: athleteActivities } = useSuspenseInfiniteQuery(
 		fetchAthleteActivitiesQueryOptions(),
 	);
+	const { unitOfMeasurement } = useUnitOfMeasurement();
 	const activitesToChart = athleteActivities.pages[0];
 	const distanceData = useMemo(
 		() =>
@@ -48,7 +51,7 @@ export function DistanceChart() {
 					content={
 						<ChartTooltipContent
 							formatter={(value) =>
-								`${((value as number) * 0.00062137).toFixed(0)} mi`
+								`${formatDistance(value as number, unitOfMeasurement)}`
 							}
 						/>
 					}

@@ -10,7 +10,6 @@ export function fetchNoteByRunIdQueryOptions({ runId }: { runId: number }) {
 	return queryOptions({
 		queryKey: ["note", runId],
 		queryFn: () => fetchNoteByRunId({ runId }),
-		staleTime: Infinity,
 	});
 }
 
@@ -31,6 +30,5 @@ export function fetchNotesByStravaIdQueryOptions({
 	return queryOptions({
 		queryKey: ["notes", stravaId],
 		queryFn: () => fetchNotesByStravaId({ stravaId }),
-		staleTime: Infinity,
 	});
 }
