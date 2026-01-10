@@ -77,7 +77,6 @@ export function RouteComponent() {
 	const initialState = note?.results[0]?.content || defaultContent;
 
 	const handleSave = async (content: string) => {
-		console.log("saving content: ", content);
 		if (didInitializeWithNote) {
 			updateNoteFn({ id: note.results[0].id, content });
 		} else {

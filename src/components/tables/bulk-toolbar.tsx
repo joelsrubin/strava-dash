@@ -12,7 +12,7 @@ export function BulkToolbar({
 	return selectedRows.length ? (
 		<div className="flex items-end justify-end pb-2 pr-2">
 			<div className="flex gap-2">
-				{/* <Tools.Hashtag selectedRows={selectedRows} /> */}
+				<Tools.Hashtag selectedRows={selectedRows} />
 				<Tools.Delete selectedRows={selectedRows} />
 			</div>
 		</div>

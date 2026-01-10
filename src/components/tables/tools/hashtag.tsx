@@ -73,7 +73,7 @@ export function Hashtag({ selectedRows }: { selectedRows: Row<ParsedNote>[] }) {
 			const updatePromises = selectedRows.map(async (row) => {
 				const note = row.original;
 				const newTags = tagsToAdd.map((tag) => generateHashtagString(tag));
-				console.log({ newTags });
+
 				const updatedContent = note.content.concat(newTags.join(" "));
 				await updateNote({
 					data: { id: note.id, content: updatedContent },
@@ -90,7 +90,6 @@ export function Hashtag({ selectedRows }: { selectedRows: Row<ParsedNote>[] }) {
 			});
 			// Remove the specific note queries entirely so the run page fetches fresh data
 			for (const runId of selectedRows.map((row) => row.original.run_id)) {
-				console.log("INVALIDATING RUNID: ", runId);
 				queryClient.refetchQueries({ queryKey: ["note", runId] });
 			}
 
