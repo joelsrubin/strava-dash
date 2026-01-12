@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import {
+	createFileRoute,
+	Outlet,
+	stripSearchParams,
+	useNavigate,
+} from "@tanstack/react-router";
 
 import { Suspense } from "react";
 import { z } from "zod";
@@ -16,17 +21,23 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
+const defaultValues = {
+	active_tab: "activity-table",
+} as const;
+
 const searchSchema = z.object({
 	active_tab: z
 		.enum(["activity-table", "notes-table"])
-		.default("activity-table")
+		.default(defaultValues.active_tab)
 		.catch("activity-table"),
 });
 
 export const Route = createFileRoute("/_authed/dashboard/_charts")({
 	component: RouteComponent,
 	validateSearch: searchSchema,
-
+	search: {
+		middlewares: [stripSearchParams(defaultValues)],
+	},
 	loader({ context: { queryClient, athlete } }) {
 		queryClient.prefetchQuery(
 			fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
