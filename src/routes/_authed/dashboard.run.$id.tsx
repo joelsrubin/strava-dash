@@ -32,8 +32,8 @@ export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 	pendingComponent: PendingComponent,
 	pendingMinMs: 0,
 	loader: async ({ context: { queryClient }, params: { id } }) => {
-		await queryClient.ensureQueryData(fetchActivityQueryOptions(id));
-		await queryClient.ensureQueryData(
+		queryClient.prefetchQuery(fetchActivityQueryOptions(id));
+		queryClient.prefetchQuery(
 			fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
 		);
 	},

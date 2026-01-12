@@ -26,7 +26,8 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/_authed/dashboard/_charts")({
 	component: RouteComponent,
 	validateSearch: searchSchema,
-	beforeLoad: ({ context: { queryClient, athlete } }) => {
+
+	loader({ context: { queryClient, athlete } }) {
 		queryClient.prefetchQuery(
 			fetchNotesByStravaIdQueryOptions({ stravaId: athlete.id }),
 		);

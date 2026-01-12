@@ -15,7 +15,6 @@ import { Route as AuthedDashboardRouteImport } from './routes/_authed/dashboard'
 import { Route as AuthedDashboardChartsRouteImport } from './routes/_authed/dashboard._charts'
 import { Route as AuthedDashboardChartsIndexRouteImport } from './routes/_authed/dashboard._charts.index'
 import { Route as AuthedDashboardRunIdRouteImport } from './routes/_authed/dashboard.run.$id'
-import { Route as AuthedDashboardChartsNotesRouteImport } from './routes/_authed/dashboard._charts.notes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -47,18 +46,11 @@ const AuthedDashboardRunIdRoute = AuthedDashboardRunIdRouteImport.update({
   path: '/run/$id',
   getParentRoute: () => AuthedDashboardRoute,
 } as any)
-const AuthedDashboardChartsNotesRoute =
-  AuthedDashboardChartsNotesRouteImport.update({
-    id: '/notes',
-    path: '/notes',
-    getParentRoute: () => AuthedDashboardChartsRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthedDashboardChartsRouteWithChildren
   '/exchange': typeof ExchangeIndexRoute
-  '/dashboard/notes': typeof AuthedDashboardChartsNotesRoute
   '/dashboard/run/$id': typeof AuthedDashboardRunIdRoute
   '/dashboard/': typeof AuthedDashboardChartsIndexRoute
 }
@@ -66,7 +58,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthedDashboardChartsIndexRoute
   '/exchange': typeof ExchangeIndexRoute
-  '/dashboard/notes': typeof AuthedDashboardChartsNotesRoute
   '/dashboard/run/$id': typeof AuthedDashboardRunIdRoute
 }
 export interface FileRoutesById {
@@ -75,7 +66,6 @@ export interface FileRoutesById {
   '/_authed/dashboard': typeof AuthedDashboardRouteWithChildren
   '/exchange/': typeof ExchangeIndexRoute
   '/_authed/dashboard/_charts': typeof AuthedDashboardChartsRouteWithChildren
-  '/_authed/dashboard/_charts/notes': typeof AuthedDashboardChartsNotesRoute
   '/_authed/dashboard/run/$id': typeof AuthedDashboardRunIdRoute
   '/_authed/dashboard/_charts/': typeof AuthedDashboardChartsIndexRoute
 }
@@ -85,23 +75,16 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/exchange'
-    | '/dashboard/notes'
     | '/dashboard/run/$id'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/dashboard'
-    | '/exchange'
-    | '/dashboard/notes'
-    | '/dashboard/run/$id'
+  to: '/' | '/dashboard' | '/exchange' | '/dashboard/run/$id'
   id:
     | '__root__'
     | '/'
     | '/_authed/dashboard'
     | '/exchange/'
     | '/_authed/dashboard/_charts'
-    | '/_authed/dashboard/_charts/notes'
     | '/_authed/dashboard/run/$id'
     | '/_authed/dashboard/_charts/'
   fileRoutesById: FileRoutesById
@@ -156,23 +139,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthedDashboardRunIdRouteImport
       parentRoute: typeof AuthedDashboardRoute
     }
-    '/_authed/dashboard/_charts/notes': {
-      id: '/_authed/dashboard/_charts/notes'
-      path: '/notes'
-      fullPath: '/dashboard/notes'
-      preLoaderRoute: typeof AuthedDashboardChartsNotesRouteImport
-      parentRoute: typeof AuthedDashboardChartsRoute
-    }
   }
 }
 
 interface AuthedDashboardChartsRouteChildren {
-  AuthedDashboardChartsNotesRoute: typeof AuthedDashboardChartsNotesRoute
   AuthedDashboardChartsIndexRoute: typeof AuthedDashboardChartsIndexRoute
 }
 
 const AuthedDashboardChartsRouteChildren: AuthedDashboardChartsRouteChildren = {
-  AuthedDashboardChartsNotesRoute: AuthedDashboardChartsNotesRoute,
   AuthedDashboardChartsIndexRoute: AuthedDashboardChartsIndexRoute,
 }
 
