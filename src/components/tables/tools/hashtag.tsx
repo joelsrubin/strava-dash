@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
-import type { Row } from "@tanstack/react-table";
+import type { Row, Table } from "@tanstack/react-table";
 import { Hash, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -33,7 +33,13 @@ function generateHashtagString(tag: string) {
 	return `<span data-tag="${tag}" class="hashtag" data-hashtag="" contenteditable="false">#${tag}</span>`;
 }
 
-export function Hashtag({ selectedRows }: { selectedRows: Row<ParsedNote>[] }) {
+export function Hashtag({
+	selectedRows,
+	table,
+}: {
+	selectedRows: Row<ParsedNote>[];
+	table: Table<ParsedNote>;
+}) {
 	const [open, setOpen] = useState(false);
 	const [inputValue, setInputValue] = useState("");
 	const { queryClient, athlete } = useRouteContext({
@@ -116,6 +122,7 @@ export function Hashtag({ selectedRows }: { selectedRows: Row<ParsedNote>[] }) {
 	});
 
 	const handleAddTags = async () => {
+		table.toggleAllPageRowsSelected(false);
 		const allTags = parseAllTags(inputValue);
 		if (allTags.length === 0) return;
 

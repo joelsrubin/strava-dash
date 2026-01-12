@@ -272,10 +272,10 @@ export function DataTable() {
 			sorting,
 		},
 	});
+	console.log(table.getRowModel().rows?.length);
 
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
-			<div className="p-2 text-sm font-medium">Activities</div>
 			<div className="min-h-0 flex-1 overflow-auto">
 				<Table>
 					<TableHeader className="sticky top-0 z-10 bg-background">
@@ -336,7 +336,7 @@ export function DataTable() {
 								</TableCell>
 							</TableRow>
 						)}
-						{table.getRowModel().rows?.length === 30 ? (
+						{table.getRowModel().rows?.length >= 30 ? (
 							<TableRow>
 								<TableCell
 									colSpan={columns.length}

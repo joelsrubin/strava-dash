@@ -1,7 +1,7 @@
 import { useDebouncedCallback } from "@tanstack/react-pacer";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, createFileRoute } from "@tanstack/react-router";
-
+import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
+import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import {
 	useCreateNoteMutation,
@@ -11,8 +11,9 @@ import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
 import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import ActivityMap from "@/components/activity-map/activity-map";
 import Tiptap from "@/components/editor/tip-tap";
+import { Button } from "@/components/ui/button";
 import { ChartLoader } from "@/components/ui/loaders/chart-loader";
-import { SidebarInset } from "@/components/ui/sidebar";
+
 import {
 	Table,
 	TableBody,
@@ -92,7 +93,13 @@ export function RouteComponent() {
 	const debounceFn = useDebouncedCallback(handleSave, { wait: 500 });
 
 	return (
-		<SidebarInset className={"flex min-h-0 flex-1 flex-col"}>
+		<div className={"flex min-h-0 flex-1 flex-col"}>
+			<Link to={"/dashboard"} className="pt-4">
+				<Button variant="link" className="text-foreground">
+					<ChevronLeft />
+					Back
+				</Button>
+			</Link>
 			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
 				<div className="grid auto-rows-min gap-4 grid-cols-1 md:grid-cols-3 order-2 lg:order-1">
 					<div className="bg-muted/50 rounded-xl p-2 col-span-2">
@@ -153,7 +160,7 @@ export function RouteComponent() {
 					<Tiptap initialContent={initialState} onUpdate={debounceFn} />
 				</div>
 			</div>
-		</SidebarInset>
+		</div>
 	);
 }
 //

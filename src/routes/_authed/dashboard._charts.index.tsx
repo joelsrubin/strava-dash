@@ -1,12 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import {
-	fetchAthleteActivitiesAllQueryOptions,
-	fetchAthleteActivitiesQueryOptions,
-} from "@/api/queries/strava";
-
+import { NotesTable } from "@/components/tables/notes-table";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { TabsContent } from "@/components/ui/tabs";
 import { DataTable } from "../../components/tables/activity-table";
 import { PendingComponent } from "./-pending-component";
 export const Route = createFileRoute("/_authed/dashboard/_charts/")({
@@ -14,15 +10,25 @@ export const Route = createFileRoute("/_authed/dashboard/_charts/")({
 	pendingComponent: PendingComponent,
 	pendingMinMs: 0,
 	pendingMs: 0,
-	loader: ({ context: { queryClient } }) => {
-		// Fire-and-forget prefetch - don't block navigation
-		queryClient.prefetchInfiniteQuery(fetchAthleteActivitiesQueryOptions());
-		queryClient.prefetchQuery(fetchAthleteActivitiesAllQueryOptions());
-	},
 });
 
 function RouteComponent() {
-	return <DataTable />;
+	return (
+		<>
+			<TabsContent
+				value="activity-table"
+				className="bg-muted/50 rounded-xl min-h-0 flex flex-col"
+			>
+				<DataTable />
+			</TabsContent>
+			<TabsContent
+				value="notes-table"
+				className="bg-muted/50 rounded-xl min-h-0 flex flex-col"
+			>
+				<NotesTable />
+			</TabsContent>
+		</>
+	);
 }
 
 export function TableLoader() {

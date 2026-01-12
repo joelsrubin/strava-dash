@@ -64,7 +64,7 @@ import { HashtagList } from "./hashtag-list";
 
 export function NotesTable() {
 	const { athlete } = useRouteContext({
-		from: "/_authed/dashboard/_charts/notes",
+		from: "/_authed/dashboard/_charts/",
 	});
 
 	const { data: notesData } = useSuspenseQuery(
@@ -247,7 +247,6 @@ export function NotesTable() {
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
 			<div className="flex flex-row items-center justify-between p-2 gap-4">
-				<div className="text-sm font-medium">Notes</div>
 				<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2">
 					<div className="w-full">
 						<InputGroup className="rounded-md bg-background">
@@ -357,7 +356,7 @@ export function NotesTable() {
 					</TableBody>
 				</Table>
 			</div>
-			<BulkToolbar selectedRows={selectedRows} />
+			<BulkToolbar selectedRows={selectedRows} table={table} />
 		</div>
 	);
 }

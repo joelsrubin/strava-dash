@@ -4,13 +4,11 @@ import {
 	Outlet,
 	redirect,
 } from "@tanstack/react-router";
-import { Suspense } from "react";
+
 import { getAthlete, getStravaAccessToken } from "@/api/auth.server";
 
-import { AppSidebar } from "@/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/dashboard/site-header";
 
-import { SidebarMenuSkeleton, SidebarProvider } from "@/components/ui/sidebar";
 import { getUserPreferences } from "@/db";
 import { UserPreferencesProvider } from "@/lib/user-preferences";
 
@@ -42,16 +40,11 @@ function RouteComponent() {
 			stravaId={athlete.id}
 			defaultPreferences={userPreferences.preferences}
 		>
-			<div className="h-dvh overflow-hidden [--header-height:calc(--spacing(14))]">
-				<SidebarProvider className="flex h-full flex-col">
-					<SiteHeader user={athlete} />
-					<div className="flex min-h-0 flex-1">
-						<Suspense fallback={<SidebarMenuSkeleton />}>
-							<AppSidebar user={athlete} />
-						</Suspense>
-						<Outlet />
-					</div>
-				</SidebarProvider>
+			<div className="h-dvh overflow-hidden flex flex-col [--header-height:calc(--spacing(14))]">
+				<SiteHeader user={athlete} />
+				<div className="flex min-h-0 flex-1 flex-col">
+					<Outlet />
+				</div>
 			</div>
 		</UserPreferencesProvider>
 	);
