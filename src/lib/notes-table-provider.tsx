@@ -1,5 +1,5 @@
 import type { Table } from "@tanstack/react-table";
-import { createContext, type ReactNode, useContext } from "react";
+import { createContext, type ReactNode, useContext, useState } from "react";
 import type { ParsedNote } from "@/db";
 
 interface TableProviderContextValue {
@@ -15,7 +15,11 @@ interface TableProviderProps {
 	table: Table<ParsedNote>;
 }
 
-export function TableProvider({ children, table }: TableProviderProps) {
+export function TableProvider({
+	children,
+	table: tableData,
+}: TableProviderProps) {
+	const [table] = useState(tableData);
 	return (
 		<TableProviderContext.Provider value={{ table }}>
 			{children}
