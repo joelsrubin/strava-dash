@@ -272,7 +272,6 @@ export function DataTable() {
 			sorting,
 		},
 	});
-	console.log(table.getRowModel().rows?.length);
 
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
