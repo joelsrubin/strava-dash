@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
-import type { Row, Table } from "@tanstack/react-table";
+import type { Row } from "@tanstack/react-table";
 import { Hash, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import type { ParsedNote } from "@/db";
 import { updateNote } from "@/db";
+import { useNotesTable } from "@/lib/notes-table-provider";
 
 interface AddTagsVariables {
 	selectedRows: Row<ParsedNote>[];
@@ -33,17 +34,14 @@ function generateHashtagString(tag: string) {
 	return `<span data-tag="${tag}" class="hashtag" data-hashtag="" contenteditable="false">#${tag}</span>`;
 }
 
-export function Hashtag({
-	selectedRows,
-	table,
-}: {
-	selectedRows: Row<ParsedNote>[];
-	table: Table<ParsedNote>;
-}) {
+export function Hashtag() {
+	const { table } = useNotesTable();
+	const selectedRows = table.getFilteredSelectedRowModel().rows;
+
 	const [open, setOpen] = useState(false);
 	const [inputValue, setInputValue] = useState("");
 	const { queryClient, athlete } = useRouteContext({
-		from: "/_authed/dashboard/_charts/notes",
+		from: "/_authed/dashboard/_charts/",
 	});
 
 	// Parse comma-separated input into individual tags

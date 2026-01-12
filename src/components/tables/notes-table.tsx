@@ -31,9 +31,8 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { ParsedNote } from "@/db";
-
+import { TableProvider } from "@/lib/notes-table-provider";
 import { parseNoteContent } from "@/lib/utils";
-
 import { Checkbox } from "../ui/checkbox";
 import {
 	Combobox,
@@ -242,8 +241,6 @@ export function NotesTable() {
 		},
 	});
 
-	const selectedRows = table.getFilteredSelectedRowModel().rows;
-
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
 			<div className="flex flex-row items-center justify-between p-2 gap-4">
@@ -356,7 +353,9 @@ export function NotesTable() {
 					</TableBody>
 				</Table>
 			</div>
-			<BulkToolbar selectedRows={selectedRows} table={table} />
+			<TableProvider table={table}>
+				<BulkToolbar />
+			</TableProvider>
 		</div>
 	);
 }

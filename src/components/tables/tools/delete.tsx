@@ -1,20 +1,17 @@
 import { useRouteContext } from "@tanstack/react-router";
-import type { Row, Table } from "@tanstack/react-table";
+
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useDeleteNoteMutation } from "@/api/mutations/notes";
 import { Button } from "@/components/ui/button";
-import type { ParsedNote } from "@/db";
 
-export function Delete({
-	selectedRows,
-	table,
-}: {
-	selectedRows: Row<ParsedNote>[];
-	table: Table<ParsedNote>;
-}) {
+import { useNotesTable } from "@/lib/notes-table-provider";
+
+export function Delete() {
+	const { table } = useNotesTable();
+	const selectedRows = table.getFilteredSelectedRowModel().rows;
 	const { queryClient, athlete } = useRouteContext({
-		from: "/_authed/dashboard/_charts/notes",
+		from: "/_authed/dashboard/_charts/",
 	});
 	const { mutate: deleteNotes, isPending: isDeleting } = useDeleteNoteMutation({
 		onSuccess: (_data, variables) => {

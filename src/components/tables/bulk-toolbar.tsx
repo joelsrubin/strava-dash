@@ -1,21 +1,14 @@
-import type { Row, Table } from "@tanstack/react-table";
-
-import type { ParsedNote } from "@/db";
-
+import { useNotesTable } from "@/lib/notes-table-provider";
 import { Tools } from "./tools";
 
-export function BulkToolbar({
-	table,
-	selectedRows,
-}: {
-	table: Table<ParsedNote>;
-	selectedRows: Row<ParsedNote>[];
-}) {
+export function BulkToolbar() {
+	const { table } = useNotesTable();
+	const selectedRows = table.getFilteredSelectedRowModel().rows;
 	return selectedRows.length ? (
 		<div className="flex items-end justify-end pb-2 pr-2">
 			<div className="flex gap-2">
-				<Tools.Hashtag selectedRows={selectedRows} table={table} />
-				<Tools.Delete selectedRows={selectedRows} table={table} />
+				<Tools.Hashtag />
+				<Tools.Delete />
 			</div>
 		</div>
 	) : null;
