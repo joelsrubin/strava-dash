@@ -11,6 +11,7 @@ import { Container } from "@/components/container";
 
 import { getThemeScript } from "@/lib/theme";
 import appCss from "../styles.css?url";
+import { PendingComponent } from "./_authed/-pending-component";
 import { Providers } from "./-providers";
 
 export const Route = createRootRouteWithContext<{
@@ -72,7 +73,7 @@ export const Route = createRootRouteWithContext<{
 			},
 		],
 	}),
-
+	pendingComponent: PendingComponent,
 	notFoundComponent: () => (
 		<Container>
 			<div className="flex justify-center items-center flex-col">
@@ -81,7 +82,7 @@ export const Route = createRootRouteWithContext<{
 			</div>
 		</Container>
 	),
-
+	pendingMinMs: 0,
 	shellComponent: RootDocument,
 });
 
