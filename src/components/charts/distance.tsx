@@ -1,7 +1,7 @@
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid } from "recharts";
-import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
+import { fetchAthleteActivitiesAllQueryOptions } from "@/api/queries/strava";
 import { useUnitOfMeasurement } from "@/lib/user-preferences";
 import { formatDistance } from "@/lib/utils";
 import {
@@ -12,49 +12,75 @@ import {
 } from "../ui/chart";
 
 export function DistanceChart() {
-	const { data: athleteActivities } = useSuspenseInfiniteQuery(
-		fetchAthleteActivitiesQueryOptions(),
+	const { data: athleteActivities } = useSuspenseQuery(
+		fetchAthleteActivitiesAllQueryOptions(),
 	);
 	const { unitOfMeasurement } = useUnitOfMeasurement();
-	const activitesToChart = athleteActivities.pages[0];
-	const distanceData = useMemo(
-		() =>
-			activitesToChart
-				.map((activity, index) => ({
-					distance: activity.distance || activitesToChart[index - 1]?.distance,
+	const activitesToChart = athleteActivities;
+
+	const weeklyDistanceData = useMemo(() => {
+		const weeklyMap = new Map<string, number>();
+
+		activitesToChart.forEach((activity) => {
+			if (activity.start_date && activity.distance) {
+				const date = new Date(activity.start_date);
+				const weekStart = new Date(date);
+				weekStart.setDate(date.getDate() - date.getDay() + 1); // Monday
+				const weekKey = weekStart.toLocaleDateString("en-US", {
+					month: "short",
+					day: "numeric",
+				});
+
+				const currentTotal = weeklyMap.get(weekKey) || 0;
+				weeklyMap.set(weekKey, currentTotal + activity.distance);
+			}
+		});
+
+		return (
+			Array.from(weeklyMap.entries())
+				.map(([week, distance]) => ({
+					week,
+					distance,
 				}))
-				.reverse(),
-		[activitesToChart],
-	);
+				// Show last 12 weeks
+				.reverse()
+		);
+	}, [activitesToChart]);
 
 	const distanceConfig = useMemo<ChartConfig>(
 		() => ({
 			distance: {
-				label: "Distance",
+				label: "weekly distance",
 				color: "var(--primary)",
 			},
 		}),
 		[],
 	);
+
 	return (
 		<ChartContainer config={distanceConfig}>
-			<BarChart className=" w-full" data={distanceData}>
+			<BarChart accessibilityLayer className="w-full" data={weeklyDistanceData}>
 				<CartesianGrid vertical={false} />
-				<Bar
-					isAnimationActive={false}
-					dataKey="distance"
-					fill="var(--color-distance)"
-					radius={4}
-				/>
 
 				<ChartTooltip
 					content={
 						<ChartTooltipContent
-							formatter={(value) =>
-								`${formatDistance(value as number, unitOfMeasurement)}`
-							}
+							labelFormatter={(_label, payload) => {
+								return `Week of ${payload[0].payload.week}`;
+							}}
+							nameKey="distance"
+							formatter={(value) => [
+								formatDistance(value as number, unitOfMeasurement),
+							]}
 						/>
 					}
+				/>
+				<Bar
+					isAnimationActive={false}
+					dataKey="distance"
+					fill="var(--color-distance)"
+					radius={2}
+					barSize={30}
 				/>
 			</BarChart>
 		</ChartContainer>

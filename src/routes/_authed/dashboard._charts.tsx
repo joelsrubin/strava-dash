@@ -58,9 +58,15 @@ function RouteComponent() {
 		<div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4">
 			{!isMobile && (
 				<div className="sm:grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-3 hidden">
-					<div className="bg-muted/50 rounded-xl">
-						<h2 className="p-2 flex items-center gap-2">Distance</h2>
-						<DistanceChart />
+					<div
+						className={cn("bg-muted/50 rounded-xl", {
+							"bg-transparent": isLoadingAllActivities,
+						})}
+					>
+						<Suspense fallback={<ChartLoader />}>
+							<h2 className="p-2 flex items-center gap-2">Weekly Distance</h2>
+							<DistanceChart />
+						</Suspense>
 					</div>
 					<div
 						className={cn("bg-muted/50 rounded-xl", {

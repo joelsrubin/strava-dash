@@ -87,7 +87,7 @@ export function fetchAthleteActivitiesAllQueryOptions() {
 		queryFn: async () => {
 			const activities = await fetchAthleteActivities({
 				page: 1,
-				per_page: 120,
+				per_page: 84,
 			});
 
 			return activities;
