@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	Outlet,
-	retainSearchParams,
 	stripSearchParams,
 	useNavigate,
 } from "@tanstack/react-router";
@@ -37,7 +36,7 @@ export const Route = createFileRoute("/_authed/dashboard/_charts")({
 	component: RouteComponent,
 	validateSearch: searchSchema,
 	search: {
-		middlewares: [stripSearchParams(defaultValues), retainSearchParams(true)],
+		middlewares: [stripSearchParams(defaultValues)],
 	},
 	loader({ context: { queryClient, athlete } }) {
 		queryClient.prefetchQuery(
