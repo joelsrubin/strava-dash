@@ -247,8 +247,8 @@ export function NotesTable() {
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
 			<div className="flex flex-row items-center justify-between p-2 gap-4">
-				<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2">
-					<div className="w-full">
+				<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2 flex-1 min-w-0">
+					<div className="min-w-0 shrink-0">
 						<InputGroup className="rounded-md bg-background">
 							<InputGroupInput
 								type="search"
@@ -387,7 +387,7 @@ function Filter<T extends { hashtags?: string[] }>({
 		>
 			<ComboboxChips
 				ref={anchor}
-				className="hidden sm:inline-flex rounded-md bg-background w-full"
+				className="hidden sm:inline-flex rounded-md bg-background min-w-0"
 			>
 				{columnFilterValue.map((tag) => (
 					<ComboboxChip key={tag}>{`#${tag}`}</ComboboxChip>
