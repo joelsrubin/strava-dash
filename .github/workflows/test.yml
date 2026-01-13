@@ -16,8 +16,13 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.2
+
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run tests
         run: npx vitest run --coverage
