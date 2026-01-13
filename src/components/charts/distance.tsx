@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { Bar, BarChart, CartesianGrid } from "recharts";
+import { Bar, BarChart, CartesianGrid, ReferenceLine } from "recharts";
 import { fetchAthleteActivitiesAllQueryOptions } from "@/api/queries/strava";
 import { useUnitOfMeasurement } from "@/lib/user-preferences";
 import { formatDistance } from "@/lib/utils";
@@ -18,7 +18,7 @@ export function DistanceChart() {
 	const { unitOfMeasurement } = useUnitOfMeasurement();
 	const activitesToChart = athleteActivities;
 
-	const weeklyDistanceData = useMemo(() => {
+	const { weeklyDistanceData, averageDistance } = useMemo(() => {
 		const weeklyMap = new Map<string, number>();
 
 		activitesToChart.forEach((activity) => {
@@ -36,15 +36,19 @@ export function DistanceChart() {
 			}
 		});
 
-		return (
-			Array.from(weeklyMap.entries())
-				.map(([week, distance]) => ({
-					week,
-					distance,
-				}))
-				// Show last 12 weeks
-				.reverse()
-		);
+		const data = Array.from(weeklyMap.entries())
+			.map(([week, distance]) => ({
+				week,
+				distance,
+			}))
+			.reverse();
+
+		const average =
+			data.length > 0
+				? data.reduce((sum, item) => sum + item.distance, 0) / data.length
+				: 0;
+
+		return { weeklyDistanceData: data, averageDistance: average };
 	}, [activitesToChart]);
 
 	const distanceConfig = useMemo<ChartConfig>(
@@ -74,6 +78,18 @@ export function DistanceChart() {
 							]}
 						/>
 					}
+				/>
+				<ReferenceLine
+					y={averageDistance}
+					stroke="var(--chart-4)"
+					strokeDasharray="5 5"
+					opacity={"40%"}
+					// label={{
+					// 	value: `Avg: ${formatDistance(averageDistance, unitOfMeasurement)}`,
+					// 	position: "top",
+					// 	fill: "var(--chart-4)",
+					// 	fontSize: 12,
+					// }}
 				/>
 				<Bar
 					isAnimationActive={false}
