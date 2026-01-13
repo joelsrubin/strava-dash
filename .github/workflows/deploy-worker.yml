@@ -10,24 +10,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
         with:
           version: latest
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          cache: pnpm
-      - name: Install Dependencies
+
+      - name: Install dependencies
         run: pnpm install
-      - name: Run Tests
-        run: pnpm test:coverage
+
+      - name: Run unit tests
+        run: pnpm test
 
   deploy:
     runs-on: ubuntu-latest
-    needs: test # This job requires the 'test' job to succeed first
+    needs: test
     name: Deploy
     steps:
       - uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
       - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
