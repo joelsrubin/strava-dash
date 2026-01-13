@@ -63,8 +63,8 @@ function RouteComponent() {
 							"bg-transparent": isLoadingAllActivities,
 						})}
 					>
+						<h2 className="p-2 flex items-center gap-2">Weekly Distance</h2>
 						<Suspense fallback={<ChartLoader />}>
-							<h2 className="p-2 flex items-center gap-2">Weekly Distance</h2>
 							<DistanceChart />
 						</Suspense>
 					</div>
@@ -73,8 +73,8 @@ function RouteComponent() {
 							"bg-transparent": isLoadingAllActivities,
 						})}
 					>
+						<h2 className="p-2 flex items-center gap-2">Heat Map</h2>
 						<Suspense fallback={<ChartLoader />}>
-							<h2 className="p-2 flex items-center gap-2">Heat Map</h2>
 							<ActivityHeatmap />
 						</Suspense>
 					</div>

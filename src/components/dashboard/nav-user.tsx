@@ -27,6 +27,8 @@ export function NavUser({ user }: { user: TAthlete }) {
 		navigate({ to: "/" });
 	};
 
+	const { resolvedTheme } = useTheme();
+
 	return (
 		<DropdownMenu modal={false}>
 			<DropdownMenuTrigger asChild>
@@ -134,6 +136,18 @@ export function NavUser({ user }: { user: TAthlete }) {
 					<LogOut className="mr-2 h-4 w-4" />
 					<span>Log out</span>
 				</DropdownMenuItem>
+				<DropdownMenuSeparator />
+				<div className="flex justify-start p-2">
+					<img
+						src={
+							resolvedTheme === "dark"
+								? "/powered-by-strava.png"
+								: "/powered-by-strava-light.png"
+						}
+						alt="Powered by Strava"
+						className="h-3 w-auto"
+					/>
+				</div>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
