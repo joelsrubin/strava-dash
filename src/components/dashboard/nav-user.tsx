@@ -64,7 +64,7 @@ export function NavUser({ user }: { user: TAthlete }) {
 				<DropdownMenuSeparator />
 
 				<DropdownMenuLabel>Preferences</DropdownMenuLabel>
-				<div className="flex flex-col gap-3 p-2">
+				<div className="flex flex-col gap-2 pb-2 px-2">
 					<div className="flex flex-row justify-between items-center">
 						<span className="text-xs text-accent-foreground">Theme</span>
 						<Tabs
@@ -137,7 +137,7 @@ export function NavUser({ user }: { user: TAthlete }) {
 					<span>Log out</span>
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<div className="flex justify-start p-2">
+				<div className="flex justify-start p-3">
 					<img
 						src={
 							resolvedTheme === "dark"
