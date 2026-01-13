@@ -1,28 +1,28 @@
-name: Unit Tests
+name: Run tests and upload coverage
 
-on:
-  push:
-    branches: main
-  pull_request:
-    branches: main
+on: 
+  push
 
 jobs:
   test:
+    name: Run tests and collect coverage
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          node-version: '20'
+          fetch-depth: 2
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
+      - name: Set up Node
+        uses: actions/setup-node@v4
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Run unit tests
-        run: pnpm test
+      - name: Run tests
+        run: npx vitest run --coverage
+
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
