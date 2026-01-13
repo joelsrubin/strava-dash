@@ -3,14 +3,13 @@ import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-// import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 import viteTsConfigPaths from "vite-tsconfig-paths";
+import { configDefaults } from "vitest/config";
 
-const config = defineConfig({
-	plugins: [
-		// nitro(),
-		cloudflare({ viteEnvironment: { name: "ssr" } }),
+export default defineConfig(({ mode }) => {
+	// Optional: Use loadEnv for environment-specific configs if needed
+	const plugins = [
 		viteTsConfigPaths({
 			projects: ["./tsconfig.json"],
 		}),
@@ -18,7 +17,24 @@ const config = defineConfig({
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),
-	],
-});
+	];
 
-export default config;
+	// Only add Cloudflare plugin if not in test mode
+	if (mode !== "test") {
+		plugins.push(cloudflare({ viteEnvironment: { name: "ssr" } }));
+	}
+
+	return {
+		plugins,
+		test: {
+			globals: true,
+			environment: "jsdom",
+			setupFiles: ["./src/test/setup.ts"],
+			coverage: {
+				provider: "v8",
+				reporter: ["text", "json", "html"],
+			},
+			exclude: [...configDefaults.exclude, "**/e2e/**", "**/playwright/**"],
+		},
+	};
+});
