@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
 	createFileRoute,
 	Outlet,
+	retainSearchParams,
 	stripSearchParams,
 	useNavigate,
 } from "@tanstack/react-router";
@@ -22,13 +23,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 const defaultValues = {
-	active_tab: "activity-table",
+	tab: "activity-table",
 } as const;
 
 const searchSchema = z.object({
-	active_tab: z
+	tab: z
 		.enum(["activity-table", "notes-table"])
-		.default(defaultValues.active_tab)
+		.default(defaultValues.tab)
 		.catch("activity-table"),
 });
 
@@ -36,7 +37,7 @@ export const Route = createFileRoute("/_authed/dashboard/_charts")({
 	component: RouteComponent,
 	validateSearch: searchSchema,
 	search: {
-		middlewares: [stripSearchParams(defaultValues)],
+		middlewares: [stripSearchParams(defaultValues), retainSearchParams(true)],
 	},
 	loader({ context: { queryClient, athlete } }) {
 		queryClient.prefetchQuery(
@@ -80,23 +81,21 @@ function RouteComponent() {
 			)}
 
 			<Tabs
-				defaultValue={Route.useSearch().active_tab}
+				defaultValue={Route.useSearch().tab}
 				className="grid grid-rows-[auto_1fr] min-h-0 flex-1 gap-4"
 			>
 				<TabsList className="rounded-lg">
 					<TabsTrigger
 						className="rounded-lg"
 						value="activity-table"
-						onClick={() =>
-							navigate({ search: { active_tab: "activity-table" } })
-						}
+						onClick={() => navigate({ search: { tab: "activity-table" } })}
 					>
 						Activities
 					</TabsTrigger>
 					<TabsTrigger
 						className="rounded-lg"
 						value="notes-table"
-						onClick={() => navigate({ search: { active_tab: "notes-table" } })}
+						onClick={() => navigate({ search: { tab: "notes-table" } })}
 					>
 						Notes
 					</TabsTrigger>

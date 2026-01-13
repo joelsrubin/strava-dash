@@ -177,6 +177,9 @@ export function NotesTable() {
 						<Link
 							to="/dashboard/run/$id"
 							params={{ id: row.original.run_id.toString() }}
+							search={(prev) => ({
+								tab: prev.tab,
+							})}
 							preload="intent"
 						>
 							<div

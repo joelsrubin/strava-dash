@@ -1,6 +1,11 @@
 import { useDebouncedCallback } from "@tanstack/react-pacer";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
+import {
+	ClientOnly,
+	createFileRoute,
+	Link,
+	retainSearchParams,
+} from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -31,6 +36,9 @@ export const Route = createFileRoute("/_authed/dashboard/run/$id")({
 	component: RouteComponent,
 	pendingComponent: PendingComponent,
 	pendingMinMs: 0,
+	search: {
+		middlewares: [retainSearchParams(true)],
+	},
 	loader: async ({ context: { queryClient }, params: { id } }) => {
 		queryClient.prefetchQuery(fetchActivityQueryOptions(id));
 		queryClient.prefetchQuery(
@@ -94,7 +102,13 @@ export function RouteComponent() {
 
 	return (
 		<div className={"flex min-h-0 flex-1 flex-col"}>
-			<Link to={"/dashboard"} className="pt-4">
+			<Link
+				to={"/dashboard"}
+				search={(prev) => ({
+					tab: prev.tab,
+				})}
+				className="pt-4"
+			>
 				<Button variant="link" className="text-foreground">
 					<ChevronLeft />
 					Back

@@ -29,7 +29,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { useUnitOfMeasurement } from "@/lib/user-preferences";
-import { formatDistance, formatPace } from "@/lib/utils";
+import { cn, formatDistance, formatPace } from "@/lib/utils";
 import { EmptyState } from "./empty-state";
 
 export function DataTable() {
@@ -210,7 +210,7 @@ export function DataTable() {
 				header: ({ column }) => {
 					return (
 						<Button
-							className="px-0 py-2"
+							className="px-0 py-2 rounded-t-md"
 							variant="ghost"
 							onClick={() =>
 								column.toggleSorting(column.getIsSorted() === "asc")
@@ -277,17 +277,18 @@ export function DataTable() {
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
 			<div className="min-h-0 flex-1 overflow-auto">
 				<Table>
-					<TableHeader className="sticky top-0 z-10 bg-background">
+					<TableHeader className="rounded-t-md sticky top-0 z-10 bg-background">
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow key={headerGroup.id}>
 								{headerGroup.headers.map((header) => {
 									return (
 										<TableHead
 											key={header.id}
-											className={
+											className={cn(
 												// biome-ignore lint/suspicious/noExplicitAny: False positive due to generic typing
-												(header.column.columnDef as any).meta?.className
-											}
+												(header.column.columnDef as any).meta?.className,
+												"rounded-t-md",
+											)}
 										>
 											{header.isPlaceholder
 												? null
