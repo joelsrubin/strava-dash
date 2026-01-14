@@ -1,6 +1,6 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { Area, AreaChart, CartesianGrid, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid } from "recharts";
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
 import { type ChartConfig, ChartContainer } from "../ui/chart";
 
@@ -18,6 +18,7 @@ export function HeartRateChart() {
 		}),
 		[],
 	);
+
 	const heartRateData = useMemo(
 		() =>
 			activitesToChart

@@ -16,6 +16,14 @@ import {
 import { DistanceChart } from "@/components/charts/distance";
 import { HeartRateChart } from "@/components/charts/heart-rate";
 import ActivityHeatmap from "@/components/charts/heat-map";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+	CarouselNext,
+	CarouselPrevious,
+} from "@/components/ui/carousel";
 import { ChartLoader } from "@/components/ui/loaders/chart-loader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -85,6 +93,43 @@ function RouteComponent() {
 				</div>
 			)}
 
+			{isMobile && (
+				<Carousel className="w-full max-w-md flex justify-center items-center mx-auto">
+					<CarouselContent>
+						<CarouselItem>
+							<div
+								className={cn("bg-muted/50 rounded-xl", {
+									"bg-transparent": isLoadingAllActivities,
+								})}
+							>
+								<h2 className="p-2 flex items-center gap-2">Weekly Distance</h2>
+								<Suspense fallback={<ChartLoader />}>
+									<DistanceChart />
+								</Suspense>
+							</div>
+						</CarouselItem>
+
+						<CarouselItem>
+							<div
+								className={cn("bg-muted/50 rounded-xl", {
+									"bg-transparent": isLoadingAllActivities,
+								})}
+							>
+								<h2 className="p-2 flex items-center gap-2">Heat Map</h2>
+								<Suspense fallback={<ChartLoader />}>
+									<ActivityHeatmap />
+								</Suspense>
+							</div>
+						</CarouselItem>
+						<CarouselItem>
+							<div className="bg-muted/50 rounded-xl ">
+								<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>
+								<HeartRateChart />
+							</div>
+						</CarouselItem>
+					</CarouselContent>
+				</Carousel>
+			)}
 			<Tabs
 				defaultValue={Route.useSearch().tab}
 				className="grid grid-rows-[auto_1fr] min-h-0 flex-1 gap-4"
