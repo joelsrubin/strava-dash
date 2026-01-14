@@ -93,7 +93,7 @@ function RouteComponent() {
 			{/* This is a hack to provide a placeholder while `isMobile` inits on client */}
 			{!isMobile && (
 				<div
-					className={cn("bg-muted/50 rounded-xl", {
+					className={cn("bg-muted/50 rounded-xl sm:hidden", {
 						"bg-transparent": isLoadingAllActivities,
 					})}
 				>
