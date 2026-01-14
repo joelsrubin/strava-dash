@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-	ClientOnly,
 	createFileRoute,
 	Outlet,
 	stripSearchParams,
@@ -89,6 +88,17 @@ function RouteComponent() {
 						<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>
 						<HeartRateChart />
 					</div>
+				</div>
+			)}
+			{/* This is a hack to provide a placeholder while `isMobile` inits on client */}
+			{!isMobile && (
+				<div
+					className={cn("bg-muted/50 rounded-xl", {
+						"bg-transparent": isLoadingAllActivities,
+					})}
+				>
+					<h2 className="p-2 flex items-center gap-2">Weekly Distance</h2>
+					<ChartLoader />
 				</div>
 			)}
 
