@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Bar, BarChart, CartesianGrid, ReferenceLine } from "recharts";
 import { fetchAthleteActivitiesAllQueryOptions } from "@/api/queries/strava";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useUnitOfMeasurement } from "@/lib/user-preferences";
 import { formatDistance } from "@/lib/utils";
 import {
@@ -17,7 +18,7 @@ export function DistanceChart() {
 	);
 	const { unitOfMeasurement } = useUnitOfMeasurement();
 	const activitesToChart = athleteActivities;
-
+	const { isMobile } = useIsMobile();
 	const { weeklyDistanceData, averageDistance } = useMemo(() => {
 		const weeklyMap = new Map<string, number>();
 
@@ -66,19 +67,21 @@ export function DistanceChart() {
 			<BarChart accessibilityLayer className="w-full" data={weeklyDistanceData}>
 				<CartesianGrid vertical={false} />
 
-				<ChartTooltip
-					content={
-						<ChartTooltipContent
-							labelFormatter={(_label, payload) => {
-								return `Week of ${payload[0].payload.week}`;
-							}}
-							nameKey="distance"
-							formatter={(value) => [
-								formatDistance(value as number, unitOfMeasurement),
-							]}
-						/>
-					}
-				/>
+				{isMobile ? null : (
+					<ChartTooltip
+						content={
+							<ChartTooltipContent
+								labelFormatter={(_label, payload) => {
+									return `Week of ${payload[0].payload.week}`;
+								}}
+								nameKey="distance"
+								formatter={(value) => [
+									formatDistance(value as number, unitOfMeasurement),
+								]}
+							/>
+						}
+					/>
+				)}
 				<ReferenceLine
 					y={averageDistance}
 					stroke="var(--chart-4)"

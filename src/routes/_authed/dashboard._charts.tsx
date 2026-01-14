@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+	ClientOnly,
 	createFileRoute,
 	Outlet,
 	stripSearchParams,
@@ -16,13 +17,11 @@ import {
 import { DistanceChart } from "@/components/charts/distance";
 import { HeartRateChart } from "@/components/charts/heart-rate";
 import ActivityHeatmap from "@/components/charts/heat-map";
-import { Card, CardContent } from "@/components/ui/card";
+
 import {
 	Carousel,
 	CarouselContent,
 	CarouselItem,
-	CarouselNext,
-	CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ChartLoader } from "@/components/ui/loaders/chart-loader";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -94,7 +93,10 @@ function RouteComponent() {
 			)}
 
 			{isMobile && (
-				<Carousel className="w-full max-w-md flex justify-center items-center mx-auto">
+				<Carousel
+					opts={{ loop: true }}
+					className="w-full max-w-2xl flex justify-center items-center mx-auto"
+				>
 					<CarouselContent>
 						<CarouselItem>
 							<div
