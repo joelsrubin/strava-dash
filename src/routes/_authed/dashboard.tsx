@@ -11,9 +11,11 @@ import { SiteHeader } from "@/components/dashboard/site-header";
 
 import { getUserPreferences } from "@/db";
 import { UserPreferencesProvider } from "@/lib/user-preferences";
+import { RootErrorComponent } from "./-error-component";
 
 export const Route = createFileRoute("/_authed/dashboard")({
 	component: RouteComponent,
+	errorComponent: RootErrorComponent,
 	beforeLoad: async () => {
 		const token = await getStravaAccessToken();
 		if (!token) {

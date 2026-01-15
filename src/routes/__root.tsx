@@ -11,6 +11,7 @@ import { Container } from "@/components/container";
 
 import { getThemeScript } from "@/lib/theme";
 import appCss from "../styles.css?url";
+import { RootErrorComponent } from "./_authed/-error-component";
 import { PendingComponent } from "./_authed/-pending-component";
 import { Providers } from "./-providers";
 
@@ -83,6 +84,7 @@ export const Route = createRootRouteWithContext<{
 		</Container>
 	),
 	pendingMinMs: 0,
+	errorComponent: RootErrorComponent,
 	shellComponent: RootDocument,
 });
 
