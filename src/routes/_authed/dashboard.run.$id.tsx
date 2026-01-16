@@ -1,19 +1,14 @@
-import { useDebouncedCallback } from "@tanstack/react-pacer";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ClientOnly, createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
-import { toast } from "sonner";
-import {
-	useCreateNoteMutation,
-	useUpdateNoteMutation,
-} from "@/api/mutations/notes";
+
 import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
 import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import ActivityMap from "@/components/activity-map/activity-map";
-import Tiptap from "@/components/editor/tip-tap";
+import { EditorComponent } from "@/components/editor/editor-component";
+
 import { Button } from "@/components/ui/button";
 import { ChartLoader } from "@/components/ui/loaders/chart-loader";
-
 import {
 	Table,
 	TableBody,
@@ -45,52 +40,8 @@ export function RouteComponent() {
 	const { isMobile } = useIsMobile();
 	const { unitOfMeasurement } = useUnitOfMeasurement();
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
-	const { data: note } = useSuspenseQuery(
-		fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
-	);
-
-	const didInitializeWithNote = Boolean(
-		note.results.length > 0 && note.results[0].id,
-	);
-
-	const { mutate: updateNoteFn } = useUpdateNoteMutation({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
-			queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
-		},
-		onError: () => {
-			toast.error("Failed to update note");
-		},
-	});
-	const { mutate: createNoteFn } = useCreateNoteMutation({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
-			queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
-		},
-		onError: () => {
-			toast.error("Failed to create note");
-		},
-	});
 
 	const polyline = activity.map.polyline;
-
-	const defaultContent = `<p><b>${activity.name}</b> - ${formatDistance(activity.distance, unitOfMeasurement)} ${unitOfMeasurement}</p>`;
-	const initialState = note?.results[0]?.content || defaultContent;
-
-	const handleSave = async (content: string) => {
-		if (didInitializeWithNote) {
-			updateNoteFn({ id: note.results[0].id, content });
-		} else {
-			createNoteFn({
-				strava_id: Number(athlete.id),
-				run_id: Number(id),
-				activity_date: activity?.start_date,
-				content,
-			});
-		}
-	};
-
-	const debounceFn = useDebouncedCallback(handleSave, { wait: 500 });
 
 	return (
 		<div className={"flex min-h-0 flex-1 flex-col"}>
@@ -103,7 +54,7 @@ export function RouteComponent() {
 			>
 				<Button variant="link" className="text-foreground">
 					<ChevronLeft />
-					Back
+					Back to Dash
 				</Button>
 			</Link>
 			<div className={"flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4"}>
@@ -160,11 +111,7 @@ export function RouteComponent() {
 						</div>
 					)}
 				</div>
-				<div
-					className={`flex min-h-0 flex-1 flex-col bg-muted/50 rounded-xl order-3 lg:order-4 ${isMobile ? "max-h-[60vh]" : ""}`}
-				>
-					<Tiptap initialContent={initialState} onUpdate={debounceFn} />
-				</div>
+				<EditorComponent queryClient={queryClient} athlete={athlete} id={id} />
 			</div>
 		</div>
 	);

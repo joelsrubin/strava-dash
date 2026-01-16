@@ -28,14 +28,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 const defaultValues = {
-	tab: "activity-table",
+	tab: "recent-run",
 } as const;
 
 const searchSchema = z.object({
 	tab: z
-		.enum(["activity-table", "notes-table"])
+		.enum(["activity-table", "notes-table", "recent-run"])
 		.default(defaultValues.tab)
-		.catch("activity-table"),
+		.catch("recent-run"),
 });
 
 export const Route = createFileRoute("/_authed/dashboard/_charts")({
@@ -147,6 +147,13 @@ function RouteComponent() {
 				className="grid grid-rows-[auto_1fr] min-h-0 flex-1 gap-4"
 			>
 				<TabsList className="rounded-lg">
+					<TabsTrigger
+						className="rounded-lg"
+						value="recent-run"
+						onClick={() => navigate({ search: { tab: "recent-run" } })}
+					>
+						Journal
+					</TabsTrigger>
 					<TabsTrigger
 						className="rounded-lg"
 						value="activity-table"
