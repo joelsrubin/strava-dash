@@ -358,18 +358,6 @@ export function NotesTable() {
 												If you haven't added any notes, add one to an activity
 											</EmptyDescription>
 										</EmptyHeader>
-										<EmptyContent>
-											<Button
-												variant="link"
-												asChild
-												className="text-muted-foreground"
-												size="sm"
-											>
-												<Link to={"/dashboard"}>
-													View Activities <ArrowUpRightIcon />
-												</Link>
-											</Button>
-										</EmptyContent>
 									</Empty>
 								</TableCell>
 							</TableRow>
