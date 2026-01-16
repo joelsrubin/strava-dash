@@ -30,21 +30,22 @@ function RouteComponent() {
 				value="recent-run"
 				className="rounded-xl min-h-0 flex flex-col"
 			>
-				<div className="flex justify-between items-center px-2 pb-2 ">
+				<div className="flex justify-between items-start sm:items-center px-2 pb-2 ">
 					<div className="flex flex-col sm:flex-row gap-2">
 						<h2 className="italic">{formatDate(latest.start_date)} </h2>{" "}
-						<h2 className="">
-							Write about your latest run! Collect your thoughts and check in
-							with your mind
-						</h2>
+						<h2 className="text-balance">Write about your latest run!</h2>
 					</div>
 					<Link
 						preload="render"
 						to={"/dashboard/run/$id"}
 						params={{ id: stringifiedId }}
 					>
-						<Button size="lg" variant="ghost">
-							<span className="text-xs">View Activity</span>
+						<Button
+							size="lg"
+							variant="link"
+							className="items-start sm:items-center"
+						>
+							<span className="text-xs font-normal">View Activity</span>
 							<ExternalLink />
 						</Button>
 					</Link>
