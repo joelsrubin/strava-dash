@@ -85,7 +85,7 @@ function RouteComponent() {
 						</Suspense>
 					</div>
 					<div className="bg-muted/50 rounded-xl hidden lg:block">
-						<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>
+						<h2 className="p-2 flex items-center gap-2">Effort</h2>
 						<HeartRateChart />
 					</div>
 				</div>
@@ -135,7 +135,7 @@ function RouteComponent() {
 						</CarouselItem>
 						<CarouselItem>
 							<div className="bg-muted/50 rounded-xl ">
-								<h2 className="p-2 flex items-center gap-2">Heart Rate</h2>
+								<h2 className="p-2 flex items-center gap-2">Effort</h2>
 								<HeartRateChart />
 							</div>
 						</CarouselItem>

@@ -15,6 +15,9 @@ import {
 	AlertCircle,
 	ArrowUpDown,
 	ArrowUpRightIcon,
+	FilterIcon,
+	FilterXIcon,
+	ListFilterIcon,
 	Search,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -31,6 +34,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { ParsedNote } from "@/db";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { TableProvider } from "@/lib/notes-table-provider";
 import { parseNoteContent } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
@@ -45,6 +49,16 @@ import {
 	ComboboxList,
 	useComboboxAnchor,
 } from "../ui/combobox";
+import {
+	Drawer,
+	DrawerClose,
+	DrawerContent,
+	DrawerDescription,
+	DrawerFooter,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerTrigger,
+} from "../ui/drawer";
 import {
 	Empty,
 	EmptyContent,
@@ -247,7 +261,7 @@ export function NotesTable() {
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
 			<div className="flex flex-row items-center justify-between p-2 gap-4">
-				<div className="flex flex-col gap-y-2 sm:gap-y-0 sm:flex-row gap-x-2 flex-1 min-w-0">
+				<div className="flex  gap-y-2 sm:gap-y-0 flex-row gap-x-2 flex-1 min-w-0 items-center">
 					<div className="min-w-0 shrink-0">
 						<InputGroup className="rounded-md bg-background">
 							<InputGroupInput
@@ -266,7 +280,14 @@ export function NotesTable() {
 							</InputGroupAddon>
 						</InputGroup>
 					</div>
-
+					{/* <FilterDrawer>
+						<Button
+							className="inline-flex items-center justify-center sm:hidden"
+							size="icon-sm"
+						>
+							<FilterIcon />
+						</Button>
+					</FilterDrawer> */}
 					<Filter column={table.getColumn("hashtags")} hashtags={allHashtags} />
 				</div>
 			</div>
@@ -408,5 +429,27 @@ function Filter<T extends { hashtags?: string[] }>({
 				</ComboboxList>
 			</ComboboxContent>
 		</Combobox>
+	);
+}
+
+function FilterDrawer({ children }: { children: React.ReactNode }) {
+	return (
+		<Drawer>
+			<DrawerTrigger asChild>{children}</DrawerTrigger>
+			<DrawerContent>
+				<DrawerHeader className="text-left">
+					<DrawerTitle>Edit profile</DrawerTitle>
+					<DrawerDescription>
+						Make changes to your profile here. Click save when you&apos;re done.
+					</DrawerDescription>
+				</DrawerHeader>
+
+				<DrawerFooter className="pt-2">
+					<DrawerClose asChild>
+						<Button variant="outline">Cancel</Button>
+					</DrawerClose>
+				</DrawerFooter>
+			</DrawerContent>
+		</Drawer>
 	);
 }

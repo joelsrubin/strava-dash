@@ -125,12 +125,6 @@ export function DistanceChart() {
 					stroke="var(--chart-4)"
 					strokeDasharray="5 5"
 					opacity={"40%"}
-					// label={{
-					// 	value: `Avg: ${formatDistance(averageDistance, unitOfMeasurement)}`,
-					// 	position: "top",
-					// 	fill: "var(--chart-4)",
-					// 	fontSize: 12,
-					// }}
 				/>
 				<Bar
 					isAnimationActive={false}

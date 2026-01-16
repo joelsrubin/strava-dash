@@ -9,36 +9,52 @@ export function HeartRateChart() {
 		fetchAthleteActivitiesQueryOptions(),
 	);
 	const activitesToChart = athleteActivities.pages[0];
-	const heartRateConfig = useMemo<ChartConfig>(
+	const effortConfig = useMemo<ChartConfig>(
 		() => ({
-			heartRate: {
-				label: "Heart Rate",
+			effort: {
 				color: "var(--primary)",
 			},
 		}),
 		[],
 	);
 
-	const heartRateData = useMemo(
+	const effortData = useMemo(
 		() =>
 			activitesToChart
 				.map((activity) => ({
-					heartRate: activity.average_heartrate,
+					effort: activity.weighted_average_watts,
 				}))
 				.reverse(),
 		[activitesToChart],
 	);
+
 	return (
-		<ChartContainer config={heartRateConfig}>
-			<AreaChart className=" w-full" data={heartRateData}>
+		<ChartContainer config={effortConfig}>
+			<AreaChart className=" w-full" data={effortData}>
+				<defs>
+					<linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+						<stop
+							offset="45%"
+							stopColor="var(--color-primary)"
+							stopOpacity={0.8}
+						/>
+						<stop
+							offset="95%"
+							stopColor="var(--color-primary)"
+							stopOpacity={0.1}
+						/>
+					</linearGradient>
+				</defs>
 				<CartesianGrid vertical={false} />
+
 				<Area
 					isAnimationActive={false}
-					dataKey="heartRate"
-					fill="var(--color-heartRate)"
-					stroke="var(--color-heartRate)"
+					dataKey="effort"
+					fill="url(#fillDesktop)"
+					stroke="var(--color-effort)"
 					strokeWidth={2}
 					connectNulls
+					type="natural"
 				/>
 			</AreaChart>
 		</ChartContainer>
