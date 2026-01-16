@@ -90,7 +90,9 @@ export function fetchAthleteActivitiesAllQueryOptions() {
 				per_page: 84,
 			});
 
-			return activities;
+			const onlyRuns = activities.filter((activity) => activity.type === "Run");
+
+			return onlyRuns;
 		},
 		staleTime: Infinity,
 	});
