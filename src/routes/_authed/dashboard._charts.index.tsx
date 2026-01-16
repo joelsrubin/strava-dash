@@ -1,6 +1,6 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { ChevronRight, ExternalLink } from "lucide-react";
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
 import { EditorComponent } from "@/components/editor/editor-component";
 import { NotesTable } from "@/components/tables/notes-table";
@@ -43,10 +43,10 @@ function RouteComponent() {
 						<Button
 							size="lg"
 							variant="link"
-							className="items-start sm:items-center"
+							className="items-start sm:items-center text-foreground"
 						>
 							<span className="text-xs font-normal">View Activity</span>
-							<ExternalLink />
+							<ChevronRight />
 						</Button>
 					</Link>
 				</div>
