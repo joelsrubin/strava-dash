@@ -1,9 +1,10 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Pencil } from "lucide-react";
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
 import { EditorComponent } from "@/components/editor/editor-component";
 import { NotesTable } from "@/components/tables/notes-table";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TabsContent } from "@/components/ui/tabs";
@@ -28,12 +29,16 @@ function RouteComponent() {
 		<>
 			<TabsContent
 				value="recent-run"
-				className="rounded-xl min-h-0 flex flex-col"
+				className="rounded-xl min-h-0 flex flex-col gap-2"
 			>
-				<div className="flex justify-between items-start sm:items-center px-2 pb-2 ">
+				{/* <div className="flex justify-between items-start sm:items-center px-2 pb-2 ">
 					<div className="flex flex-col sm:flex-row gap-2">
-						<h2 className="italic">{formatDate(latest.start_date)} </h2>{" "}
-						<h2 className="text-balance">Write about your latest run!</h2>
+						<h2 className="italic text-[16px]">
+							{formatDate(latest.start_date)}{" "}
+						</h2>{" "}
+						<h2 className="text-balance text-[16px]">
+							Write about your latest run!
+						</h2>
 					</div>
 					<Link
 						preload="render"
@@ -43,13 +48,35 @@ function RouteComponent() {
 						<Button
 							size="lg"
 							variant="link"
-							className="items-start sm:items-center text-foreground"
+							className="items-start sm:items-center text-foreground text-[16px]"
 						>
 							<span className="text-xs font-normal">View Activity</span>
 							<ChevronRight />
 						</Button>
 					</Link>
-				</div>
+				</div> */}
+				<Alert className="border-0 flex items-center justify-betweeen">
+					<Pencil />
+					<div>
+						<AlertTitle>Write about your latest run!</AlertTitle>
+						<AlertDescription>{formatDate(latest.start_date)}</AlertDescription>
+					</div>
+					<Link
+						className="ml-auto"
+						preload="render"
+						to={"/dashboard/run/$id"}
+						params={{ id: stringifiedId }}
+					>
+						<Button
+							size="lg"
+							variant="link"
+							className="ml-auto text-foreground"
+						>
+							<span className="text-xs  font-normal">View Activity</span>
+							<ChevronRight />
+						</Button>
+					</Link>
+				</Alert>
 
 				<EditorComponent
 					queryClient={queryClient}
