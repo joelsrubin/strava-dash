@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
 
 function App() {
 	return (
-		<Container>
+		<Container className="flex items-center justify-center h-screen">
 			<LoginForm />
 		</Container>
 	);
