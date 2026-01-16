@@ -101,7 +101,7 @@ export function Toolbar({ editor }: ToolbarProps) {
 	}
 
 	return (
-		<div className="flex sticky top-0 z-10 flex-wrap items-center gap-0.5 border-b border-border bg-muted/50 backdrop-blur-3xl p-1.5">
+		<div className="hidden sm:flex sticky top-0 z-10 flex-wrap items-center gap-0.5 border-b border-border bg-muted/50 backdrop-blur-3xl p-1.5">
 			{/* Text formatting */}
 			<ToolbarButton
 				onClick={() => editor.chain().focus().toggleBold().run()}

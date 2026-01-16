@@ -1,6 +1,6 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronRight, ExternalLink } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
 import { EditorComponent } from "@/components/editor/editor-component";
 import { NotesTable } from "@/components/tables/notes-table";
