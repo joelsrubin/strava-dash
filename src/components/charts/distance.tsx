@@ -29,29 +29,35 @@ export function DistanceChart() {
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const { weeklyDistanceData, averageDistance } = useMemo(() => {
-		const weeklyMap = new Map<string, number>();
+		const weeklyMap = new Map<string, { distance: number; weekStart: Date }>();
 
 		activitesToChart.forEach((activity) => {
 			if (activity.start_date && activity.distance) {
 				const date = new Date(activity.start_date);
 				const weekStart = new Date(date);
-				weekStart.setDate(date.getDate() - date.getDay() + 1); // Monday
+				const day = weekStart.getDay();
+				const diff = weekStart.getDate() - day + (day === 0 ? -6 : 1);
+				weekStart.setDate(diff); // Monday of the week
 				const weekKey = weekStart.toLocaleDateString("en-US", {
 					month: "short",
 					day: "numeric",
 				});
 
-				const currentTotal = weeklyMap.get(weekKey) || 0;
-				weeklyMap.set(weekKey, currentTotal + activity.distance);
+				const current = weeklyMap.get(weekKey) || { distance: 0, weekStart };
+				weeklyMap.set(weekKey, {
+					distance: current.distance + activity.distance,
+					weekStart,
+				});
 			}
 		});
 
 		const data = Array.from(weeklyMap.entries())
-			.map(([week, distance]) => ({
+			.map(([week, { distance, weekStart }]) => ({
 				week,
 				distance,
+				weekDate: weekStart,
 			}))
-			.reverse();
+			.sort((a, b) => a.weekDate.getTime() - b.weekDate.getTime());
 
 		const average =
 			data.length > 0

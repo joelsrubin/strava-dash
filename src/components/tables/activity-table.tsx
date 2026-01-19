@@ -42,11 +42,8 @@ export function DataTable() {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const { unitOfMeasurement } = useUnitOfMeasurement();
 	const tableData = useMemo(
-		() =>
-			(athleteActivities.pages.flat() as TActivity[]).filter(
-				(activity) => activity.type === "Run",
-			),
-		[athleteActivities.pages],
+		() => athleteActivities.pages.flat() as TActivity[],
+		[athleteActivities],
 	);
 	const columns: ColumnDef<TActivity>[] = useMemo(
 		() => [

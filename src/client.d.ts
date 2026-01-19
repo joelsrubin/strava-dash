@@ -120,7 +120,6 @@ type TActivity = {
 	total_elevation_gain: number;
 	elev_high: number;
 	elev_low: number;
-	/** @deprecated Prefer to use sport_type */
 	type: TActivityType;
 	sport_type: TSportType;
 	start_date: string;

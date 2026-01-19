@@ -53,6 +53,17 @@ export const Route = createFileRoute("/_authed/dashboard/_charts")({
 	},
 });
 
+function ChartLabel({ label }: { label: string }) {
+	return (
+		<div className="p-2 flex items-center justify-between gap-2">
+			<h2>{label}</h2>
+			<h4 className="italic text-muted-foreground text-xs/relaxed text-balance">
+				last 12 weeks
+			</h4>
+		</div>
+	);
+}
+
 function RouteComponent() {
 	const { isMobile } = useIsMobile();
 	const { isLoading: isLoadingAllActivities } = useQuery(
@@ -69,7 +80,7 @@ function RouteComponent() {
 							"bg-transparent": isLoadingAllActivities,
 						})}
 					>
-						<h2 className="p-2 flex items-center gap-2">Weekly Distance</h2>
+						<ChartLabel label="Weekly Distance" />
 						<Suspense fallback={<ChartLoader />}>
 							<DistanceChart />
 						</Suspense>
@@ -79,13 +90,13 @@ function RouteComponent() {
 							"bg-transparent": isLoadingAllActivities,
 						})}
 					>
-						<h2 className="p-2 flex items-center gap-2">Heat Map</h2>
+						<ChartLabel label="Heat Map" />
 						<Suspense fallback={<ChartLoader />}>
 							<ActivityHeatmap />
 						</Suspense>
 					</div>
 					<div className="bg-muted/50 rounded-xl hidden lg:block">
-						<h2 className="p-2 flex items-center gap-2">Effort</h2>
+						<ChartLabel label="Effort" />
 						<HeartRateChart />
 					</div>
 				</div>
@@ -97,7 +108,7 @@ function RouteComponent() {
 						"bg-transparent": isLoadingAllActivities,
 					})}
 				>
-					<h2 className="p-2 flex items-center gap-2">Weekly Distance</h2>
+					<ChartLabel label="Weekly Distance" />
 					<ChartLoader />
 				</div>
 			)}
@@ -114,7 +125,7 @@ function RouteComponent() {
 									"bg-transparent": isLoadingAllActivities,
 								})}
 							>
-								<h2 className="p-2 flex items-center gap-2">Weekly Distance</h2>
+								<ChartLabel label="Weekly Distance" />
 								<Suspense fallback={<ChartLoader />}>
 									<DistanceChart />
 								</Suspense>
@@ -127,7 +138,7 @@ function RouteComponent() {
 									"bg-transparent": isLoadingAllActivities,
 								})}
 							>
-								<h2 className="p-2 flex items-center gap-2">Heat Map</h2>
+								<ChartLabel label="Heat Map" />
 								<Suspense fallback={<ChartLoader />}>
 									<ActivityHeatmap />
 								</Suspense>
@@ -135,7 +146,7 @@ function RouteComponent() {
 						</CarouselItem>
 						<CarouselItem>
 							<div className="bg-muted/50 rounded-xl ">
-								<h2 className="p-2 flex items-center gap-2">Effort</h2>
+								<ChartLabel label="Effort" />
 								<HeartRateChart />
 							</div>
 						</CarouselItem>

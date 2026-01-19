@@ -53,13 +53,20 @@ export function fetchAthleteStatsQueryOptions({
 export const fetchAthleteActivities = async ({
 	page = 1,
 	per_page = 30,
+	after,
 }: {
 	page?: number;
 	per_page?: number;
+	after?: number;
 }) => {
 	const token = await getStravaAccessToken();
+	const params = new URLSearchParams();
+	params.append("page", page.toString());
+	params.append("per_page", per_page.toString());
+	if (after) params.append("after", after.toString());
+
 	const response = await fetch(
-		`${BASE_URL}/athlete/activities?page=${page}&per_page=${per_page}`,
+		`${BASE_URL}/athlete/activities?${params.toString()}`,
 		{
 			headers: {
 				Authorization: `Bearer ${token}`,
@@ -85,9 +92,13 @@ export function fetchAthleteActivitiesAllQueryOptions() {
 	return queryOptions({
 		queryKey: ["athlete-activities-all"],
 		queryFn: async () => {
+			// Calculate 12 weeks ago in seconds (epoch timestamp)
+			const twelveWeeksAgo =
+				Math.floor(Date.now() / 1000) - 12 * 7 * 24 * 60 * 60;
+
 			const activities = await fetchAthleteActivities({
-				page: 1,
-				per_page: 84,
+				per_page: 100,
+				after: twelveWeeksAgo,
 			});
 
 			const onlyRuns = activities.filter((activity) => activity.type === "Run");

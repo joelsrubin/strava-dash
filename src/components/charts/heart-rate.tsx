@@ -1,14 +1,14 @@
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Area, AreaChart, CartesianGrid } from "recharts";
-import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
+import { fetchAthleteActivitiesAllQueryOptions } from "@/api/queries/strava";
 import { type ChartConfig, ChartContainer } from "../ui/chart";
 
 export function HeartRateChart() {
-	const { data: athleteActivities } = useSuspenseInfiniteQuery(
-		fetchAthleteActivitiesQueryOptions(),
+	const { data: athleteActivities } = useSuspenseQuery(
+		fetchAthleteActivitiesAllQueryOptions(),
 	);
-	const activitesToChart = athleteActivities.pages[0];
+	const activitesToChart = athleteActivities;
 	const effortConfig = useMemo<ChartConfig>(
 		() => ({
 			effort: {
@@ -20,11 +20,9 @@ export function HeartRateChart() {
 
 	const effortData = useMemo(
 		() =>
-			activitesToChart
-				.map((activity) => ({
-					effort: activity.weighted_average_watts,
-				}))
-				.reverse(),
+			activitesToChart.map((activity) => ({
+				effort: activity.weighted_average_watts,
+			})),
 		[activitesToChart],
 	);
 

@@ -22,7 +22,7 @@ const getIntensityColor = (intensity: number) => {
 	return colors[intensity] || colors[0];
 };
 
-const dayLabels = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+const dayLabels = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
 export default function ActivityHeatmap() {
 	const { data: activities } = useSuspenseQuery(
@@ -69,12 +69,12 @@ export default function ActivityHeatmap() {
 		today.setHours(0, 0, 0, 0);
 		const data = [];
 
-		// Find the end of the current week (Saturday)
+		// Find the end of the current week (Sunday)
 		const endOfWeek = new Date(today);
-		const daysUntilSaturday = (6 - today.getDay() + 7) % 7;
-		endOfWeek.setDate(today.getDate() + daysUntilSaturday);
+		const daysUntilSunday = (7 - today.getDay()) % 7;
+		endOfWeek.setDate(today.getDate() + daysUntilSunday);
 
-		// Calculate start date (beginning of the first week, which is a Sunday)
+		// Calculate start date (beginning of the first week, which is a Monday)
 		const startDate = new Date(endOfWeek);
 		startDate.setDate(endOfWeek.getDate() - (weeks * 7 - 1));
 
