@@ -303,6 +303,15 @@
   }
 }
 
+table {
+  .hashtag {
+    &:hover {
+      text-decoration: none;
+
+    }
+  }
+}
+
 
 
 
