@@ -1,24 +1,7 @@
 import { type UseMutationOptions, useMutation } from "@tanstack/react-query";
-import { createNote, deleteNotes, type Note, updateNote } from "@/db";
+import { deleteNotes, type Note, upsertNote } from "@/db";
 
-export const useUpdateNoteMutation = (
-	options?: UseMutationOptions<
-		{ id: number },
-		Error,
-		{ id: number; content: string }
-	>,
-) => {
-	return useMutation({
-		mutationFn: async ({ id, content }: { id: number; content: string }) => {
-			await updateNote({ data: { id, content } });
-			return { id };
-		},
-		mutationKey: ["notes-update"],
-		...options,
-	});
-};
-
-export const useCreateNoteMutation = (
+export const useUpsertNoteMutation = (
 	options?: UseMutationOptions<
 		void,
 		Error,
@@ -37,9 +20,9 @@ export const useCreateNoteMutation = (
 			strava_id: number;
 			activity_date: string;
 		}) => {
-			await createNote({ data: { content, run_id, strava_id, activity_date } });
+			await upsertNote({ data: { content, run_id, strava_id, activity_date } });
 		},
-		mutationKey: ["notes-create"],
+		mutationKey: ["notes-upsert"],
 		...options,
 	});
 };

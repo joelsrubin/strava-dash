@@ -2,10 +2,7 @@ import { useDebouncedCallback } from "@tanstack/react-pacer";
 import { type QueryClient, useSuspenseQuery } from "@tanstack/react-query";
 
 import { toast } from "sonner";
-import {
-	useCreateNoteMutation,
-	useUpdateNoteMutation,
-} from "@/api/mutations/notes";
+import { useUpsertNoteMutation } from "@/api/mutations/notes";
 import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
 import { fetchActivityQueryOptions } from "@/api/queries/strava";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -30,42 +27,26 @@ export function EditorComponent({
 
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
 	const { unitOfMeasurement } = useUnitOfMeasurement();
-	const didInitializeWithNote = Boolean(
-		note.results.length > 0 && note.results[0].id,
-	);
+	const { mutate: upsertNoteFn } = useUpsertNoteMutation({
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
+			queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
+		},
+		onError: () => {
+			toast.error("Failed to save note");
+		},
+	});
 
-	const { mutate: updateNoteFn } = useUpdateNoteMutation({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
-			queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
-		},
-		onError: () => {
-			toast.error("Failed to update note");
-		},
-	});
-	const { mutate: createNoteFn } = useCreateNoteMutation({
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes", athlete.id] });
-			queryClient.invalidateQueries({ queryKey: ["note", Number(id)] });
-		},
-		onError: () => {
-			toast.error("Failed to create note");
-		},
-	});
 	const defaultContent = `<p><b>${activity.name}</b> - ${formatDistance(activity.distance, unitOfMeasurement)} ${unitOfMeasurement}</p>`;
 	const initialState = note?.results[0]?.content || defaultContent;
 
 	const handleSave = async (content: string) => {
-		if (didInitializeWithNote) {
-			updateNoteFn({ id: note.results[0].id, content });
-		} else {
-			createNoteFn({
-				strava_id: Number(athlete.id),
-				run_id: Number(id),
-				activity_date: activity?.start_date,
-				content,
-			});
-		}
+		upsertNoteFn({
+			strava_id: Number(athlete.id),
+			run_id: Number(id),
+			activity_date: activity?.start_date,
+			content,
+		});
 	};
 
 	const debounceFn = useDebouncedCallback(handleSave, { wait: 500 });

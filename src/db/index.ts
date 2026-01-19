@@ -66,7 +66,7 @@ export const getNoteByRun = createServerFn({ method: "GET" })
 		return { results };
 	});
 
-export const createNote = createServerFn({ method: "POST" })
+export const upsertNote = createServerFn({ method: "POST" })
 	.inputValidator(
 		(input: {
 			strava_id: number;
@@ -77,50 +77,26 @@ export const createNote = createServerFn({ method: "POST" })
 	)
 	.handler(async ({ data }) => {
 		const { strava_id, run_id, content, activity_date } = data;
-
 		const hashtags = extractHashtags(content);
-		if (hashtags.length > 0) {
-			const result = await env.DB.prepare(
-				"INSERT INTO notes (strava_id, run_id, content, hashtags, activity_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-			)
-				.bind(
-					strava_id,
-					run_id,
-					content,
-					JSON.stringify(hashtags),
-					activity_date,
-					new Date().toISOString(),
-					new Date().toISOString(),
-				)
-				.run();
-			return { success: result.success };
-		} else {
-			const result = await env.DB.prepare(
-				"INSERT INTO notes (strava_id, run_id, content, activity_date, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-			)
-				.bind(
-					strava_id,
-					run_id,
-					content,
-					activity_date,
-					new Date().toISOString(),
-					new Date().toISOString(),
-				)
-				.run();
-			return { success: result.success };
-		}
-	});
-
-export const updateNote = createServerFn({ method: "POST" })
-	.inputValidator((input: { id: number; content: string }) => input)
-	.handler(async ({ data }) => {
-		const { id, content } = data;
-		const hashtags = extractHashtags(content);
+		const now = new Date().toISOString();
 
 		const result = await env.DB.prepare(
-			"UPDATE notes SET content = ?, hashtags = ?, updated_at = ? WHERE id = ?",
+			`INSERT INTO notes (strava_id, run_id, content, hashtags, activity_date, created_at, updated_at)
+			 VALUES (?, ?, ?, ?, ?, ?, ?)
+			 ON CONFLICT(run_id) DO UPDATE SET
+			   content = excluded.content,
+			   hashtags = excluded.hashtags,
+			   updated_at = excluded.updated_at`,
 		)
-			.bind(content, JSON.stringify(hashtags), new Date().toISOString(), id)
+			.bind(
+				strava_id,
+				run_id,
+				content,
+				JSON.stringify(hashtags),
+				activity_date,
+				now,
+				now,
+			)
 			.run();
 		return { success: result.success };
 	});
@@ -176,31 +152,18 @@ export const updateUserPreferences = createServerFn({ method: "POST" })
 	)
 	.handler(async ({ data }) => {
 		const { strava_id, preferences } = data;
-
 		const preferencesJson = JSON.stringify(preferences);
+		const now = new Date().toISOString();
 
-		// Try to update existing record first
-		const updateResult = await env.DB.prepare(
-			"UPDATE user_preferences SET preferences = ?, updated_at = ? WHERE strava_id = ?",
+		const result = await env.DB.prepare(
+			`INSERT INTO user_preferences (strava_id, preferences, created_at, updated_at)
+			 VALUES (?, ?, ?, ?)
+			 ON CONFLICT(strava_id) DO UPDATE SET
+			   preferences = excluded.preferences,
+			   updated_at = excluded.updated_at`,
 		)
-			.bind(preferencesJson, new Date().toISOString(), strava_id)
+			.bind(strava_id, preferencesJson, now, now)
 			.run();
 
-		// If no record was updated, insert a new one
-		if (updateResult.meta.changes === 0) {
-			const insertResult = await env.DB.prepare(
-				"INSERT INTO user_preferences (strava_id, preferences, created_at, updated_at) VALUES (?, ?, ?, ?)",
-			)
-				.bind(
-					strava_id,
-					preferencesJson,
-					new Date().toISOString(),
-					new Date().toISOString(),
-				)
-				.run();
-
-			return { success: insertResult.success };
-		}
-
-		return { success: updateResult.success };
+		return { success: result.success };
 	});

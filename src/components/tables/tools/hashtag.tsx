@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import type { ParsedNote } from "@/db";
-import { updateNote } from "@/db";
+import { upsertNote } from "@/db";
 import { useNotesTable } from "@/lib/notes-table-provider";
 
 interface AddTagsVariables {
@@ -79,8 +79,13 @@ export function Hashtag() {
 				const newTags = tagsToAdd.map((tag) => generateHashtagString(tag));
 
 				const updatedContent = note.content.concat(newTags.join(" "));
-				await updateNote({
-					data: { id: note.id, content: updatedContent },
+				await upsertNote({
+					data: {
+						strava_id: note.strava_id,
+						run_id: note.run_id,
+						content: updatedContent,
+						activity_date: note.activity_date,
+					},
 				});
 
 				return { runId: note.run_id, hashtags: newTags };
