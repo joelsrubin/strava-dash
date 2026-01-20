@@ -1,5 +1,6 @@
+import { useDebouncer } from "@tanstack/react-pacer";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { useNavigate, useRouteContext } from "@tanstack/react-router";
 import {
 	type ColumnDef,
 	flexRender,
@@ -8,18 +9,15 @@ import {
 	type SortingState,
 	useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
-import { fetchAthleteActivitiesQueryOptions } from "@/api/queries/strava";
-import { Button } from "@/components/ui/button";
+import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+	fetchActivityQueryOptions,
+	fetchAthleteActivitiesQueryOptions,
+} from "@/api/queries/strava";
+import { Button } from "@/components/ui/button";
+
 import {
 	Table,
 	TableBody,
@@ -225,36 +223,6 @@ export function DataTable() {
 					return <div>🎉 {row.original.kudos_count}</div>;
 				},
 			},
-
-			{
-				id: "actions",
-				cell: ({ row }) => {
-					return (
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button variant="ghost" className="h-8 w-8 p-0">
-									<span className="sr-only">Open menu</span>
-									<MoreHorizontal className="h-4 w-4" />
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent align="end">
-								<DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-								<DropdownMenuItem asChild>
-									<Link
-										to="/dashboard/run/$id"
-										params={{ id: row.original.id.toString() }}
-										preload="render"
-									>
-										View Run
-									</Link>
-								</DropdownMenuItem>
-								<DropdownMenuSeparator />
-							</DropdownMenuContent>
-						</DropdownMenu>
-					);
-				},
-			},
 		],
 		[unitOfMeasurement],
 	);
@@ -269,6 +237,27 @@ export function DataTable() {
 			sorting,
 		},
 	});
+
+	const navigate = useNavigate({ from: "/dashboard/" });
+	const { queryClient } = useRouteContext({
+		from: "/_authed/dashboard/_charts",
+	});
+
+	const prefetchDebouncer = useDebouncer(
+		(runId: number) => {
+			queryClient.prefetchQuery(fetchNoteByRunIdQueryOptions({ runId }));
+			queryClient.prefetchQuery(fetchActivityQueryOptions(String(runId)));
+		},
+		{ wait: 1000 },
+	);
+
+	const handleMouseEnter = (runId: number) => {
+		prefetchDebouncer.maybeExecute(runId);
+	};
+
+	const handleMouseLeave = () => {
+		prefetchDebouncer.cancel();
+	};
 
 	return (
 		<div className="relative flex min-h-0 flex-1 flex-col rounded-md border">
@@ -303,16 +292,27 @@ export function DataTable() {
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow
-									key={row.id}
+									onMouseEnter={() => handleMouseEnter(Number(row.original.id))}
+									onMouseLeave={handleMouseLeave}
+									onClick={() => {
+										// TODO: Navigate to activity detail page
+										navigate({
+											to: "/dashboard/run/$id",
+											params: { id: row.original.id.toString() },
+											search: { tab: "activity-table" },
+										});
+									}}
 									data-state={row.getIsSelected() && "selected"}
+									key={row.id}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell
 											key={cell.id}
-											className={
+											className={cn(
 												// biome-ignore lint/suspicious/noExplicitAny: False positive due to generic typing
-												(cell.column.columnDef as any).meta?.className
-											}
+												(cell.column.columnDef as any).meta?.className,
+												"py-4",
+											)}
 										>
 											{flexRender(
 												cell.column.columnDef.cell,

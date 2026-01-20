@@ -124,6 +124,7 @@ type TActivity = {
 	sport_type: TSportType;
 	start_date: string;
 	start_date_local: string;
+	has_heartrate: boolean;
 	timezone: string;
 	start_latlng: TLatLng;
 	end_latlng: TLatLng;

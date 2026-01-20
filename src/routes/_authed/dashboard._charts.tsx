@@ -5,7 +5,6 @@ import {
 	stripSearchParams,
 	useNavigate,
 } from "@tanstack/react-router";
-
 import { Suspense } from "react";
 import { z } from "zod";
 import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
@@ -16,10 +15,10 @@ import {
 import { DistanceChart } from "@/components/charts/distance";
 import { HeartRateChart } from "@/components/charts/heart-rate";
 import ActivityHeatmap from "@/components/charts/heat-map";
-
 import {
 	Carousel,
 	CarouselContent,
+	CarouselDots,
 	CarouselItem,
 } from "@/components/ui/carousel";
 import { ChartLoader } from "@/components/ui/loaders/chart-loader";
@@ -114,44 +113,47 @@ function RouteComponent() {
 			)}
 
 			{isMobile && (
-				<Carousel
-					opts={{ loop: true }}
-					className="w-full max-w-2xl flex justify-center items-center mx-auto"
-				>
-					<CarouselContent>
-						<CarouselItem>
-							<div
-								className={cn("bg-muted/50 rounded-xl", {
-									"bg-transparent": isLoadingAllActivities,
-								})}
-							>
-								<ChartLabel label="Weekly Distance" />
-								<Suspense fallback={<ChartLoader />}>
-									<DistanceChart />
-								</Suspense>
-							</div>
-						</CarouselItem>
+				<div>
+					<Carousel
+						opts={{ loop: true }}
+						className="w-full max-w-2xl flex flex-col justify-center items-center mx-auto"
+					>
+						<CarouselContent>
+							<CarouselItem>
+								<div
+									className={cn("bg-muted/50 rounded-xl", {
+										"bg-transparent": isLoadingAllActivities,
+									})}
+								>
+									<ChartLabel label="Weekly Distance" />
+									<Suspense fallback={<ChartLoader />}>
+										<DistanceChart />
+									</Suspense>
+								</div>
+							</CarouselItem>
 
-						<CarouselItem>
-							<div
-								className={cn("bg-muted/50 rounded-xl", {
-									"bg-transparent": isLoadingAllActivities,
-								})}
-							>
-								<ChartLabel label="Heat Map" />
-								<Suspense fallback={<ChartLoader />}>
-									<ActivityHeatmap />
-								</Suspense>
-							</div>
-						</CarouselItem>
-						<CarouselItem>
-							<div className="bg-muted/50 rounded-xl ">
-								<ChartLabel label="Effort" />
-								<HeartRateChart />
-							</div>
-						</CarouselItem>
-					</CarouselContent>
-				</Carousel>
+							<CarouselItem>
+								<div
+									className={cn("bg-muted/50 rounded-xl", {
+										"bg-transparent": isLoadingAllActivities,
+									})}
+								>
+									<ChartLabel label="Heat Map" />
+									<Suspense fallback={<ChartLoader />}>
+										<ActivityHeatmap />
+									</Suspense>
+								</div>
+							</CarouselItem>
+							<CarouselItem>
+								<div className="bg-muted/50 rounded-xl ">
+									<ChartLabel label="Effort" />
+									<HeartRateChart />
+								</div>
+							</CarouselItem>
+						</CarouselContent>
+						<CarouselDots />
+					</Carousel>
+				</div>
 			)}
 			<Tabs
 				defaultValue={Route.useSearch().tab}
@@ -163,7 +165,7 @@ function RouteComponent() {
 						value="recent-run"
 						onClick={() => navigate({ search: { tab: "recent-run" } })}
 					>
-						Journal
+						Latest Run
 					</TabsTrigger>
 					<TabsTrigger
 						className="rounded-lg"
