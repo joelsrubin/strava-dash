@@ -2,6 +2,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Emoji, { gitHubEmojis } from "@tiptap/extension-emoji";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
+
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";

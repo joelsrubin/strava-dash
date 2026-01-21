@@ -27,44 +27,72 @@ export function DistanceChart() {
 	const activitesToChart = athleteActivities;
 	const { isMobile } = useIsMobile();
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const { weeklyDistanceData, averageDistance } = useMemo(() => {
-		const weeklyMap = new Map<string, { distance: number; weekStart: Date }>();
+		if (!activitesToChart)
+			return { weeklyDistanceData: [], averageDistance: 0 };
 
-		activitesToChart.forEach((activity) => {
-			if (activity.start_date && activity.distance) {
-				const date = new Date(activity.start_date);
-				const weekStart = new Date(date);
-				const day = weekStart.getDay();
-				const diff = weekStart.getDate() - day + (day === 0 ? -6 : 1);
-				weekStart.setDate(diff); // Monday of the week
-				const weekKey = weekStart.toLocaleDateString("en-US", {
-					month: "short",
-					day: "numeric",
-				});
+		const activitiesByDate = activitesToChart.reduce(
+			(acc: Record<string, (typeof activitesToChart)[number][]>, activity) => {
+				if (activity.start_date && activity.distance) {
+					const date = new Date(activity.start_date)
+						.toISOString()
+						.split("T")[0];
+					if (!acc[date]) acc[date] = [];
+					acc[date].push(activity);
+				}
+				return acc;
+			},
+			{},
+		);
 
-				const current = weeklyMap.get(weekKey) || { distance: 0, weekStart };
-				weeklyMap.set(weekKey, {
-					distance: current.distance + activity.distance,
-					weekStart,
+		const weeks = 12;
+		const daysPerWeek = 7;
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		const endOfWeek = new Date(today);
+		const daysUntilSunday = (7 - today.getDay()) % 7;
+		endOfWeek.setDate(today.getDate() + daysUntilSunday);
+
+		const startDate = new Date(endOfWeek);
+		startDate.setDate(endOfWeek.getDate() - (weeks * 7 - 1));
+
+		const weeklyData = [];
+
+		for (let week = 0; week < weeks; week++) {
+			let weekDistance = 0;
+			const weekStart = new Date(startDate);
+			weekStart.setDate(startDate.getDate() + week * 7);
+
+			for (let day = 0; day < daysPerWeek; day++) {
+				const currentDate = new Date(weekStart);
+				currentDate.setDate(weekStart.getDate() + day);
+
+				const dateKey = currentDate.toISOString().split("T")[0];
+				const dayActivities = activitiesByDate[dateKey] || [];
+
+				dayActivities.forEach((activity) => {
+					weekDistance += activity.distance || 0;
 				});
 			}
-		});
 
-		const data = Array.from(weeklyMap.entries())
-			.map(([week, { distance, weekStart }]) => ({
-				week,
-				distance,
-				weekDate: weekStart,
-			}))
-			.sort((a, b) => a.weekDate.getTime() - b.weekDate.getTime());
+			weeklyData.push({
+				week: weekStart.toLocaleDateString("en-US", {
+					month: "short",
+					day: "numeric",
+				}),
+				distance: weekDistance,
+				weekDate: new Date(weekStart),
+			});
+		}
 
 		const average =
-			data.length > 0
-				? data.reduce((sum, item) => sum + item.distance, 0) / data.length
+			weeklyData.length > 0
+				? weeklyData.reduce((sum, item) => sum + item.distance, 0) /
+					weeklyData.length
 				: 0;
 
-		return { weeklyDistanceData: data, averageDistance: average };
+		return { weeklyDistanceData: weeklyData, averageDistance: average };
 	}, [activitesToChart]);
 	const highestDistance = weeklyDistanceData.reduce(
 		(max, item) => Math.max(max, item.distance),
