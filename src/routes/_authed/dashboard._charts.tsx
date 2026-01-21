@@ -94,9 +94,15 @@ function RouteComponent() {
 							<ActivityHeatmap />
 						</Suspense>
 					</div>
-					<div className="bg-muted/50 rounded-xl hidden lg:block">
+					<div
+						className={cn("bg-muted/50 rounded-xl hidden lg:block", {
+							"bg-transparent": isLoadingAllActivities,
+						})}
+					>
 						<ChartLabel label="Effort" />
-						<HeartRateChart />
+						<Suspense fallback={<ChartLoader />}>
+							<HeartRateChart />
+						</Suspense>
 					</div>
 				</div>
 			)}
