@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { useUpsertNoteMutation } from "@/api/mutations/notes";
 import { fetchNoteByRunIdQueryOptions } from "@/api/queries/notes";
 import { fetchActivityQueryOptions } from "@/api/queries/strava";
-import { useIsMobile } from "@/hooks/use-mobile";
+
 import { useUnitOfMeasurement } from "@/lib/user-preferences";
 import { formatDistance } from "@/lib/utils";
 import Tiptap from "./tip-tap";
@@ -22,8 +22,6 @@ export function EditorComponent({
 	const { data: note } = useSuspenseQuery(
 		fetchNoteByRunIdQueryOptions({ runId: Number(id) }),
 	);
-
-	const { isMobile } = useIsMobile();
 
 	const { data: activity } = useSuspenseQuery(fetchActivityQueryOptions(id));
 	const { unitOfMeasurement } = useUnitOfMeasurement();
@@ -52,7 +50,7 @@ export function EditorComponent({
 	const debounceFn = useDebouncedCallback(handleSave, { wait: 500 });
 	return (
 		<div
-			className={`flex min-h-0 flex-1 flex-col bg-muted/50 rounded-xl order-3 lg:order-4 ${isMobile ? "max-h-[60vh]" : ""}`}
+			className={`flex min-h-0 flex-1 flex-col bg-muted/50 rounded-xl order-3 lg:order-4`}
 		>
 			<Tiptap initialContent={initialState} onUpdate={debounceFn} />
 		</div>

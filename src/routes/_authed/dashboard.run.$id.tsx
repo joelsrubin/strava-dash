@@ -48,7 +48,7 @@ export function RouteComponent() {
 			<Link
 				to={"/dashboard"}
 				search={(prev) => ({
-					tab: prev.tab,
+					...prev,
 				})}
 				className="pt-4"
 			>

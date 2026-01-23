@@ -299,7 +299,10 @@ export function DataTable() {
 										navigate({
 											to: "/dashboard/run/$id",
 											params: { id: row.original.id.toString() },
-											search: { tab: "activity-table" },
+											search: (prev) => ({
+												...prev,
+												tab: "activity-table",
+											}),
 										});
 									}}
 									data-state={row.getIsSelected() && "selected"}

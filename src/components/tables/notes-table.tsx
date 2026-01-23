@@ -14,10 +14,10 @@ import {
 import {
 	AlertCircle,
 	ArrowUpDown,
-	ArrowUpRightIcon,
-	FilterIcon,
-	FilterXIcon,
-	ListFilterIcon,
+	// ArrowUpRightIcon,
+	// FilterIcon,
+	// FilterXIcon,
+	// ListFilterIcon,
 	Search,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -34,7 +34,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { ParsedNote } from "@/db";
-import { useMediaQuery } from "@/hooks/use-media-query";
+
 import { TableProvider } from "@/lib/notes-table-provider";
 import { parseNoteContent } from "@/lib/utils";
 import { Checkbox } from "../ui/checkbox";
@@ -49,19 +49,18 @@ import {
 	ComboboxList,
 	useComboboxAnchor,
 } from "../ui/combobox";
-import {
-	Drawer,
-	DrawerClose,
-	DrawerContent,
-	DrawerDescription,
-	DrawerFooter,
-	DrawerHeader,
-	DrawerTitle,
-	DrawerTrigger,
-} from "../ui/drawer";
+// import {
+// 	Drawer,
+// 	DrawerClose,
+// 	DrawerContent,
+// 	DrawerDescription,
+// 	DrawerFooter,
+// 	DrawerHeader,
+// 	DrawerTitle,
+// 	DrawerTrigger,
+// } from "../ui/drawer";
 import {
 	Empty,
-	EmptyContent,
 	EmptyDescription,
 	EmptyHeader,
 	EmptyMedia,
@@ -192,7 +191,7 @@ export function NotesTable() {
 							to="/dashboard/run/$id"
 							params={{ id: row.original.run_id.toString() }}
 							search={(prev) => ({
-								tab: prev.tab,
+								...prev,
 							})}
 							preload="intent"
 						>
@@ -420,24 +419,24 @@ function Filter<T extends { hashtags?: string[] }>({
 	);
 }
 
-function FilterDrawer({ children }: { children: React.ReactNode }) {
-	return (
-		<Drawer>
-			<DrawerTrigger asChild>{children}</DrawerTrigger>
-			<DrawerContent>
-				<DrawerHeader className="text-left">
-					<DrawerTitle>Edit profile</DrawerTitle>
-					<DrawerDescription>
-						Make changes to your profile here. Click save when you&apos;re done.
-					</DrawerDescription>
-				</DrawerHeader>
+// function FilterDrawer({ children }: { children: React.ReactNode }) {
+// 	return (
+// 		<Drawer>
+// 			<DrawerTrigger asChild>{children}</DrawerTrigger>
+// 			<DrawerContent>
+// 				<DrawerHeader className="text-left">
+// 					<DrawerTitle>Edit profile</DrawerTitle>
+// 					<DrawerDescription>
+// 						Make changes to your profile here. Click save when you&apos;re done.
+// 					</DrawerDescription>
+// 				</DrawerHeader>
 
-				<DrawerFooter className="pt-2">
-					<DrawerClose asChild>
-						<Button variant="outline">Cancel</Button>
-					</DrawerClose>
-				</DrawerFooter>
-			</DrawerContent>
-		</Drawer>
-	);
-}
+// 				<DrawerFooter className="pt-2">
+// 					<DrawerClose asChild>
+// 						<Button variant="outline">Cancel</Button>
+// 					</DrawerClose>
+// 				</DrawerFooter>
+// 			</DrawerContent>
+// 		</Drawer>
+// 	);
+// }
