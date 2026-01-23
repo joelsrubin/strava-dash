@@ -39,6 +39,11 @@ export function EditorComponent({
 	const initialState = note?.results[0]?.content || defaultContent;
 
 	const handleSave = async (content: string) => {
+		const existingContent = note?.results[0]?.content;
+		if (content === existingContent) {
+			return;
+		}
+
 		upsertNoteFn({
 			strava_id: Number(athlete.id),
 			run_id: Number(id),

@@ -30,6 +30,7 @@ import { cn } from "@/lib/utils";
 
 const defaultValues = {
 	tab: "recent-run",
+	isMaximized: false,
 } as const;
 
 const searchSchema = z.object({
@@ -37,7 +38,7 @@ const searchSchema = z.object({
 		.enum(["activity-table", "notes-table", "recent-run"])
 		.default(defaultValues.tab)
 		.catch("recent-run"),
-	isMaximized: z.boolean().default(false).catch(false),
+	isMaximized: z.boolean().default(defaultValues.isMaximized).catch(false),
 });
 
 export const Route = createFileRoute("/_authed/dashboard/_charts")({

@@ -25,6 +25,7 @@ const Tiptap = ({
 }: TiptapProps) => {
 	const editor = useEditor({
 		immediatelyRender: false,
+
 		extensions: [
 			StarterKit.configure({
 				codeBlock: false, // Disable default code block, we use CodeBlockLowlight instead
