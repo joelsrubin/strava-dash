@@ -5,6 +5,7 @@ import {
 	stripSearchParams,
 	useNavigate,
 } from "@tanstack/react-router";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { Suspense } from "react";
 import { z } from "zod";
 import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
@@ -15,6 +16,7 @@ import {
 import { DistanceChart } from "@/components/charts/distance";
 import { HeartRateChart } from "@/components/charts/heart-rate";
 import ActivityHeatmap from "@/components/charts/heat-map";
+import { Button } from "@/components/ui/button";
 import {
 	Carousel,
 	CarouselContent,
@@ -35,6 +37,7 @@ const searchSchema = z.object({
 		.enum(["activity-table", "notes-table", "recent-run"])
 		.default(defaultValues.tab)
 		.catch("recent-run"),
+	isMaximized: z.boolean().default(false).catch(false),
 });
 
 export const Route = createFileRoute("/_authed/dashboard/_charts")({
@@ -65,6 +68,7 @@ function ChartLabel({ label }: { label: string }) {
 
 function RouteComponent() {
 	const { isMobile } = useIsMobile();
+	const { isMaximized } = Route.useSearch();
 	const { isLoading: isLoadingAllActivities } = useQuery(
 		fetchAthleteActivitiesAllQueryOptions(),
 	);
@@ -107,7 +111,7 @@ function RouteComponent() {
 				</div>
 			)}
 			{/* This is a hack to provide a placeholder while `isMobile` inits on client */}
-			{!isMobile && (
+			{!isMobile && !isMaximized && (
 				<div
 					className={cn("bg-muted/50 rounded-xl sm:hidden", {
 						"bg-transparent": isLoadingAllActivities,
@@ -118,7 +122,7 @@ function RouteComponent() {
 				</div>
 			)}
 
-			{isMobile && (
+			{isMobile && !isMaximized && (
 				<div>
 					<Carousel
 						opts={{ loop: true }}
@@ -165,29 +169,53 @@ function RouteComponent() {
 				defaultValue={Route.useSearch().tab}
 				className="grid grid-rows-[auto_1fr] min-h-0 flex-1 gap-4"
 			>
-				<TabsList className="rounded-lg">
-					<TabsTrigger
-						className="rounded-lg"
-						value="recent-run"
-						onClick={() => navigate({ search: { tab: "recent-run" } })}
+				<div className="flex items-center justify-between">
+					<TabsList className="rounded-lg">
+						<TabsTrigger
+							className="rounded-lg"
+							value="recent-run"
+							onClick={() =>
+								navigate({ search: (prev) => ({ ...prev, tab: "recent-run" }) })
+							}
+						>
+							Latest Run
+						</TabsTrigger>
+						<TabsTrigger
+							className="rounded-lg"
+							value="activity-table"
+							onClick={() =>
+								navigate({
+									search: (prev) => ({ ...prev, tab: "activity-table" }),
+								})
+							}
+						>
+							Activities
+						</TabsTrigger>
+						<TabsTrigger
+							className="rounded-lg"
+							value="notes-table"
+							onClick={() =>
+								navigate({
+									search: (prev) => ({ ...prev, tab: "notes-table" }),
+								})
+							}
+						>
+							Notes
+						</TabsTrigger>
+					</TabsList>
+					<Button
+						className="inline-flex sm:hidden"
+						variant="ghost"
+						size="icon-lg"
+						onClick={() =>
+							navigate({
+								search: (prev) => ({ isMaximized: !prev.isMaximized }),
+							})
+						}
 					>
-						Latest Run
-					</TabsTrigger>
-					<TabsTrigger
-						className="rounded-lg"
-						value="activity-table"
-						onClick={() => navigate({ search: { tab: "activity-table" } })}
-					>
-						Activities
-					</TabsTrigger>
-					<TabsTrigger
-						className="rounded-lg"
-						value="notes-table"
-						onClick={() => navigate({ search: { tab: "notes-table" } })}
-					>
-						Notes
-					</TabsTrigger>
-				</TabsList>
+						{isMaximized ? <Minimize2 /> : <Maximize2 />}
+					</Button>
+				</div>
 				<Outlet />
 			</Tabs>
 		</div>
