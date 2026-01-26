@@ -6,7 +6,7 @@ import {
 	useNavigate,
 } from "@tanstack/react-router";
 import { Maximize2, Minimize2 } from "lucide-react";
-import { Suspense } from "react";
+import { Activity, Suspense } from "react";
 import { z } from "zod";
 import { fetchNotesByStravaIdQueryOptions } from "@/api/queries/notes";
 import {
@@ -21,6 +21,7 @@ import {
 	Carousel,
 	CarouselContent,
 	CarouselDots,
+	CarouselDotsLoader,
 	CarouselItem,
 } from "@/components/ui/carousel";
 import { ChartLoader } from "@/components/ui/loaders/chart-loader";
@@ -120,11 +121,12 @@ function RouteComponent() {
 				>
 					<ChartLabel label="Weekly Distance" />
 					<ChartLoader />
+					<CarouselDotsLoader />
 				</div>
 			)}
 
-			{isMobile && !isMaximized && (
-				<div>
+			{isMobile && (
+				<Activity mode={isMaximized ? "hidden" : "visible"}>
 					<Carousel
 						opts={{ loop: true }}
 						className="w-full max-w-2xl flex flex-col justify-center items-center mx-auto"
@@ -164,7 +166,7 @@ function RouteComponent() {
 						</CarouselContent>
 						<CarouselDots />
 					</Carousel>
-				</div>
+				</Activity>
 			)}
 			<Tabs
 				defaultValue={Route.useSearch().tab}

@@ -280,6 +280,27 @@ function CarouselDots({ className }: { className?: string }) {
   )
 }
 
+function CarouselDotsLoader() {
+  return (
+     <div
+      className={cn('flex justify-center gap-1.5 py-2')}
+      data-slot="carousel-dots"
+    >
+      {[1,2,3].map((_, index) => (
+        <div
+          key={index}
+
+          className={cn(
+            'h-[6px] w-[6px] rounded-full transition-colors duration-200', 'bg-muted-foreground/30',
+          )}
+
+
+        />
+      ))}
+    </div>
+  )
+}
+
 export {
   type CarouselApi,
   Carousel,
@@ -288,5 +309,6 @@ export {
   CarouselPrevious,
   CarouselNext,
   CarouselDots,
+  CarouselDotsLoader,
   useCarousel,
 }
