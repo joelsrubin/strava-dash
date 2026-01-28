@@ -73,13 +73,18 @@ export const fetchAthleteActivities = async ({
 			},
 		},
 	);
+
 	return response.json() as Promise<TActivity[]>;
 };
 
 export function fetchAthleteActivitiesQueryOptions() {
 	return infiniteQueryOptions({
 		queryKey: ["athlete-activities"],
-		queryFn: ({ pageParam }) => fetchAthleteActivities({ page: pageParam }),
+		queryFn: async ({ pageParam }) => {
+			const data = await fetchAthleteActivities({ page: pageParam });
+			const onlyRuns = data.filter((activity) => activity.type === "Run");
+			return onlyRuns;
+		},
 		staleTime: Infinity,
 		initialPageParam: 1,
 		getNextPageParam: (_lastPage, _allPages, lastPageParam) => {
