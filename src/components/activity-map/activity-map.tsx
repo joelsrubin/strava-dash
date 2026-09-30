@@ -58,7 +58,7 @@ export default function ActivityMap({
 	return (
 		<div className="relative z-1">
 			<MapContainer style={{ height: 300, width: "100%", zIndex: 1 }}>
-				<TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+				<TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?key=cb1_45eh_1_b108bf333cdc61c3e66b5772" />
 				<Polyline
 					positions={positions}
 					pathOptions={{ color: "var(--color-primary)", weight: 2 }}
